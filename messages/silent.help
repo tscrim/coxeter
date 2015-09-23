@@ -1,0 +1,6 @@
+
+The command "silent" turns off status reports during computations (this
+is the default). When the computation takes more than a few seconds, it is
+usually more pleasant to monitor what's going on --- to turn on status
+reports, say "verbose".
+

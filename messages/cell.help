@@ -1,0 +1,30 @@
+
+The command "cell" is the main commannd of this demo version. It prompts
+for an element y of the current group, which should be given in the form of
+a string of generators. It then attempts to construct the corresponding
+"kl context" (the schubert cell [e,y], and the action of the various
+generators on it), and to compute the k-l polynomials P_{x,y} with x
+"extremal" w.r.t. y. The major obstacle to this computation is lack of
+enough memory.
+
+In case of success, the program outputs the essential data about the cell,
+on a file chosen by the user, or stdout by default. This includes the list 
+of extremal k-l polynomials, and the printout of the various layers of
+the singular locus of the corresponding schubert cell, as described by
+Mark Goresky in "Tables of Kazhdan-Lusztig polynomials", 
+http://www.math.ias.edu/~goresky (of course we don't know how to construct 
+such a schubert cell for general coxeter groups, but it is likely that in 
+all cases there will exist a geometry for which such an interpretation 
+holds.) To be precise, we output the maximal elements in the sets of elements 
+having a given (non-trivial) k-l polynomial. This should correspond to the 
+supports of the various layers of (rational) singularity. A * in the output 
+corresponds to polynomials for which the degree is as big as it can be (in 
+other words, for which the so-called mu-coefficient is non-zero.)
+
+Finally, we print the betti numbers and intersection homology Betti numbers
+(the latter are readily expressed in terms of k-l polynomials) of the
+corresponding schubert cell.
+
+In case of failure, the program tries to explain why : lack of memory? If
+so, at which stage?
+

@@ -1,0 +1,8 @@
+
+The "ihbetti" command prints out the coefficients of the polynomial
+\sum_{x\leq y} P_{x,y}q^{l(y)-l(x)}. These are the betti numbers of the
+intersection cohomology of the Schubert variety X_y in the case where W
+is crystallographic. In that case, they are known to satisfy Poincare
+duality; actually this is conjectured to hold in general, and the program
+will scream a congratulation if it ever finds a counterexample.
+

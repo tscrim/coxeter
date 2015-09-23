@@ -1,0 +1,13 @@
+
+The "inorder" command compares two elements in the group, using only elementary
+string operations (and hence not consuming any memory). The algorithm is as
+follows : let s be a generator s.t. hs < h; then if gs < g, g<=h iff gs<=hs;
+otherwise g<=h iff g<=hs. Of course this is very slow and not suitable for
+large-scale computations.
+
+If the comparison is true, the program will indicate the set of erasure points
+in h which lead to g. Note that the erasures are made from a reduced expression
+of g (one such can be gotten with the "compute" command); also, they could well
+lead to an expression for h which is different from the one you entered, even
+if that was reduced.
+

@@ -1,0 +1,8 @@
+
+The "duflo" command prints out the Duflo (or distinguished) involutions in
+the group. These are the unique elements in each left Kazhdan-Lusztig cell
+for which the number l(d)-2*deg(P_{e,d}) is minimal; it turns out that they
+are involutions. They are output in the same order as the one used for
+left cells, i.e. by shortlex order of the shortlex-smallest element in the
+cell, for the current ordering of the generators.
+

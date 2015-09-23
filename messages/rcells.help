@@ -1,0 +1,13 @@
+
+The command "rcells" prints out the right cells in the group, together with
+the corresponding W-graphs. The cells are sorted in ShortLex order (for
+the current ordering of the generators), and printed in the ShortLex order
+of their smallest element.
+
+In the default output mode, the W-graphs in the following format : for
+each of the cells, in increasing order, we output one line per vertex
+of the cell, containing a list of pairs (e;mu), one for each edge 
+originating from that vertex, where e is the extremity of the edge, and
+mu is the corresponding mu-coefficients. The file-output formats will
+include comments in their files explaining the output format which is used.
+

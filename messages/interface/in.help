@@ -1,0 +1,7 @@
+
+The "in" command will put you in the mode for resetting the input interface.
+As always, this mode is exited with "q"; on exit, the program will check if
+your new choices are consistent with the remaining old choices (consistency
+of the new choices will aready have been checked). If a problem is found,
+it will put you in "in" mode again so that you can review your choices.
+

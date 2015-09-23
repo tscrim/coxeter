@@ -1,0 +1,7 @@
+
+The "terse" command sets input conventions to terse style. This style is
+meant for i/o that is easily parsed by computer. Decimal generator symbols 
+are adopted, with GAP-style representation of words. The ordering of the 
+generators is left untouched, and can be set separately by the user, if so
+desired.
+

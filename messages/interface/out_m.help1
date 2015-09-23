@@ -1,0 +1,8 @@
+
+You are currently in the "out" mode of the interface environment; this is a
+small mode intended for the resetting of the parameters which govern the
+output of group elements into the program. Since arbitrary strings are
+allowed for all output parameters, no consistency check is necessary
+
+Commands available in this mode are :
+

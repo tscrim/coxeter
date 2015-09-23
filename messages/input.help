@@ -1,0 +1,43 @@
+
+We have attempted to make input of group elements (interactively or from a 
+file) as pleasant as possible. The parsing rules for reading an element are
+as follows. 
+
+A valid input string is a sequence of group elements. A group element is
+(a) a word in the generators (b) a context number (the symbol % followed by
+an integer smaller than the size of the current enumerated part) (c) (for
+SmallCoxGroups only) a "dense array" number (the symbol # followed by an 
+integer representing a group element, which would be its context number
+if the context were constructed from the normal form of the longest element
+in the standard internal numbring of the generators) (d) an expression
+of the form (w), where w is a valid input string, possibly followed in each
+case by a string of "modifiers" acting as unary postfix operators. The
+modifiers are ! (indicating that we go over to the inverse); ^ followed by
+an integer, indicating exponentiation; or (for finite groups only) *,
+indicating that we multiply on the right by the longest element. They are
+right associative. In each case, integers are optional white space followed
+by either a sequence of decimal digits, or a sequence of hexadecimal digits
+preceded by 0x.
+
+NOTE : to simplify the parsing a little bit, actually the empty string of
+group elements (an input string made up entirely of whitespace) is always
+allowed, even in the presence of prefixes and postfixes (and of course it
+represents the identity.)
+
+The rules for reading CoxWords are again as follows : a Coxword is of the
+form prefix [generator [separator generator]*] postfix, where prefix,
+separator, postfix are the current input symbols of that name, and
+generator is a current input symbol for a generator. Each of prefix, postfix
+and separator may be empty. If postfix is non-empty, reading continues until
+the first postfix is reached (and a well-formed word is obtained); otherwise,
+it continues as long as the group element can be possibly extended. Reading
+fails if at that point the expression is not a correct group element 
+expression.
+
+In interactive input, the user is given a second chance when the input is not
+a valid input string; the string is parsed as far as it makes sense, and
+the user is prompted to change the sequel (unfortunately we have not been able
+to unbuffer keyboard input in order to allow correction of earlier terms.)
+
+The ? symbol acts as an escape character to get out of this input loop.
+

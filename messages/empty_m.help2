@@ -1,0 +1,32 @@
+
+Command completion is enforced if the input string has a unique nonambiguous 
+completion (except in cases where this seemed inappropriate.)
+
+Note that the program starts up in the so-called "empty" mode (the mode
+it is in before type and rank are defined); most of the above commands
+will be available only after you have entered type and rank. Even the help
+information about them is initially unavailable, but will become available
+as soon as you have entered a valid type and rank.
+
+You can always type "help" whenever you have the prompt. This puts you
+in help mode, where typing a command results in a brief description of its
+workings.
+
+Some commands put the program in a special "mode"; this is usually apparent
+from the fact that the prompt changes. The idea is to avoid polluting the
+global command space with rarely used names (or worse, with names that create
+annoyance when typed by accident), and/or to allow some command names to
+behave differently under certain circumstances. The typical example of this
+is help mode. The modes function as a pushdown stack : on exiting a mode we 
+are put back in the mode where we came from.
+
+A word about ranks. In principle the implementation of Coxeter groups allows
+ranks up to 255, and coxeter matrix entries up to 32763 (or infinity). However,
+for the convenience of the programmer and for efficiency reasons, currently we
+have restricted the program to ranks at most equal to half the bit-size of an 
+unsigned long on your computer (this is usually 16 on a 32-bit computer, and 
+32 on a 64-bit one.) Particularly in view of the coming migration to 64 bits, 
+this seems to cover the main cases of interest. Also, if the program is unable
+to construct the full minimal root table for lack of memory, it will quit. 
+Again, this is no limitation in practice.
+

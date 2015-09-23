@@ -1,0 +1,10 @@
+##
+## It contains the allocation to the variable coxeter_duflo of the list
+## of all Duflo involutions in the current group, together with the
+## corresponding Kazhdan-Lusztig polynomials P_{e,d} (recall that a
+## Duflo involution d is the unique element in its left cell for which
+## l(d) - 2 deg(P_{e,d}) is minimal.)
+##
+## The involutions are output in the same order as the left cells are
+## output by the "lcells" command.
+##

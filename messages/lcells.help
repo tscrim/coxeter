@@ -1,0 +1,9 @@
+
+The "lcells" command prints out the full list of left cells of the group,
+with the corresponding W-graphs.
+
+The numbering of the cells in all the cell commands is consistent; the lists
+that are printed are always printed in the same ordering (corresponding to
+the shortlex ordering of the first element in the cell, in the standard
+enumeration of the generators.)
+

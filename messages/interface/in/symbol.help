@@ -1,0 +1,7 @@
+
+The symbol command allows you to reset an input symbol. Input symbols
+may be arbitrary non-empty strings, except that they have to be distinct
+from each other and from the other input symbols, and that they are not
+allowed to begin with whitespace. This is checked at the end of your 
+modifications.
+

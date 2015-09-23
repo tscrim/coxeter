@@ -1,0 +1,10 @@
+
+The "bourbaki" command sets input conventions to Bourbaki. This means that the
+default ordering of the generators in types B and D is reversed from our
+usual choice; nothing is changed for the other types. In order to have output
+which is not too confusing, and which is consistent with other programs that
+adopt Bourbaki conventions, such as GAP, we also permute the generator
+symbols; usually they are attributed in the natural ordering of the vertices,
+so the effect is an increasing labelling of the generators in the new
+enumeration.
+

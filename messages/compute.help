@@ -1,0 +1,19 @@
+
+The compute command prints out the normal form of an element. Moreover,
+if the group has been classified as a SmallCoxGroup (this means that it
+is finite, and that its order fits into an unsigned long), a representation
+of the element as a single number (preceded by a # sign) is printed.
+Otherwise, if the element lies in the current context for k-l computations,
+its number in the context (preceded by a % sign) is printed. These numbers
+are convenient as shorthand notations and may be used in input.
+
+Note that the # number, when defined, is always the same; the % number, on
+the other hand, may be session-dependent (it depends on how the context
+has been built up.) It is even possible that the program decides to reorder
+the context during a computation (this will happen only rarely, for very big
+computations;) we will try to remember to print a warning like "warning : 
+% numbers may have changed" every time this occurs. Then you need to use
+"compute" again to discover the new % number of your element.
+
+Type "input" in help mode for a full description of the input rules.
+

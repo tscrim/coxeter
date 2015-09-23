@@ -1,0 +1,25 @@
+##
+## All group elements are represented by their shortlex normal forms in
+## the GAP conventions (unless you did something to change that).
+##
+## This file contains what is the geometrical data for the schubert cell
+## corresponding to one element y in the group. It contains the following
+## allocations :
+##
+##   coxeter_currentElement : the element y;
+##   coxeter_criticalPairs : the list of all x s.t. (x,y) is a critical
+##     pair, together with the corresponding k-l polynomial (as a polynomial
+##     in q = u^2);
+##   coxeter_slocus : the (rational) singular locus, a sublist of
+##     coxeter_criticalPairs;
+##   coxeter_sstratification : for each polynomial P != 1 which occurs 
+##     among the P_{x,y}, we look a the x s.t. P_{x,y} = P and which are 
+##     maximal in the Bruhat ordering; this is another sublist of 
+##     coxeter_criticalPairs;
+##   coxeter_betti : the ordinary betti numbers;
+##   coxeter_ihbetti : the intersection homology betti numbers;
+##
+## Look at the header files and/or help functions for the commands extremals,
+## slocus, sstratification, betti and ihbetti for more details on these
+## concepts.
+##

@@ -1,0 +1,5 @@
+
+The "fullcontext" command extends the enumerated part of the group to the
+full group --- of course, ti is available for finite groups only. It is
+invoked automatically before commands that compute all cells in the group.
+

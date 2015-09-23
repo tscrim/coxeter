@@ -1,0 +1,9 @@
+
+This help message is intended to get new users started with the program.
+We refer the user to the INTRO file for a more detailed description of
+the capabilities and limitations of the program, and for comments about
+the various algorithms that have been used.
+
+The program works with a command interface. The list of available commands
+in the main program mode is the following :
+

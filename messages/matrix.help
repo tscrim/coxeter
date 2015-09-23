@@ -1,0 +1,5 @@
+
+The command "matrix" prints out the Coxeter matrix of the current group. This
+is useful to see if interactive or file input had the desired effect, or to
+check the enumeration of the generators for the standard types.
+

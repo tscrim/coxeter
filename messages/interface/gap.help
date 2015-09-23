@@ -1,0 +1,13 @@
+
+The "gap" command sets i/o conventions to GAP style. This means first of
+all that Bourbaki conventions are adopted (see the help message for the
+"bourbaki" command.) Futher, decimal generator symbols are set, and
+prefix, separator, and postfix are set respectively to "[", ",", "]", so
+that for instance an element denoted 12321 in our standard notation becomes
+[1,2,3,2,1]. This applies to both input and output.
+
+Furthermore, all output to files is done in such a way that the corresponding
+files are directly legible by GAP3, and contain legal definitions of GAP
+objects. This sets up a rudimentary communication protocol between GAP and
+Coxeter.
+

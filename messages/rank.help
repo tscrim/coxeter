@@ -1,0 +1,10 @@
+
+The "rank" command may be used to change the rank while keeping the
+type. This makes for a bit nicer interaction. If we are in one of
+the standard families A-I, a-g, the meaning is obvious (the rank
+given will be checked to be meaningful); If we are in types X/x or Y/y,
+giving l as the rank means that the first l elements of the first
+l lines of the file are used as the Coxeter matrix (so that a single
+file can be used for a family of groups.) An error occurs if the file
+is not big enough.
+

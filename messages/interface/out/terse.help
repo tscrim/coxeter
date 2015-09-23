@@ -1,0 +1,13 @@
+
+The "terse" command sets output conventions to terse style. This style is
+meant to produce output that is easily parsed by computer. Decimal generator
+symbols are adopted, with GAP-style representation of words, and a string-
+representation of polynomials is adopted as well, without an explicit
+indeterminate. The ordering of the generators is left untouched, and can
+be set separately by the user, if so desired.
+
+Output files in the terse style usually contain a number of comment-lines,
+starting with the # symbol, which explain the contents and the format of
+the file; that way, the file should be usable without having to look at
+this help message.
+

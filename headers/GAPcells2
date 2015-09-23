@@ -1,0 +1,16 @@
+##
+## The next instruction is the allocation to coxeter_wgraphs of the list of
+## the W-graphs of the preceding cells. Each W-graph is printed out as a list
+## of pairs, one for each node in the corresponding cell. Each pair is of
+## the form [descent set,edge-list] where the descent set is the list of
+## descent generators for the corresponding node (in the case of one-sided
+## cells) or again a pair [left descent set, right descent set], in the
+## case of twosided cells; the edge-list is a list of pairs [dest,mu], where
+## mu is the mu-coefficient of the edge, and dest is the destination vertex,
+## written here as a single number, viz. its index in the cell for the
+## priviously printed enumeration of the cells (recall taht in GAP list
+## indices start with 1, not 0.) This is different from the representation of 
+## W-graphs used in Chevie; Chevie writes down the mu-coefficients as a full 
+## NxN matrix, where N is the size of the cell, whereas we use a sparse 
+## representation.
+##

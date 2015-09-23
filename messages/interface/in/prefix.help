@@ -1,0 +1,6 @@
+
+The prefix command allows you to reset the input prefix. The prefix may
+be an arbitrary string, including the empty string. If it is non-empty,
+it must be different from all other input symbols. This is checked at the
+end of your modifications.
+

@@ -1,0 +1,13 @@
+
+Congratulations !! You just found a negative coefficient in a Kazhdan-Lusztig
+polynomial. If this is not due to a bug in the program, it is a
+counter-example to a longstanding conjecture, and should definitely be
+published.
+
+Be aware that Kazhdan-Lusztig polynomials have been shown to have positive
+coefficients for all finite Coxeter groups (computationally in the case of
+H3 and H4), and for all Weyl groups of Kac-Moody Lie algebras. So if your
+group is one of these, there is definitely a bug in the program.
+
+Please notify the author (ducloux@desargues.univ-lyon1.fr) either way.
+

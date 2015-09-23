@@ -1,0 +1,9 @@
+
+The program is currently in schubert mode. This is the mode in
+which schubert cells are constructed, according to the algorithm
+described in the introduction. Various functions for probing the
+poset structure of the corresponding cell should eventually be
+available in this mode; in this demo version, it is simply used
+to set up the context for the computation of the kazhdan-lusztig
+polynomials.
+

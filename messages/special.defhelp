@@ -1,0 +1,5 @@
+
+The "special" command executes the function special_f, defined in the
+file special.c. The default value is to print an "unimplemented" message; 
+you can define an arbitrary action by editing the function.
+

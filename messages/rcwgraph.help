@@ -1,0 +1,14 @@
+
+The "rcwgraphs" command prints out the W-graphs of the right cells in the 
+group. The cells are sorted in ShortLex order (for the current ordering of 
+the generators); this is the order in which they are output by the "rcells"
+command.
+
+In the default output mode, the W-graphs in the following format : first
+we output the descents sets for each node in each cell, one line per cell; 
+then, for each of the cells, in increasing order, we output one line per 
+vertex of the cell, containing a list of pairs (e;mu), one for each edge 
+originating from that vertex, where e is the extremity of the edge, and
+mu is the corresponding mu-coefficient. The file-output formats will
+include comments in their files explaining the output format which is used.
+

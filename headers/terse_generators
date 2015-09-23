@@ -1,0 +1,7 @@
+#
+# Generators in the group are represented by decimal numbers 1,2, ... ; the
+# ordering of the generators is the current ordering. Unless you have changed
+# that, the format for outputting group elements as words is the same as for 
+# GAP, viz. prefix "[", separator ",", postfix "]"; so for instance a word in 
+# three generators that would be written as 12321 in our usual "really terse" 
+# style will be written here as [1,2,3,2,1].

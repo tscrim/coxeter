@@ -1,0 +1,23 @@
+##
+## It contains the allocation to the variable coxeter_lrwgraph of the
+## full two-sidedW-graph of the current context. This is guaranteed to 
+## be a W-graph only when the current context is the full group context;
+## otherwise it is the user's responsibility either to ensure that he
+## is dealing with a context which is a union of two-sided cells, or to
+## get what he can from the partial graph.
+##
+## In order to be consistent with our other output, we have sorted the
+## group elements in shortlex order for the Bourbaki ordering of the
+## generators.
+##
+## For convenience we allocate the enumeration to the variable
+## coxeter_contextEnumeration.
+##
+## The W-graph is represented as a list of pairs [descent set, edge-list],
+## one for each element on the context. The descent set is again a pair
+## [left descents, right descents]; the edge-list is a list of pairs
+## [destination,mu], where mu is the mu-coefficient, and destination is
+## the destination of the edge, represented as a number in the enumeration
+## of the context that we use (indices start from 1, to be consistent with
+## GAP usage.)
+##

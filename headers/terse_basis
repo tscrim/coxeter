@@ -1,0 +1,20 @@
+#
+# Polynomials are represented in dense representation, as a list of
+# coefficients, starting with the coefficient in degree zero. Lists
+# are comma-separated and enclosed in parentheses. Polynomials may
+# be preceded by a modifier of the form (d,m); this means that X^d
+# has to be substituted in the polynomial, and that the result should
+# be multiplied by X^m; in particular, this is how Laurent polynomials
+# are obtained. An absent modifier is equivalent to the modifier (1,0).
+#
+# The file contains the data for one element c_y of the Kazhdan-Lusztig
+# c-basis (denoted C' in the original KL paper) of the Hecke algebra
+# of the group. The coefficients in this basis are polynomials in the
+# indeterminate u = q^{-1/2}; but after an appropriate shift they become
+# polynomials in q. Therefore they can be compactly represented with
+# a modifier of the form (2,-m), m >= 0. We print out one line for
+# each x <= y in the Bruhat ordering; the line contains the element x,
+# followed by : and the corresponding polynomial. To find out the value
+# of y, look at the last line. The elements x are sorted in the shortlex
+# ordering corresponding to the ordering of generators which was current
+# when this file was created.

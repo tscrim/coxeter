@@ -1,0 +1,4 @@
+
+The symbol command allows you to reset an output symbol. Output symbols
+may be arbitrary non-empty strings.
+

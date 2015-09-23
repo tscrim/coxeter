@@ -1,0 +1,30 @@
+#
+# This file contains what is the geometrical data for the schubert cell
+# corresponding to one element y in the group. It contains the following
+# information :
+#
+#   - the element y;
+#   - the extremal pairs for y, output in the form element:polynomial;
+#   - the irreducible components of the rational singular locus;
+#   - the rational singular stratification : this is the set of x for
+#     which P_{x,y} != 1, and which are maximal with that k-l polynomial;
+#   - the ordinary betti numbers;
+#   - the IH betti numbers;
+#
+# The various output components are separated by a comment line, to
+# make the file more readable and to simplify parsing.
+#
+# Generators in the group are represented by decimal numbers 1,2, ... ;
+# the format for outputting group elements as words is the same as for
+# GAP, viz. prefix "[", separator ",", postfix "]"; so for instance a word
+# in three generators that would be written as 12321 in our usual "really
+# terse" style will be written here as [1,2,3,2,1].
+#
+# Polynomials are represented in dense representation, as a list of
+# coefficients, starting with the coefficient in degree zero. Lists
+# are comma-separated and enclosed in parentheses. Polynomials may
+# be preceded by a modifier of the form (d,m); this means that X^d
+# has to be substituted in the polynomial, and that the result should
+# be multiplied by X^m; in particular, this is how Laurent polynomials
+# are obtained. An absent modifier is equivalent to the modifier (1,0).
+#

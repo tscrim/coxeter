@@ -1,0 +1,5 @@
+
+warning : group context is not complete. The output of the wgraph command
+will most likely not be a true W-graph. If the group is finite, you can
+(try to) complete the context using the "fullcontext" command.
+

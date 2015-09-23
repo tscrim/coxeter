@@ -1,0 +1,4 @@
+
+The "uneq" command puts the program in unequal-parameter mode. This replaces
+the various kazhdan-lusztig commands by their unequal-parameter analogues.
+

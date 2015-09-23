@@ -1,0 +1,4 @@
+
+The command "verbose" turns on status reports during computations. If
+you want to turn them off again, say "silent".
+

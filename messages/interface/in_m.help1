@@ -1,0 +1,9 @@
+
+You are currently in the "in" mode of the interface environment; this is a
+small mode intended for the resetting of the parameters which govern the
+input of group elements into the program. On exit, your settings will be
+checked for consistency with the remaining old settings; in particular,
+no non-empty input symbols may be used in two different meanings.
+
+Commands available in this mode are :
+

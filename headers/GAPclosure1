@@ -1,0 +1,15 @@
+##
+## It contains information about the schubert variety corresponding to a
+## element y. The following data are given : a reduced expression of y;
+## the complete list of all "critical pairs" (x,y), as defined in the
+## Chevie manual (called "extremal pairs" within Coxeter), and their
+## corresponding Kazhdan-Lusztig polynomials; the singular locus of
+## the schubert variety; and the rational singular stratification.
+##
+## All group elements are represented by reduced expressions in GAP format,
+## i.e. a left bracket [, followed by a comma-separated list of the
+## generators in the expression in decimal notation, and a right bracket ].
+## The numbering of the group generators is bourbaki numbering.
+##
+## The element y :
+##

@@ -1,0 +1,19 @@
+
+The schubert command prints out data for a schubert closure in the group
+(this was called "cell" in Coxeter2). This is essentially the information
+contained in the element c_y of the k-l basis of the Hecke algebra.
+
+For a given y, the command prints out the coatoms of y, then the values
+of P_{x,y} for x <= y extremal w.r.t. y (this gives in particular all the
+P_{x,y} that come up in c_y).
+
+Then we print out information on the singular locus of the Schubert variety
+(when this exists) : this means that for each polynomial p != 1, we print
+out the maximal elements of the set of x <= y s.t. P_{x,y} = p (these will
+correspond to the irreducible components of the strata in the "equi-kl"
+stratification of the Schubert variety.) This is the information contained
+in the files produced by Goresky.
+
+The command "klbasis" will produce the actual c_y in GAP-format (be aware
+that this can get _huge_, and will most likely be hard to use.)
+

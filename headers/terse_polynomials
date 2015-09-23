@@ -1,0 +1,8 @@
+#
+# Polynomials are represented in dense representation, as a list of
+# coefficients, starting with the coefficient in degree zero. Lists
+# are comma-separated and enclosed in parentheses. Polynomials may
+# be preceded by a modifier of the form (d,m); this means that X^d
+# has to be substituted in the polynomial, and that the result should
+# be multiplied by X^m; in particular, this is how Laurent polynomials
+# are obtained. An absent modifier is equivalent to the modifier (1,0).

@@ -1,0 +1,20 @@
+#
+# This file contains the list of the W-graphs for the various Kazhdan-Lusztig
+# cells in the group. Each cell is sorted w.r.t the shortlex normal form order
+# (for the ordering of the generators which was current when this file was 
+# created) and the cells are written in the order of their first elements.
+#
+# First we print the lists of the descent sets for the various nodes of the
+# graphs. We output one line per graph, and on each line a comma-separated
+# set of lists of the form (*,*,...,*) where the * are the descent generators.
+#
+# Then we print the list of edge-lists, again one line per graph. There is
+# one edge-list per node of the graph; it is a brace-enclosed, comma-separated
+# list of pairs (destination,mu) where destination is the destination of
+# the edge, represented by the index number of the destination node, starting
+# from zero, in the node numbering that we use, and mu is the corresponding
+# mu-coefficient.
+#
+# The two lists are separated by a comment line saying "edge lists", to
+# make parsing easier.
+# 

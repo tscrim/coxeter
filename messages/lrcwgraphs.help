@@ -1,0 +1,12 @@
+
+The "lrcwgraphs" command prints out the W-graphs of the two-sided cells in 
+the group. The cells are sorted in ShortLex order (for the current ordering 
+of the generators); this is the order in which they are output by the 
+"lrcells" command.
+
+In the default output mode, the graphs are numbered by the number of the
+corresponding cell in the above ordering; they are output in the default
+format for W-graphs (one line per node, starting wtih the descent set,
+and followed by the edge-list). See the help message for the "lrwgraph"
+command for more details.
+

@@ -1,0 +1,6 @@
+
+The "default" command resets i/o conventions to their default values. This
+means that decimal symbols are used, no pre- or postfix, and that the
+separator "." is used only when the rank is >= 10. The style for the
+output files is the Pretty style.
+

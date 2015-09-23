@@ -1,0 +1,4 @@
+
+The descent command prints out the left and right descent sets, in the
+current output format for generators.
+

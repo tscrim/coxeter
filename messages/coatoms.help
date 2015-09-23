@@ -1,0 +1,9 @@
+
+The "coatoms" command prints out the coatoms of a given element x in the group.
+Recall that these are the z < x which are of length one less than x; so the
+set of coatoms is empty iff x is the identity element (in terms of posets,
+these are the coatoms of the poset [e,x], for the Bruhat ordering.) It is 
+known that the number of coatoms is at least equal to the cardinality of the 
+support of x. Finding good upper bounds (when such exist) for any given
+group is much more difficult.
+

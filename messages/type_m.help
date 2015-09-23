@@ -1,0 +1,8 @@
+
+You are currently in mode type_m. This is an artificial mode, intended
+for that brief span in time where the type is set, but not the rank. If
+you got stuck in this mode, it's because you answered to the Rank: prompt
+with a carriage return. To continue, you should simply say "rank" again to 
+set the rank for the current type, or say "type" if you also want to reset 
+the type.
+

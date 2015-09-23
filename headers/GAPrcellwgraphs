@@ -1,0 +1,15 @@
+##
+## This file contains the list of the W-graphs for the various right
+## Kazhdan-Lusztig cells in the group. Each cell is sorted w.r.t the shortlex 
+## normal form order (for the natural ordering of the generators used in GAP, 
+## unless you have changed that), and the cells are written in the order of
+## their first elements.
+##
+## The file contains the allocation to the variable coxeter_rcwgraphs of a list
+## of W-graphs, one for each right cell, which are output as the for the full
+## right W-graph of the group, viz. as a list of pairs [descent set, 
+## edge list], one pair for each node in the cell. The edge-list is again a 
+## list of pairs [dest,mu], where dest is the destination node of the edge, 
+## and mu the corresponding mu-coefficient. Nodes are numbered from 1, as is 
+## customary in GAP.
+##

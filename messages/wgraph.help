@@ -1,0 +1,12 @@
+
+The "wgraph" command prints out the W-graph of the group, numbered as always
+in the ordering described in the help message for "lcells". For each node
+in the graph, we print out the edges in the edges in the graph originating
+from that node, together with the corresponding mu-coefficient.
+
+This function will give a correct answer only if the full mu-table for the
+group has been computed. Because this is of interest for further
+investigations, we allow the command to be called also for infinite, or
+partially filled, groups, even though the result is not then an actual
+W-graph in general.
+

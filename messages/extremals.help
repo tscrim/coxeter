@@ -1,0 +1,5 @@
+
+The "extremals" command prints out the list of extremal elements x <= y,
+together with their corresponding k-l polynomials (this list appears also
+as part of the "schubert" command.)
+

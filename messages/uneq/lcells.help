@@ -1,0 +1,6 @@
+
+The command "lcells" prints out the left cells in the group, for the current 
+choice of parameters. The cells are sorted in ShortLex order (for the current 
+ordering of the generators), and printed in the ShortLex order of their 
+smallest element.
+

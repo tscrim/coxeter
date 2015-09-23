@@ -1,0 +1,6 @@
+
+The "hexadecimal" command in general interface mode activates the standard
+hexadecimal symbols for input and output : the symbols are the hexadecimal
+sequence "1", "2", ... , "f", "10", ...; the prefix and postfix are empty,
+and the separator is empty unless the rank is > 15, when it is "."
+

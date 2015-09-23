@@ -1,0 +1,12 @@
+#
+# This file contains the list of the W-graphs for the various two-sided
+# Kazhdan-Lusztig cells in the group. Each cell is sorted w.r.t the shortlex 
+# normal form order (for the ordering of the generators which was current when 
+# this file was created) and the cells are written in the order of their first 
+# elements.
+#
+# We print the list of the W-graphs of the various cells, in the usual format
+# of W-graphs (see the header file for the lwgraph printout). The graphs
+# are separated by an empty comment line in order to facilitate parsing,
+# and to make the file more readable for humans.
+#

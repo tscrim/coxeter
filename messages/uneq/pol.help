@@ -1,0 +1,6 @@
+
+The pol command prints out a single polynomial P_{x,y}. You should enter
+x as response to "first", y as response to "second". It is looked up in
+the table if available, computed otherwise. As few k-l polynomials are
+computed as possible, but all computed polynomials are remembered.
+

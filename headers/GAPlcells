@@ -1,0 +1,9 @@
+##
+## It contains the allocation to the variable coxeter_lcells of the list
+## of all left Kazhdan-Lusztig cells in the group. Each cell is sorted
+## w.r.t the shortlex normal form order (for the natural ordering of the
+## generators used in GAP, unless you have changed that), and the cells
+## are written in the order of their first elements. All the printouts
+## relating to left cells, such as Duflo involutions and left cell order,
+## are consistent with this choice of ordering.
+##

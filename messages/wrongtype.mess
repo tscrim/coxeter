@@ -1,0 +1,12 @@
+
+The types allowed are :
+
+	A,B,C,D,E,F,G,H,I for the finite Coxeter groups
+	(here I stands for the dihedral groups)
+
+	a,b,c,d,e,f,g for the affine Weyl groups
+
+	X,x for arbitrary Coxeter groups, where the matrix is read
+	from a file, and Y,y if the matrix is read interactively.
+
+Carriage return will abort.

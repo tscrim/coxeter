@@ -1,0 +1,13 @@
+
+The command show takes as input two elements x and y in the group,
+and prints out the various ingredients in the recursion formula for
+mu(x,y). The algorithm tries to push the computation down until a
+"double extremal" situation is reached, where x is extremal w.r.t.
+all ys, s in R(y) (using the analysis of "star-operations" in the k-l
+paper.)
+
+The generator is entered as "l" or "r" (depending on which side you want
+it to act) followed by the current input symbol of your generator; if you
+enter an empty string, the default descent generator is used. To find out
+the descent set of your element, use "descent".
+

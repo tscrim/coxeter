@@ -1,0 +1,12 @@
+
+The command "rcorder" prints out the ordering of the right cells for the
+current group, for the current choice of parameters. This is by definition 
+the ordered set associated to the oriented graph which defines the right
+preorder relation, where we have an arrow x->y if there exists an s in S
+such that the coefficient of c_y in the product c_x.c_s is non-zero.
+
+The output file contains a printout of the (dual) Hasse diagram of the
+"abstract" poset, in the numbering of the vertices obtained by ordering
+the cells in the shortLex order of their shortLex-smallest elements, for
+the shortLex order corresponding to the current ordering of the vertices.
+

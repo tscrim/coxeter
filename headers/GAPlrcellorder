@@ -1,0 +1,17 @@
+##
+## It contains the allocation to the variable coxeter_lcellOrder of the 
+## order relation on the tow-sided cells, inherited from the preorder relation
+## <=_LR on the group. What we output is the hasse diagram of this ordering
+## (or rather of the dual ordering) : for each cell, we print the list
+## of cells that lie immediately above it (recall that {e} is the *largest*
+## element in the two-sided cell ordering.) As always, cells are represented
+## by their index number in the list which is output by lcells; in this
+## file, we produce the abstract ordering on the integers {1, ..., N}, where
+## N is the number of two-sided cells.
+##
+## Note that the enumeration ordering we use on cells is not compatible with
+## the (reversed) two-sided cell ordering, in the sense that edges in our hasse
+## diagram do not always go to elements with a smaller index. It would be
+## possible to re-sort the cells so that this would be true, but we have
+## refrained from doing that for the sake of consistency.
+##

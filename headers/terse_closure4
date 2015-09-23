@@ -1,0 +1,6 @@
+#
+# Rational singular stratification : for each k-l polynomial p != 1, we print
+# the maximal elements of the set of x <= y s.t. P_{x,y} = p (it is easy to
+# see that (x,y) has to be a critical pair.) This gives a rough version of
+# equisingularity.
+#

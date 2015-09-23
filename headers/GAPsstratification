@@ -1,0 +1,13 @@
+##
+## This file contains the allocation to the variable coxeter_sstratification
+## of the list of pairs [elt,pol], where elt runs through the maximal
+## elements of the sets of x < y with a given k-l polynomial != 1; pol is
+## the correswponding k-l polynomial. In the case where W is crystallographic, 
+## these are the irreducible components of the the "rational singular 
+## stratification" of the Schubert variety X_y, where P_{x,y} is used as a 
+## measure of the severity of the singularity along the subvariety defined by 
+## x. It is known that in this case, P_{x,y} is a decreasing function of x.
+##
+## NOTE : the ordering of the printout is inverse to the one used in Goresky's
+## files.
+##

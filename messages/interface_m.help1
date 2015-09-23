@@ -1,0 +1,14 @@
+
+You are currently in interface mode; this is a "floating" mode meant for 
+changing either the ordering of the generators, or the appearance of the 
+output. You exit this mode by typing "q"; this will put you back where you 
+were previously.
+
+Changes to the interface only affect input-output operations, and don't change
+anything in the internal representation of the group. Therefore they can be
+made at any time without penalty; all your previous computations will be
+preserved. All changes are relative to the current group only; every new group
+starts up with the default interface.
+
+Commands available in this mode are :
+

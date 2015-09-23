@@ -1,0 +1,10 @@
+
+The separator command allows you to reset the input separator. The separator 
+may be an arbitrary string, including the empty string, but may not start
+with white space. In addition, all the strings of the input interface must be
+distinct. The empty string is likely to cause problems when the generator
+symbols have embeddings (e.g. if 1, 2, and 12 are all three input symbols, then
+with empty separator the string 12 will always be parsed as the single 
+generator 12, never as 1 times 2.) However, white space in input will always
+act as a separator, so you could still enter 1 2 in that case.
+

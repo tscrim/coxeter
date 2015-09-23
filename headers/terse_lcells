@@ -1,0 +1,10 @@
+#
+# The file contains the list of the various left Kazhdan-Lusztig cells in 
+# the group. Each cell is sorted w.r.t the shortlex normal form order (for 
+# the ordering of the generators which was current when this file was created)
+# and the cells are written in the order of their first elements. All the 
+# printouts relating to left cells, such as Duflo involutions and left cell 
+# order, are consistent with this enumeration of the cells.
+#
+# Left cells (one cell per line, as a comma-separated list) :
+#

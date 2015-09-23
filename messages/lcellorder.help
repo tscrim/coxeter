@@ -1,0 +1,14 @@
+
+The "lcellorder" command prints out the natural ordering on the set of
+all left cells in the group. Currently it works only for (some) finite
+groups; more precisely, it will work only if the full mu-table of the
+group could be computed. The limit for this on a decent-sized workstation
+nowadays (2003) seems to lie around E7, inclusive if you're lucky, barely
+exclusive if you're not. For finite Weyl groups, there is a 1-1 correspondence
+between left cells and primitive ideals in the enveloping algebra with
+trivial infinitesimal character; in this correspondence, the left cell 
+ordering corresponds to the inclusion ordering among ideals.
+
+What is printed is the Hasse diagram of the ordering : for each cell number,
+we print the numbers of the cells immediately above the given one (recall
+that the identity is the greatest element in the cell ordering.)

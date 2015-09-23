@@ -1,0 +1,22 @@
+#
+# The file contains the full two-sidedW-graph of the current context. This
+# contains all the edges of the W-graph which lie in the context; so it
+# is guaranteed to be a W-graph only when the current context is the full 
+# group; otherwise it is the user's responsibility either to ensure that he 
+# is dealing with a context which is a union of two-sided cells, or to get 
+# what he can from the partial graph.
+#
+# The group elements are sorted in shortlex order for the current ordering of 
+# the generators. We start with a list of the shortLex normal forms of the
+# elements in the context, one per line, sorted in ShortLex order. Then
+# one line is printed for each element in the context; it starts with the
+# brace-enclosed descent set of the element, written in the form
+# {left descents;right descents}, followed by a colon and a brace-enclosed, 
+# comma-separated list of pairs of the form (destination, mu-coefficient),
+# representing the edges of the graph originating from the current element; 
+# here the destination is just the number of the destination vertex in the 
+# ShortLex numbering that we use (starting from 0.)
+#
+# The two lists are separated by a comment line "# graph", in order to
+# facilitate parsing.
+#

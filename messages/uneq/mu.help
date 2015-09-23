@@ -1,0 +1,11 @@
+
+The command "mu" prints out the mu-coefficient mu(s,x,y) for a generator s
+and two given elements x and y in the group; x should be entered in response 
+to "first", y in response to "second". The generator should be entered as
+'l' or 'r' (depending on whether left or right action is desired), followed
+by one of the current generator symbols. The result is undefined unless x < y, 
+ys > y and xs < x.
+
+The result is looked up in the table if available, computed otherwise. The 
+computation of k-l polynomials is avoided as much as possible. 
+

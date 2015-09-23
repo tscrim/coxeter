@@ -1,0 +1,6 @@
+
+The "betti" command prints out the ordinary Betti numbers for the interval
+[e,y]. Unfortunately the computation of the Betti numbers for an arbitrary
+interval [x,y] is not implemented --- to do it right would require more
+time than I can affor to spend on it right now!
+

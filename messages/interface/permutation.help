@@ -1,0 +1,7 @@
+
+The "permutation" command in general interface mode activates i/o in
+permutation form; this means that group elements are written as permutations
+of the hexadecimal symbols {0,...,n}, where n is the rank. This is more
+compact than the standard notation, and very useful for interaction with
+other programs.
+

@@ -1,0 +1,5 @@
+
+The command "type" allows the user to change the type of the current
+group (thus restarting the program.) He is then also automatically
+prompted for the rank.
+

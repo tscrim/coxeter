@@ -1,0 +1,10 @@
+
+The program is currently in kl mode. This is the mode in which Kazhdan-
+Lusztig polynomials are computed. Contrary to prior versions of the
+program, no preliminary tables whatsoever are computed aforehand. At
+each point in time, tables for the bruhat order and the actions of
+the generators on an initial subset of the group are maintained, and
+grown according to the requests of the user.
+
+In this demo version, the commands available in this mode are :
+

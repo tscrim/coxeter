@@ -1,0 +1,4 @@
+
+The "invpol" command prints out a single inverse K-L polynomial Q_{x,y}. You 
+should enter x as response to "first", y as response to "second".
+

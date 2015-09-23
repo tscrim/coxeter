@@ -1,0 +1,5 @@
+
+An attempt was made to resize a block in a fixed-size memory zone.
+This means a bug in the program, unless you added some code of your
+own. Please notify the author.
+

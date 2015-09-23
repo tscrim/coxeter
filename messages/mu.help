@@ -1,0 +1,8 @@
+
+The command "mu" prints out the mu-coefficient mu(x,y) for two given elements 
+x and y in the group; x should be entered in response to "first", y in response
+to "second". The result is looked up in the table if available, computed
+otherwise. The computation of k-l polynomials is avoided as much as possible.
+
+To see the details of the computation, try "showmu".
+

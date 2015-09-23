@@ -1,0 +1,10 @@
+
+The "interface" command puts the program in interface mode. This allows
+you to enter various commands to change the parameters which govern
+the input/output functions : you can change the symbols representing
+the generators, prefix, postfix and generator both for input and output
+(notice that it can be rather useful to have different symbols for input
+and output), and the ordering of the generators.
+
+The commands available in interface mode are the following :
+

@@ -1,0 +1,6 @@
+
+The "alphabetic" command in general interface mode activates the standard
+alphabetical symbols for input and output : the symbols are the alphabetical
+sequence "a", "b", ... , "z", "aa", ...; the prefix and postfix are empty,
+and the separator is empty unless the rank is > 26, when it is "."
+

@@ -1,0 +1,5 @@
+
+The "alphabetic" command in input mode sets the input symbols to the
+alphabetic sequence "a", "b", ... , "z", "aa", ... It doesn't change prefix, 
+postfix or separator (you can of course change these yourself separately.)
+

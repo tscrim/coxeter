@@ -1,0 +1,13 @@
+
+The command "ordering" allows you to change the ordering of the generators.
+This does not change the way the program deals with the group internally; 
+it only affects the output, and the definition of ShortLex normal forms, for 
+instance.
+
+One should not confuse the ordering of the generators, and the symbols
+which are attached to them (this can be a little bit confusing when the
+symbols themselves are labels like "1", "2", etc.) We have taken the approach
+that symbols are attached to actual generators; changing the ordering does
+not affect the correspondence. This makes it easy, for instance, to see how
+normal forms change when the ordering is changed.
+

@@ -1,0 +1,5 @@
+
+The "out" command will put you in the mode for resetting the input interface.
+As always, this mode is exited with "q". Since output symbols may be completely
+arbitrary strings, no consistency check is necessary here on exit.
+

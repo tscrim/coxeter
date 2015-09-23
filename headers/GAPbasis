@@ -1,0 +1,14 @@
+##
+## Let H := Hecke(W,u^2,u) be the Hecke algebra of our group, where u is
+## a square root of our indeterminate q. Then this file contains one GAP 
+## instruction, the assignment to the variable coxeter_cbasis of what would be 
+## the GAP output to the call t(c(w)) in Chevie, where w is our element (which 
+## can be read as the last term in the file), t is u^{-l(w)}T(w), where 
+## T := Basis(H,"T") is the ordinary basis of the Hecke algebra, and 
+## c := Basis(H,"C'") is what was called the C'-basis in the original 
+## Kazhdan-Lusztig paper.
+##
+## The coefficients are shifted as they should, and are therefore polynomials
+## in the negative powers of the indeterminate u. The powers that come up are 
+## either all even or all odd.
+##

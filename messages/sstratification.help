@@ -1,0 +1,11 @@
+
+In geometric language, the "sstratification" command prints out the irreducible
+components of the strata in the singular locus of the Schubert variety X_y, 
+defined by the values of the Kazhdan-Lusztig polynomial P_{x,y}. In other 
+words, we look at the set of x < y such that P_{x,y} has a given value != 1,
+and take the maximal elements in these sets. In the cases where there really
+is a Schubert variety (i.e. for crystallographic Coxeter groups), it is known
+that P_{x,y} is a coefficient-wise decreasing function of x. Note that the
+ordering we use (the shortlex ordering on x) is precisely reversed from the
+one that is used in Goresky's files.
+

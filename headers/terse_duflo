@@ -1,0 +1,24 @@
+#
+# This file contains the list of all Duflo (or distinguished) involutions in 
+# the current group, together with the corresponding Kazhdan-Lusztig 
+# polynomials P_{e,d} (recall that a Duflo involution d is the unique element 
+# in its left cell for which l(d) - 2 deg(P_{e,d}) is minimal.)
+#
+# Pairs are output in the format involution:polynomial, one pair per line.
+# The output order is the same as the order in which the left cells are
+# output by the "lcells" command.
+#
+# Generators in the group are represented by decimal numbers 1,2, ... ;
+# the format for outputting group elements as words is the same as for
+# GAP, viz. prefix "[", separator ",", postfix "]"; so for instance a word
+# in three generators that would be written as 12321 in our usual "really
+# terse" style will be written here as [1,2,3,2,1].
+#
+# Polynomials are represented in dense representation, as a list of
+# coefficients, starting with the coefficient in degree zero. Lists
+# are comma-separated and enclosed in parentheses. Polynomials may
+# be preceded by a modifier of the form (d,m); this means that X^d
+# has to be substituted in the polynomial, and that the result should
+# be multiplied by X^m; in particular, this is how Laurent polynomials
+# are obtained. An absent modifier is equivalent to the modifier (1,0).
+#

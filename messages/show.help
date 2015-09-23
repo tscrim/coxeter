@@ -1,0 +1,13 @@
+
+The command show takes as input two elements x and y in the group,
+and prints out the various ingredients in the recursion formula for
+P_{x,y}. This opens up the computations a little bit, and makes it
+easier to understand what's going on. It's also very nice for the
+purpose of following a computation step by step, say for debugging
+purposes.
+
+The generator is entered as "l" or "r" (depending on which side you want
+it to act) followed by the current input symbol of your generator; if you
+enter an empty string, the default descent generator is used. To find out
+the descent set of your element, use "descent".
+

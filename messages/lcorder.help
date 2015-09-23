@@ -1,0 +1,13 @@
+
+The "lcorder" command prints out the ordering of the left cells for the
+current group. This is by definition the ordered set associated to the
+W-graph seen as an oriented graph; recall that if the group is a finite Weyl 
+group, this is also the poset of primitive ideals with trivial central 
+character of the universal enveloping algebra of the corresponding semisimple 
+Lie algebra.
+
+The output file contains a printout of the (dual) Hasse diagram of the
+"abstract" poset, in the numbering of the vertices obtained by ordering
+the cells in the shortLex order of their shortLex-smallest elements, for
+the shortLex order corresponding to the current ordering of the vertices.
+
