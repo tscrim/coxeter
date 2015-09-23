@@ -250,7 +250,7 @@ void error::Error(int number, ... )
       notCoxelt();
       break;
     case NOT_DESCENT: {
-      const char *const str = va_arg(ap,const char *const);
+      const char *str = va_arg(ap,const char *);
       notDescent(str);
       break;
     }
@@ -280,7 +280,7 @@ void error::Error(int number, ... )
       parNbrOverflow();
       break;
     case PARSE_ERROR: {
-      const char *const str = va_arg(ap,const char *const);
+      const char *str = va_arg(ap,const char *);
       parseError(str);
     }
       break;
