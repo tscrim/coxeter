@@ -5,5 +5,18 @@ This file mostly contains practical hints for the compilation and installation
 of the program. For a detailed overview of the program, its capabilities and
 limitations, see the INTRO file.
 
+The program needs access to help files and to Coxeter matrices. The
+locations of these files are described in directories.h. The default
+setting is that they are in the directory where the program is being
+executed.
+
+In order to access most of the "help" for individual commands, you
+should first pick a Coxeter group (by typing "type" and then (for
+instance) "A" and "1".  Then type "help" and the name of a command.
+
+Debugging is enabled by default; to avoid this (and make the program
+run much faster) say "make optimize=true".
+
 % explain installation in general directory
 % explain known compilation problems
+
