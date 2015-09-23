@@ -41,31 +41,31 @@ template <class T> class Vector
   public:
 /* constructors and destructors */
     Vector(){};
-    Vector(Ulong n):d_list(n) {};
+    Vector(unsigned long long n):d_list(n) {};
     Vector(const Vector<T>& w):d_list(w.list()) {};
-    Vector(T* const& ptr, const Ulong& n):d_list(ptr,n) {};
-    Vector(T* const& ptr, const Ulong& n, bool b):d_list(ptr,n,b) {};
+    Vector(T* const& ptr, const unsigned long long& n):d_list(ptr,n) {};
+    Vector(T* const& ptr, const unsigned long long& n, bool b):d_list(ptr,n,b) {};
     ~Vector() {};
 /* manipulators */
-    T& operator[] (const Ulong& j);                              /* inlined */
+    T& operator[] (const unsigned long long& j);                              /* inlined */
     const Vector<T>& operator= (const Vector<T>& w);             /* inlined */
     Vector<T>& operator+= (const Vector<T>& w);
     Vector<T>& operator-= (const Vector<T>& w);
     Vector<T>& operator*= (const T& a);
-    Ulong& dim();                                                 /* inlined */
+    unsigned long long& dim();                                                 /* inlined */
     T* ptr();                                                     /* inlined */
     void reduceDim();
-    void setDim(const Ulong& n);                                  /* inlined */
-    void setDimValue(const Ulong& n);                             /* inlined */
-    void setVect(const T *source, const Ulong& first, const Ulong& r);
+    void setDim(const unsigned long long& n);                                  /* inlined */
+    void setDimValue(const unsigned long long& n);                             /* inlined */
+    void setVect(const T *source, const unsigned long long& first, const unsigned long long& r);
                                                                   /* inlined */
-    void setVect(const T *source, const Ulong& r);                /* inlined */
-    void setZero(const Ulong& first, const Ulong& r);             /* inlined */
-    void setZero(const Ulong& r);                                 /* inlined */
+    void setVect(const T *source, const unsigned long long& r);                /* inlined */
+    void setZero(const unsigned long long& first, const unsigned long long& r);             /* inlined */
+    void setZero(const unsigned long long& r);                                 /* inlined */
     void setZero();                                               /* inlined */
 /* accessors */
-    const T& operator[] (const Ulong& j) const;                   /* inlined */
-    const Ulong& dim() const;                                     /* inlined */
+    const T& operator[] (const unsigned long long& j) const;                   /* inlined */
+    const unsigned long long& dim() const;                                     /* inlined */
     const List<T>& list() const;                                  /* inlined */
     const T* ptr() const;                                         /* inlined */
   };
@@ -76,35 +76,35 @@ template <class T> class Vector
 
 namespace vector {
 
-template<class T> inline T& Vector<T>::operator[] (const Ulong& j) 
+template<class T> inline T& Vector<T>::operator[] (const unsigned long long& j) 
   {return d_list[j];}
 template<class T> 
 inline const Vector<T>& Vector<T>::operator= (const Vector<T>& w)
   {d_list.assign(w.list()); return *this;}
-template<class T> Ulong& Vector<T>::dim() {return d_list.size();}
+template<class T> unsigned long long& Vector<T>::dim() {return d_list.size();}
 template<class T> inline T* Vector<T>::ptr() {return d_list.ptr();}
-template<class T> inline void Vector<T>::setDim(const Ulong& n)
-  {Ulong d = dim(); d_list.setSize(n); if (n>d) setZero(d,n-d);}
-template<class T> inline void Vector<T>::setDimValue(const Ulong& n) 
+template<class T> inline void Vector<T>::setDim(const unsigned long long& n)
+  {unsigned long long d = dim(); d_list.setSize(n); if (n>d) setZero(d,n-d);}
+template<class T> inline void Vector<T>::setDimValue(const unsigned long long& n) 
   {d_list.setSizeValue(n);}
 template<class T> 
-inline void Vector<T>::setVect(const T *source, const Ulong& first, 
-			       const Ulong& r)
+inline void Vector<T>::setVect(const T *source, const unsigned long long& first, 
+			       const unsigned long long& r)
   {d_list.setData(source,first,r);}
 template<class T> inline void Vector<T>::setVect(const T *source, 
-						 const Ulong& r) 
+						 const unsigned long long& r) 
   {setVect(source,0,r);}
-template<class T> inline void Vector<T>::setZero(const Ulong& first,
-						 const Ulong& r) 
+template<class T> inline void Vector<T>::setZero(const unsigned long long& first,
+						 const unsigned long long& r) 
   {d_list.setZero(first,r);}
 template<class T> 
-  inline void Vector<T>::setZero(const Ulong& r) {d_list.setZero(0,r);}
+  inline void Vector<T>::setZero(const unsigned long long& r) {d_list.setZero(0,r);}
 template<class T> inline void Vector<T>::setZero() {d_list.setZero();}
 template<class T> 
-  inline const T& Vector<T>::operator[] (const Ulong& j) const 
+  inline const T& Vector<T>::operator[] (const unsigned long long& j) const 
   {return d_list[j];}
 template<class T> 
-  inline const Ulong& Vector<T>::dim() const {return d_list.size();}
+  inline const unsigned long long& Vector<T>::dim() const {return d_list.size();}
 template<class T> 
   inline const List<T>& Vector<T>::list() const {return d_list;}
 template<class T> 

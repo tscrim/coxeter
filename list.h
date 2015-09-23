@@ -24,15 +24,15 @@ namespace list {
 /******** constants *********************************************************/
 
 namespace list {
-  const Ulong undef_size = ULONG_MAX;
-  const Ulong not_found = ULONG_MAX;
+  const unsigned long long undef_size = ULLONG_MAX;
+  const unsigned long long not_found = ULLONG_MAX;
 }
 
 /******** functions provided by list.h **************************************/
 
 namespace list {
-  template <class T> Ulong find(const List<T>& l, const T& m);
-  template <class T> Ulong insert(List<T>& l, const T& m);
+  template <class T> unsigned long long find(const List<T>& l, const T& m);
+  template <class T> unsigned long long insert(List<T>& l, const T& m);
   template <class T> void print(FILE* file, const List<T>& l);
 };
 
@@ -49,8 +49,8 @@ namespace list {
 template <class T> class List {
  protected:
   T* d_ptr;
-  Ulong d_size;
-  Ulong d_allocated;
+  unsigned long long d_size;
+  unsigned long long d_allocated;
  public:
   typedef T eltType;
 /* constructors and destructors */
@@ -60,39 +60,39 @@ template <class T> class List {
   void* operator new(size_t, void* ptr) {return ptr;}
   void operator delete(void* ptr, void* placement) {};
   List() {memset(this,0,sizeof(List<T>));} // guarantee clean memory
-  List(const Ulong& n);
+  List(const unsigned long long& n);
   List(const List<T>& r);
-  List(const T* p, const Ulong& n);
+  List(const T* p, const unsigned long long& n);
   template <class I> List(const I& first, const I& last);
   template <class I, class F> List(const I& first, const I& last, F& f);
   ~List();
 /* modifiers */
-  T& operator[] (Ulong j);                                        /* inlined */
+  T& operator[] (unsigned long long j);                                        /* inlined */
   const List<T>& operator= (const List& r);
   void append(const T& x);
   const List<T>& assign(const List& r);
-  void erase(const Ulong& n);
+  void erase(const unsigned long long& n);
   void reverse();
   T* ptr() {return d_ptr;}
-  void setData(const T* source, Ulong first, Ulong r);
-  void setData(const T* source, Ulong r);                         /* inlined */
-  void setSize(Ulong n);
-  void setSizeValue(const Ulong& n);                              /* inlined */
-  void setZero(Ulong first, Ulong r);                             /* inlined */
-  void setZero(Ulong r);                                          /* inlined */
+  void setData(const T* source, unsigned long long first, unsigned long long r);
+  void setData(const T* source, unsigned long long r);                         /* inlined */
+  void setSize(unsigned long long n);
+  void setSizeValue(const unsigned long long& n);                              /* inlined */
+  void setZero(unsigned long long first, unsigned long long r);                             /* inlined */
+  void setZero(unsigned long long r);                                          /* inlined */
   void setZero();                                                 /* inlined */
   void shallowCopy(const List& w);                                /* inlined */
-  void shiftPtr(const long& d);                                   /* inlined */
-  Ulong& size();                                                  /* inlined */
+  void shiftPtr(const long long& d);                                   /* inlined */
+  unsigned long long& size();                                                  /* inlined */
   void sort();
   template<class C> void sort(C& c);                              /* inlined */
 /* accessors */
-  const T& operator[] (Ulong j) const;                            /* inlined */
+  const T& operator[] (unsigned long long j) const;                            /* inlined */
   bool operator== (const List& w) const;
   bool operator!= (const List& w) const;
   bool operator< (const List& w) const;
   const T* ptr() const;                                           /* inlined */
-  const Ulong& size() const;                                      /* inlined */
+  const unsigned long long& size() const;                                      /* inlined */
 /* iterator */
   typedef T* Iterator;
   typedef const T* ConstIterator;
@@ -112,31 +112,31 @@ namespace list {
 
 /* modifiers */
 
-template<class T> inline T& List<T>::operator[] (Ulong j) 
+template<class T> inline T& List<T>::operator[] (unsigned long long j) 
   {return d_ptr[j];}
 template<class T> 
-inline void List<T>::setData(const T* source, Ulong r) 
+inline void List<T>::setData(const T* source, unsigned long long r) 
   {setData(source,0,r);}
-template<class T> void List<T>::setSizeValue(const Ulong& n)
+template<class T> void List<T>::setSizeValue(const unsigned long long& n)
   {d_size = n;}
-template<class T> inline void List<T>::setZero(Ulong first, Ulong r) 
+template<class T> inline void List<T>::setZero(unsigned long long first, unsigned long long r) 
   {memset(d_ptr+first,0,r*sizeof(T));}
-template<class T> inline void List<T>::setZero(Ulong r) {setZero(0,r);}
+template<class T> inline void List<T>::setZero(unsigned long long r) {setZero(0,r);}
 template<class T> inline void List<T>::setZero() {setZero(0,d_size);}
 template<class T> inline void List<T>::shallowCopy(const List<T>& w)
   {memmove(this,&w,sizeof(List<T>));}
-template<class T> inline void List<T>::shiftPtr(const long& d)
+template<class T> inline void List<T>::shiftPtr(const long long& d)
   {d_ptr += d; d_size -= d; d_allocated -= d;}
-template<class T> Ulong& List<T>::size() {return d_size;}
+template<class T> unsigned long long& List<T>::size() {return d_size;}
 
 /* accessors */
 
-template <class T> inline const T& List<T>::operator[] (Ulong j) const 
+template <class T> inline const T& List<T>::operator[] (unsigned long long j) const 
   {return(d_ptr[j]);}
 template<class T> inline bool List<T>::operator!= (const List<T>& w) const
   {return !operator==(w);}
 template<class T> const T* List<T>::ptr() const {return d_ptr;}
-template <class T> inline const Ulong& List<T>::size() const {return d_size;}
+template <class T> inline const unsigned long long& List<T>::size() const {return d_size;}
 
 /* iterators */
 

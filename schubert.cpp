@@ -1637,7 +1637,7 @@ void printPartition(FILE* file, const Partition& pi, const SchubertContext& p,
 
   for (PartitionIterator i(pi); i; ++i) {
     const Set& c = i();
-    fprintf(file,"%lu(%lu):{",count,c.size());
+    fprintf(file,"%lu(%llu):{",count,c.size());
     for (Ulong j = 0; j < c.size(); ++j) {
       CoxWord g(0);
       p.append(g,c[j]);
@@ -1667,7 +1667,7 @@ void printPartition(FILE* file, const Partition& pi, const BitMap& b,
 
   for (PartitionIterator i(pi_b); i; ++i) {
     const Set& c = i();
-    fprintf(file,"%lu(%lu):{",count,c.size());
+    fprintf(file,"%lu(%llu):{",count,c.size());
     for (Ulong j = 0; j < c.size(); ++j) {
       CoxWord g(0);
       p.append(g,q[c[j]]);

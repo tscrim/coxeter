@@ -43,7 +43,7 @@ template <class T> Vector<T>& Vector<T>::operator+= (const Vector<T>& w)
   if (w.dim() > dim())  /* enlarge v if necessary and extend by zero */
     setDim(w.dim());
 
-  for (Ulong j = 0; j < w.dim(); j++)
+  for (unsigned long long j = 0; j < w.dim(); j++)
     d_list[j] += w[j];
 
   return *this;
@@ -63,7 +63,7 @@ template <class T> Vector<T>& Vector<T>::operator-= (const Vector<T>& w)
   if (w.dim() > dim())  /* enlarge v if necessary and extend by zero */
     setDim(w.dim());
 
-  for (Ulong j = 0; j < w.dim(); j++)
+  for (unsigned long long j = 0; j < w.dim(); j++)
     d_list[j] -= w[j];
 
   return *this;
@@ -77,7 +77,7 @@ template <class T> Vector<T>& Vector<T>::operator*= (const T& a)
 */
 
 {
-  for (Ulong j = 0; j < dim(); j++)
+  for (unsigned long long j = 0; j < dim(); j++)
     d_list[j] *= a;
 
   return *this;
@@ -91,7 +91,7 @@ template <class T> void Vector<T>::reduceDim()
 */
 
 {
-  for (Ulong j = dim(); j;) {
+  for (unsigned long long j = dim(); j;) {
     j--;
     if (d_list[j]) {
       d_list.setSize(j+1);

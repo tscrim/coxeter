@@ -211,7 +211,7 @@ void CoxGroup::modify(ParseInterface& P, const Token& tok) const
   }
 
   if (isPower(tok)) {
-    Ulong m = readCoxNbr(P,ULONG_MAX);
+    Ulong m = readCoxNbr(P,ULLONG_MAX);
     CoxGroup::power(P.c,m);
   }
 }

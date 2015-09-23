@@ -56,10 +56,10 @@ namespace coxtypes {
   const Rank RANK_MAX = SMALLRANK_MAX;              /* temporary restriction */
   const Generator GENERATOR_MAX = RANK_MAX-1;       /* top value is reserved */
   const Generator undef_generator = RANK_MAX;
-  const CoxSize COXSIZE_MAX = ULONG_MAX-2;        /* top values are reserved */
+  const CoxSize COXSIZE_MAX = ULLONG_MAX-2;        /* top values are reserved */
   const CoxSize infinite_coxsize = COXSIZE_MAX+1;
   const CoxSize undef_coxsize = COXSIZE_MAX+2;
-  const BettiNbr BETTI_MAX = ULONG_MAX-1;           /* top value is reserved */
+  const BettiNbr BETTI_MAX = ULLONG_MAX-1;           /* top value is reserved */
   const BettiNbr undef_betti = BETTI_MAX+1;
   const CoxNbr COXNBR_MAX = UINT_MAX-1;             /* top value is reserved */
   const CoxNbr undef_coxnbr = COXNBR_MAX+1;
@@ -67,7 +67,7 @@ namespace coxtypes {
   const ParNbr PARNBR_MAX = USHRT_MAX-RANK_MAX-1;   /* top value is reserved */
   const Length LENGTH_MAX = USHRT_MAX-1;            /* top value is reserved */
   const Length undef_length = LENGTH_MAX+1;
-  const StarOp STAR_MAX = ULONG_MAX-1;              /* top value is reserved */
+  const StarOp STAR_MAX = ULLONG_MAX-1;              /* top value is reserved */
   const StarOp undef_starop = STAR_MAX+1;
 };
 

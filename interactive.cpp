@@ -417,7 +417,7 @@ void getLength(List<Length>& L, const CoxGraph& G, const Interface& I)
 
   getConjugacyClasses(cl,G);
 
-  printf("There are %lu conjugacy classes of generators.",cl.size());
+  printf("There are %llu conjugacy classes of generators.",cl.size());
   printf(" Enter weights (? to abort):\n\n");
 
   for (Ulong j = 0; j < cl.size(); ++j) {

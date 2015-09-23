@@ -21,6 +21,7 @@ namespace special {
 
 namespace special {
   void addSpecialCommands(commands::CommandTree* tree);
+  /*  coxgroup::CoxGroup* currentGroup(); */
 };
 
 #endif

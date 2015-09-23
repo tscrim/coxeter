@@ -9,8 +9,8 @@
 #define VERSION_H
 
 namespace version {
-  char* const NAME = "Coxeter";
-  char* const VERSION = "3.0_beta2";
+  char* const NAME = "Coxeter64";
+  char* const VERSION = "3.0.64";
 };
 
 #endif

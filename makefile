@@ -7,9 +7,12 @@ dependencies := $(patsubst %.cpp,%.d,$(wildcard *.cpp))
 
 globals = globals.h
 
-pflags = -c $(includedirs) -pg -O
-oflags = -c $(includedirs) -O -Wall
-gflags = -c $(includedirs) -g
+# pflags = -c $(includedirs) -pg -O
+pflags = -c $(includedirs) -pg -O -m64
+# oflags = -c $(includedirs) -O3 -Wall
+oflags = -c $(includedirs) -O3 -Wall -m64
+# gflags = -c $(includedirs) -g
+gflags = -c $(includedirs) -g -m64
 
 cflags = $(gflags) # the default setting
 
@@ -27,7 +30,8 @@ cc = g++
 all: coxeter #clean
 
 coxeter: $(objects)
-	$(cc) -o coxeter $(objects)
+#	$(cc) -o coxeter $(objects)
+	$(cc) -m64 -o coxeter $(objects)
 
 clean:
 	rm -f $(objects)

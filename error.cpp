@@ -652,6 +652,8 @@ void memoryWarning()
 
 {
   fprintf(stderr,"sorry, insufficient memory\n");
+  fprintf(stderr,"memory usage :\n\n");
+  memory::arena().print(stderr);
   return;
 }
 

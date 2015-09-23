@@ -32,9 +32,9 @@ namespace list {
 
   - constructors and destructors :
 
-    - List(Ulong);
+    - List(unsigned long long);
     - List(List&);
-    - List(T*,ulong);
+    - List(T*,unsigned long long);
     - List(const I&, const I&);
     - List(const I&, const I&, F&);
     - ~List();
@@ -48,17 +48,17 @@ namespace list {
 
     - append(const T&): appends an element (potentially resizing);
     - assign(const List&): copy constructor;
-    - erase(const Ulong&): erases the n-th term in the list;
+    - erase(const unsigned long long&): erases the n-th term in the list;
     - reverse(): reverses the order of the elements;
-    - setSize(Ulong): resizes;
-    - setData(T*,first,Ulong): sets the data, resizing if necessary;
+    - setSize(unsigned long long): resizes;
+    - setData(T*,first,unsigned long long): sets the data, resizing if necessary;
     - sort() : sorts the list;
 
  **************************************************************************/
 
 namespace list {
 
-template <class T> List<T>::List(const Ulong& n)
+template <class T> List<T>::List(const unsigned long long& n)
 
 /*
   Allocates this to hold n elements. Relies on the fact that it always
@@ -82,14 +82,14 @@ template <class T> List<T>::List(const List<T>& r)
 {
   d_ptr = static_cast<T*> (arena().alloc(r.size()*sizeof(T)));
   d_allocated = arena().allocSize(r.size(),sizeof(T));
-  for (Ulong j = 0; j < r.size(); ++j) {
+  for (unsigned long long j = 0; j < r.size(); ++j) {
     new(d_ptr+j) T(r[j]);
   }
   d_size = r.d_size;
 }
 
 
-template <class T> List<T>::List(const T* p, const Ulong& n)
+template <class T> List<T>::List(const T* p, const unsigned long long& n)
   :d_allocated(0)
 
 /*
@@ -147,7 +147,7 @@ template<class T> List<T>::~List()
 */
 
 {
-  for (Ulong j = 0; j < d_allocated; ++j) {
+  for (unsigned long long j = 0; j < d_allocated; ++j) {
     d_ptr[j].~T();
   }
   arena().free(d_ptr,d_allocated*sizeof(T));
@@ -167,7 +167,7 @@ template<class T> bool List<T>::operator== (const List<T>& w) const
   if (d_size != w.size())
     return false;
 
-  for (Ulong j = 0; j < d_size; ++j) {
+  for (unsigned long long j = 0; j < d_size; ++j) {
     if (!(d_ptr[j] == w[j]))
       return false;
   }
@@ -190,7 +190,7 @@ template<class T> bool List<T>::operator< (const List<T>& w) const
 
   /* if we reach this point, sizes are equal */
 
-  for (Ulong j = 0; j < d_size; ++j) {
+  for (unsigned long long j = 0; j < d_size; ++j) {
     if (d_ptr[j] < w[j])
       return true;
     if (d_ptr[j] > w[j])
@@ -224,11 +224,11 @@ template <class T> void List<T>::append(const T& x)
   // we have to be careful in case x points into the structure being
   // resized! calling setSize directly could invalidate x.
 
-  Ulong c = d_size;
+  unsigned long long c = d_size;
 
   if (d_allocated < c+1) {
-    Ulong old_size = c*sizeof(T);
-    Ulong new_size = (c+1)*sizeof(T);
+    unsigned long long old_size = c*sizeof(T);
+    unsigned long long new_size = (c+1)*sizeof(T);
     T* new_ptr = static_cast<T*> (arena().alloc(new_size));
     if (ERRNO) /* overflow */
       return;
@@ -269,7 +269,7 @@ template <class T> const List<T>& List<T>::assign(const List<T>& r)
   return *this;
 }
 
-template <class T> void List<T>::erase(const Ulong& n)
+template <class T> void List<T>::erase(const unsigned long long& n)
 
 /*
   This function erases the n-th term in the list, by shifting up.
@@ -287,7 +287,7 @@ template <class T> void List<T>::reverse()
 */
 
 {  
-  for (Ulong j = 0; j < d_size/2; ++j) {
+  for (unsigned long long j = 0; j < d_size/2; ++j) {
     T a = d_ptr[j];
     d_ptr[j] = d_ptr[d_size-j-1];
     d_ptr[d_size-j-1] = a;
@@ -296,7 +296,7 @@ template <class T> void List<T>::reverse()
   return;
 }
 
-template <class T> void List<T>::setSize(Ulong n)
+template <class T> void List<T>::setSize(unsigned long long n)
 
 /*
   Checks if the varlist will hold n nodes of data, and resizes it if not.
@@ -323,7 +323,7 @@ template <class T> void List<T>::setSize(Ulong n)
 
 
 template <class T> 
-void List<T>::setData(const T *source, Ulong first, Ulong r)
+void List<T>::setData(const T *source, unsigned long long first, unsigned long long r)
 
 /*
   After resizing if necessary, moves the first r entries of source to the
@@ -337,8 +337,8 @@ void List<T>::setData(const T *source, Ulong first, Ulong r)
   // resized! calling setSize directly would invlaidate source.
 
   if (d_allocated < first+r) {
-    Ulong old_size = first*sizeof(T);
-    Ulong new_size = (first+r)*sizeof(T);
+    //    unsigned long long old_size = first*sizeof(T);
+    unsigned long long new_size = (first+r)*sizeof(T);
     T* new_ptr = static_cast<T*> (arena().alloc(new_size));
     if (ERRNO) /* overflow */
       return;
@@ -371,7 +371,7 @@ template <class T> void List<T>::sort()
 {  
   /* set the starting value of h */
 
-  Ulong h = 1; 
+  unsigned long long h = 1; 
 
   for (; h < d_size/3; h = 3*h+1)
     ;
@@ -379,9 +379,9 @@ template <class T> void List<T>::sort()
   /* do the sort */
 
   for (; h > 0; h /= 3) {
-    for (Ulong j = h; j < d_size; ++j) {
+    for (unsigned long long j = h; j < d_size; ++j) {
       T a = d_ptr[j];
-      Ulong i = j;
+      unsigned long long i = j;
       for (; (i >= h) && (d_ptr[i-h] > a); i -= h)
 	d_ptr[i] = d_ptr[i-h];
       d_ptr[i] = a;
@@ -402,7 +402,7 @@ template<class T> template<class C> void List<T>::sort(C& c)
 {  
   /* set the starting value of h */
 
-  Ulong h = 1; 
+  unsigned long long h = 1; 
 
   for (; h < d_size/3; h = 3*h+1)
     ;
@@ -410,9 +410,9 @@ template<class T> template<class C> void List<T>::sort(C& c)
   /* do the sort */
 
   for (; h > 0; h /= 3) {
-    for (Ulong j = h; j < d_size; ++j) {
+    for (unsigned long long j = h; j < d_size; ++j) {
       T a = d_ptr[j];
-      Ulong i = j;
+      unsigned long long i = j;
       for (; (i >= h) && !c(d_ptr[i-h],a); i -= h)
 	d_ptr[i] = d_ptr[i-h];
       d_ptr[i] = a;
@@ -438,7 +438,7 @@ template<class T> template<class C> void List<T>::sort(C& c)
 
 namespace list {
 
-template <class T> Ulong insert(List<T>& l, const T& d_m)
+template <class T> unsigned long long insert(List<T>& l, const T& d_m)
 
 /*
   Inserts a new element in the (ordered) list, using binary search to find
@@ -457,11 +457,11 @@ template <class T> Ulong insert(List<T>& l, const T& d_m)
   // not being able to use setSize, or realloc. It hasn't seemed worthwile.
   T m = d_m;
 
-  Ulong j0 = ~0L;
-  Ulong j1 = l.size();
+  unsigned long long j0 = ~0L;
+  unsigned long long j1 = l.size();
 
   for (; j1-j0 > 1;) {
-    Ulong j = j0 + (j1-j0)/2;
+    unsigned long long j = j0 + (j1-j0)/2;
     if (l[j] == m) /* m was found */
       return j;
     if (l[j] < m)
@@ -481,7 +481,7 @@ template <class T> Ulong insert(List<T>& l, const T& d_m)
   return j1;
 }
 
-template <class T> Ulong find(const List<T>& l, const T& m)
+template <class T> unsigned long long find(const List<T>& l, const T& m)
 
 /*
   Finds the index of m in the list. If m is not found, returns not_found.
@@ -489,10 +489,10 @@ template <class T> Ulong find(const List<T>& l, const T& m)
 */
 
 {
-  Ulong j0 = ~0L;
+  unsigned long long j0 = ~0LL;
 
-  for (Ulong j1 = l.size(); j1-j0 > 1;) {
-    Ulong j = j0 + (j1-j0)/2;
+  for (unsigned long long j1 = l.size(); j1-j0 > 1;) {
+    unsigned long long j = j0 + (j1-j0)/2;
     if (l[j] == m) /* m was found */
       return j;
     if (l[j] < m)
@@ -526,7 +526,7 @@ template <class T> void print(FILE* file, const List<T>& l)
 */
 
 {
-  for (Ulong j = 0; j < l.size(); ++j) {
+  for (unsigned long long j = 0; j < l.size(); ++j) {
     print(file,l[j]);
     if (j+1 < l.size()) /* more to come */
       fprintf(file,",");

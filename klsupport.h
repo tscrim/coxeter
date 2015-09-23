@@ -26,8 +26,8 @@ namespace klsupport {
 namespace klsupport {
   class KLSupport;
 
-  typedef unsigned short KLCoeff;
-  typedef short SKLCoeff;
+  typedef unsigned long KLCoeff;
+  typedef long SKLCoeff;
   typedef List<CoxNbr> ExtrRow;
 };
 
@@ -36,10 +36,10 @@ namespace klsupport {
 namespace klsupport {
   enum PolynomialType {KLPOL, UNEQ_KLPOL, INV_KLPOL, NUM_POLTYPES};
 
-  const KLCoeff KLCOEFF_MAX = USHRT_MAX-1; /* top value is reserved */
+  const KLCoeff KLCOEFF_MAX = ULONG_MAX-1; /* top value is reserved */
   const KLCoeff undef_klcoeff = KLCOEFF_MAX + 1;
   const KLCoeff KLCOEFF_MIN = 0;
-  const SKLCoeff SKLCOEFF_MIN = SHRT_MIN+1;
+  const SKLCoeff SKLCOEFF_MIN = LONG_MIN+1;
   const SKLCoeff SKLCOEFF_MAX = -SKLCOEFF_MIN;
   const SKLCoeff undef_sklcoeff = SKLCOEFF_MIN-1;
 };

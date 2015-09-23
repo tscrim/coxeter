@@ -41,7 +41,8 @@ namespace memory {
 };
 
 union memory::Align {
-  Ulong d_ulong;
+  //  Ulong d_ulong;
+  unsigned long long d_ulonglong;
   void *d_voidptr;
 };
 
@@ -53,11 +54,11 @@ class memory::Arena {
   struct MemBlock {
     MemBlock *next;
   };
-  MemBlock* d_list[sizeof(Ulong)*CHAR_BIT];
-  Ulong d_used[sizeof(Ulong)*CHAR_BIT];
-  Ulong d_allocated[sizeof(Ulong)*CHAR_BIT];
+  MemBlock* d_list[sizeof(unsigned long long)*CHAR_BIT];
+  Ulong d_used[sizeof(unsigned long long)*CHAR_BIT];
+  Ulong d_allocated[sizeof(unsigned long long)*CHAR_BIT];
   unsigned d_bsBits;
-  unsigned d_count;
+  unsigned long long d_count;
   void newBlock(unsigned b);
  public:
 /* constructors and destructors */
@@ -70,8 +71,8 @@ class memory::Arena {
   void *realloc(void *ptr, size_t old_size, size_t new_size);
   void free(void *ptr, size_t n);
 /* accessors */
-  Ulong allocSize(Ulong n, Ulong m) const;
-  Ulong byteSize(Ulong n, Ulong m) const;
+  unsigned long long allocSize(unsigned long long n, unsigned long long m) const;
+  unsigned long long byteSize(unsigned long long n, unsigned long long m) const;
   void print(FILE* file) const;
 };
 

@@ -923,7 +923,7 @@ template <class KL>
   fprintf(file,"\n");
   if (traits.printCompCount) {
     io::print(file,traits.compCountPrefix);
-    fprintf(file,"%lu",hs.size());
+    fprintf(file,"%llu",hs.size());
     io::print(file,traits.compCountPostfix);
     io::print(file,traits.closeString);
     fprintf(file,"\n");
@@ -962,7 +962,7 @@ template <class KL>
   fprintf(file,"\n");
   if (traits.printCompCount) {
     io::print(file,traits.compCountPrefix);
-    fprintf(file,"%lu",hs.size());
+    fprintf(file,"%llu",hs.size());
     io::print(file,traits.compCountPostfix);
     io::print(file,traits.closeString);
     fprintf(file,"\n");

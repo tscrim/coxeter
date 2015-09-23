@@ -7,6 +7,8 @@
 
 #include "memory.h"
 #include <limits.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "error.h"
 
@@ -16,10 +18,15 @@ namespace memory {
 
 namespace {
   using namespace memory;
-  const Ulong MEMORY_MAX = ULONG_MAX;
+  //  const Ulong MEMORY_MAX = ULONG_MAX;
+  //  const unsigned long long MEMORY_MAX =
+  //  std::numeric_limits<unsigned long long >::max(); 
+  const unsigned long long MEMORY_MAX = ULLONG_MAX;
+  //  const Ulong ABYTES = 2*sizeof(Align); seg fault on start
   const Ulong ABYTES = sizeof(Align);
   const Ulong ARENA_BITS = 16;
-};
+  //  const Ulong ARENA_BITS = 64; leads to seg fault in A6 pol
+ };
 
 /****************************************************************************
 
@@ -69,11 +76,34 @@ namespace memory {
 Arena::Arena(Ulong bsBits)
 
 {
-  memset(d_list,0,BITS(Ulong)*sizeof(void *));
-  memset(d_used,0,BITS(Ulong)*sizeof(Ulong));
-  memset(d_allocated,0,BITS(Ulong)*sizeof(Ulong));
+  memset(d_list,0,BITS(unsigned long long)*sizeof(void *));
+  memset(d_used,0,BITS(unsigned long long)*sizeof(Ulong));
+  memset(d_allocated,0,BITS(unsigned long long)*sizeof(Ulong));
   d_bsBits = bsBits;
   d_count = 0;
+  /* std::cout << "ABYTES = " << ABYTES << ", CHAR_BIT = " << CHAR_BIT 
+     << ", MEMORY_MAX = " << MEMORY_MAX << std::endl; */
+  /*  struct rlimit limit;
+  getrlimit(RLIMIT_DATA, &limit);
+  std::cout << "data size limit = " << limit.rlim_cur << std::endl;
+  getrlimit(RLIMIT_NOFILE, &limit);
+  std::cout << "number of files limit = " << limit.rlim_cur << std::endl;
+  getrlimit(RLIMIT_FSIZE, &limit);
+  std::cout << "file size limit = " << limit.rlim_cur << std::endl;
+  */
+  /* for(Ulong b=25; b < 32; ++b)
+    {
+      std::cout << "testing allocation of 2^{" << b << "+3} bytes" 
+		<< std::endl;
+  d_list[b] = static_cast<MemBlock *> (calloc(1LL<<b,ABYTES));
+   if (d_list[b] == 0)
+      std::cout << "allocation error at b = " << b << std::endl; 
+      d_count += 1LL<<b;
+      d_allocated[b]++;
+   
+   };
+  // std::cout << "size of void pointer = " << sizeof(void *) << std::endl;
+  */
 }
 
 Arena::~Arena()
@@ -103,56 +133,63 @@ void Arena::newBlock(unsigned b)
   using a bitmap of available blocks.
 */
 
-{
-  for (unsigned j = b+1; j < BITS(Ulong); ++j) {
-    if (d_list[j]) /* split this block up */
+{  for (unsigned j = b+1; j < BITS(Ulong); ++j) {
+    if (d_list[j]) // split this block up 
       {
+	//	std::cout << "we're splitting j = " << j << " to b = " << b 
+	//		  << std::endl;
 	Align *ptr = reinterpret_cast<Align *> (d_list[j]);
 	d_list[j] = d_list[j]->next;
 	d_allocated[j]--;
 	for (unsigned i = b; i < j; ++i) {
-	  d_list[i] = reinterpret_cast<MemBlock *> (ptr + (1L<<i));
+	  d_list[i] = reinterpret_cast<MemBlock *> (ptr + (1LL<<i)); 
+//increments address by ABYTES each time!
 	  d_allocated[i]++;
 	}
 	d_list[b]->next = reinterpret_cast<MemBlock *> (ptr);
 	d_list[b]->next->next = 0;
 	d_allocated[b]++;
 	return;
-      }
+      }   
   }
 
   /* if we get here we need more memory from the system */
 
   if (b >= d_bsBits) { /* get block directly */
-    if (d_count > MEMORY_MAX-(1L<<b)) {
-      Error(OUT_OF_MEMORY);
+    if (d_count > MEMORY_MAX-(1LL<<b)) {
+      std::cout << "out of memory at b = " << b << std::endl; 
+     Error(OUT_OF_MEMORY);
       return;
     }
-    d_list[b] = static_cast<MemBlock *> (calloc(1L<<b,ABYTES));
+    //    if(b>24) std::cout << "in NewBlock, b = " << b << std::endl;
+    d_list[b] = static_cast<MemBlock *> (calloc(1LL<<b,ABYTES));
     if (d_list[b] == 0) {
+      std::cout << "out of memory at b = " << b << std::endl; 
       Error(OUT_OF_MEMORY);
       return;
     }
-    d_count += 1L<<b;
+    d_count += 1LL<<b;
     d_allocated[b]++;
     return;
   }
 
-  if (d_count > MEMORY_MAX-(1L<<d_bsBits)) {
+  if (d_count > MEMORY_MAX-(1LL<<d_bsBits)) {
+      std::cout << "out of memory at b = " << b << std::endl; 
     Error(OUT_OF_MEMORY);
     return;
   }
 
-  Align *ptr = static_cast<Align *> (calloc(1L<<d_bsBits,ABYTES));
+  Align *ptr = static_cast<Align *> (calloc(1LL<<d_bsBits,ABYTES));
   if (ptr == 0) {
+      std::cout << "out of memory at b = " << b << std::endl; 
     Error(OUT_OF_MEMORY);
     return;
   }
 
-  d_count += 1L<<d_bsBits;
+  d_count += 1LL<<d_bsBits;
 
   for (unsigned j = b; j < d_bsBits; ++j) {
-    d_list[j] = reinterpret_cast<MemBlock *> (ptr + (1L<<j));
+    d_list[j] = reinterpret_cast<MemBlock *> (ptr + (1LL<<j));
     d_allocated[j]++;
   }
 
@@ -199,7 +236,7 @@ void* Arena::alloc(size_t n)
   return static_cast<void *> (block);
 }
 
-Ulong Arena::allocSize(Ulong n, Ulong m) const
+unsigned long long Arena::allocSize(unsigned long long n, unsigned long long m) const
 
 /*
   Returns the size of the actual memory allocation provided on a request
@@ -211,10 +248,10 @@ Ulong Arena::allocSize(Ulong n, Ulong m) const
     return 0;
   if (n*m <= ABYTES)
     return ABYTES/m;
-  return ((1 << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES)/m;
+  return ((1LL << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES)/m;
 }
 
-Ulong Arena::byteSize(Ulong n, Ulong m) const
+unsigned long long Arena::byteSize(unsigned long long n, unsigned long long m) const
 
 /*
   Returns the actual number of bytes of the memory allocation (as opposed
@@ -226,7 +263,7 @@ Ulong Arena::byteSize(Ulong n, Ulong m) const
     return 0;
   if (n*m <= ABYTES)
     return ABYTES;
-  return (1 << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES;
+  return (1LL << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES;
 }
 
 void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
@@ -272,7 +309,7 @@ void Arena::free(void *ptr, size_t n)
   if (n > ABYTES)
     b = lastBit(n-1)-lastbit[ABYTES]+1;
 
-  memset(ptr,0,(1L<<b)*ABYTES);
+  memset(ptr,0,(1LL<<b)*ABYTES);
   MemBlock *block = (MemBlock *)ptr;
   block->next = d_list[b];
   d_list[b] = block;
@@ -289,16 +326,17 @@ void Arena::print(FILE *file) const
 {
   fprintf(file,"%-10s%10s/%-10s\n","size : 2^","used","allocated");
 
-  Ulong used_count = 0;
+  unsigned long long used_count = 0;
 
-  for (unsigned j = 0; j < BITS(Ulong); ++j) {
+  for (unsigned j = 0; j < sizeof(unsigned long long)*CHAR_BIT; ++j) {
     fprintf(file,"%3u%7s%10lu/%-10lu\n",j,"",d_used[j],d_allocated[j]);
-    used_count += (1L<<j)*d_used[j];
+    used_count += (1LL<<j)*d_used[j];
   }
 
   fprintf(file,"\n");
-  fprintf(file,"total : %10lu/%-10lu %lu-byte units used/allocated\n",
-	  used_count,static_cast<Ulong>(d_count),ABYTES);
+  fprintf(file,"total : %10llu/%-10llu %lu-byte units used/allocated\n",
+	  used_count,d_count,ABYTES);
+	  //	  used_count,static_cast<unsigned long long>(d_count),ABYTES);
 }
 
 };

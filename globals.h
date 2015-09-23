@@ -16,6 +16,7 @@
 
 namespace globals {
   typedef unsigned long Ulong; /* shorthand */
+  //  typedef unsigned long long Ulong; /* shorthand */
 };
 
 #endif

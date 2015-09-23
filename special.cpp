@@ -9,15 +9,20 @@
 
 #include "directories.h"
 #include "interactive.h"
+#include "coxgroup.h"
+#include "commands.h"
+
+#include <vector>
 
 /******** local definitions **************************************************/
 
 namespace {
   using namespace special;
-
+  using namespace commands;
   void special_f();
   void special_h();
-
+  void klminor_f();
+  void klminor_h();
   const char* special_tag = "user-defined command";
 };
 
@@ -62,19 +67,66 @@ void special::addSpecialCommands(commands::CommandTree* tree)
 
   /* add user-defined commands here ... */
 
+  tree->add("klminor",special_tag,&klminor_f,&klminor_h);
+
   return;
 }
 
 namespace {
 
 void special_f()
-
 /*
   Comment out the default code below and replace by your own code.
 */
 
 {  
   fprintf(stderr,"not implemented\n");
+  return;
+}
+
+void klminor_f()
+
+{
+  const Ulong N = 126;
+  std::vector<CoxWord> g(N,CoxWord(0));
+  std::vector<CoxNbr> x(N,CoxNbr(0));
+  for (Ulong i=0; i < N; ++i) {
+    /*    fprintf(stderr,"word : "); */
+    std::cerr << "getting entry i = " << i << std::endl; 
+    g[i] = interactive::getCoxWord(commands::currentGroup());
+    if (ERRNO) {
+      Error(ERRNO);
+      return;
+    }
+    x[i] = commands::currentGroup()->extendContext(g[i]);
+    if (ERRNO) {
+      Error(ERRNO);
+      return;
+    }
+  }
+  for (Ulong i=0; i < N; ++i) {
+    /* print ith row of matrix */
+      std::cerr << "Printing row i = " << i << " of matrix" << std::endl;
+
+    for (Ulong j=0; j < N; ++j) {
+      if(i>j) {
+	fprintf(stdout,"0\n");
+	continue;
+      }
+      if (!commands::currentGroup()->inOrder(x[i],x[j])) {
+	fprintf(stdout,"0\n");
+	continue;
+      }
+
+      const invkl::KLPol& pol = commands::currentGroup()->invklPol(x[i],x[j]);
+      if (ERRNO) {
+	Error(ERRNO,x[i],x[j]);
+	return;
+      }
+      print(stdout,pol,"q");
+      printf("\n");
+    }
+  }
   return;
 }
 
@@ -89,5 +141,11 @@ void special_h()
   return;
 }
 
+void klminor_h()
+
+{
+  io::printFile(stderr,"klminor.help",directories::MESSAGE_DIR);
+  return;
+}
 };
 
