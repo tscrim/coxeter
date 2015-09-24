@@ -506,7 +506,7 @@ void fillCoxgMatrix(CoxMatrix& m)
 }
 
 void fillCoxXMatrix(CoxMatrix& m, const Rank& l, const Type& t)
-
+// TODO: This needs to be changed to take a file as input
 /*
   Recall that in type X the type is really a string, where the name
   of a valid input file follows X, lying under coxeter_matrices. The
@@ -520,14 +520,13 @@ void fillCoxXMatrix(CoxMatrix& m, const Rank& l, const Type& t)
 */
 
 {
-  static String buf(0);
   using directories::COXMATRIX_DIR;
 
-  const String& name = t.name();
+  const char& name = t.name();
   
-  buf.setLength(strlen(COXMATRIX_DIR)+1+name.length());  // one char for `\`
-  sprintf(buf.ptr(),"%s/%s",COXMATRIX_DIR,name.ptr()+1);
-  FILE *inputfile = fopen(buf.ptr(),"r");
+  //buf.setLength(strlen(COXMATRIX_DIR)+2);  // one char for `\` and one for the name
+  //sprintf(buf.ptr(),"%s/%s",COXMATRIX_DIR,name.ptr()+1);
+  //FILE *inputfile = fopen(buf.ptr(),"r");
 
   for (Rank i = 0; i < l; i++) {
     for (Rank j = 0; j < l; j++) {
@@ -619,7 +618,7 @@ void makeCoxMatrix(CoxMatrix& m, const Type& x, const Rank& l)
   for (Ulong j = 0; j < l; ++j)
     m[j*l+j] = 1;
 
-  switch (x[0])
+  switch (x.name())
     {
     case 'A':
       fillCoxAMatrix(m,l);
@@ -773,7 +772,7 @@ bool isAffine(CoxGraph& G, LFlags I)
 {
   const Type& type = irrType(G,I);
 
-  if (strchr("abcdefg",type[0]))  /* group is affine */
+  if (strchr("abcdefg",type.name()))  /* group is affine */
     return true;
   else
     return false;
@@ -839,7 +838,7 @@ bool isFinite(CoxGraph& G, LFlags I)
       Generator s = firstBit(I);
       LFlags f = G.component(I,s);
       const Type& type = irrType(G,f);
-      if (strchr("ABCDEFGHI",type[0]) == NULL)
+      if (strchr("ABCDEFGHI",type.name()) == NULL)
 	return false;
       I &= ~f;
     }
@@ -940,8 +939,7 @@ const Type& irrType(CoxGraph& G, LFlags I)
   static Type type("X");
 
   if (bitCount(I) == 1) {
-    type[0] = 'A';
-    return type;
+    return Type('A');
   }
 
   if (bitCount(I) == 2)
@@ -953,23 +951,17 @@ const Type& irrType(CoxGraph& G, LFlags I)
       switch (m)
 	{
 	case 0:
-	  type[0] = 'a';
-	  return type;
+	  return Type('a');
 	case 3:
-	  type[0] = 'A';
-	  return type;
+	  return Type('A');
 	case 4:
-	  type[0] = 'B';
-	  return type;
+	  return Type('B');
 	case 5:
-	  type[0] = 'H';
-	  return type;
+	  return Type('H');
 	case 6:
-	  type[0] = 'G';
-	  return type;
+	  return Type('G');
 	default:
-	  type[0] = 'I';
-	  return type;
+	  return Type('I');
 	};
     }
 
@@ -978,11 +970,10 @@ const Type& irrType(CoxGraph& G, LFlags I)
   if (!isTree(G,I))  /* type must be a_n */
     {
       if (!isLoop(G,I))  /* unknown type */
-	return type;
+        return Type('X');
       if (!isSimplyLaced(G,I))  /* unknown type */
-	return type;
-      type[0] = 'a';
-      return type;
+        return Type('X');
+      return Type('a');
     }
 
   /* from here on the graph is a tree */
@@ -995,179 +986,171 @@ const Type& irrType(CoxGraph& G, LFlags I)
     switch (bitCount(fn))
       {
       case 0: /* type A */
-	type[0] = 'A';
-	return type;
+        return Type('A');
       case 1: { /* type is D, E, e, or d5, if known */
-	Generator n = firstBit(G.nodes(I));
-	switch (bitCount(G.star(n)))
-	  {
-	  case 3: { /* type is D, E or e */
-	    LFlags f = G.extremities(I);
-	    switch (bitCount(f & G.star(n)))  /* short branches */
-	      {
-	      case 3:  /* type is D4 */
-		type[0] = 'D';
-		return type;
-	      case 2:  /*  type is Dn, n >= 5 */
-		type[0] = 'D';
-		return type;
-	      case 1: { /* type is E6, E7, E8, e8 or e9 */
-		/* trim branches by one */
-		LFlags J = I & ~f;
-		f = G.extremities(J);
-		switch (bitCount(f & G.star(n)))
-		  {
-		  case 0:  /* two branches of length > 2 */
-		    if (bitCount(I) == 8)  /* type e8 */
-		      type[0] = 'e';
-		    return type;
-		  case 1:  /* one branch of length 2 */
-		    switch (bitCount(I))
-		      {
-		      case 7:  /* type E7 */
-		      case 8:  /* type E8 */
-			type[0] = 'E';
-			return type;
-		      case 9:  /* type e9 */
-			type[0] = 'e';
-			return type;
-		      default:  /* unknown type */
-			return type;
-		      };
-		  case 2:  /* two branches of length 2 */
-		    if (bitCount(I) == 6)  /* type E6 */
-		      type[0] = 'E';
-		    return type;
-		  };
-	      }
-	      case 0:  /* type has to be e7 */
-		if (bitCount(I) == 7)
-		  type[0] = 'e';
-		return type;
-	      };
-	  }
-	  case 4:  /* type is d5 */
-	    if (bitCount(I) == 5)
-	      type[0] = 'd';
-	    return type;
-	  default:  /* unknown type */
-	    return type;
-	  };
+        Generator n = firstBit(G.nodes(I));
+        switch (bitCount(G.star(n)))
+          {
+          case 3: { /* type is D, E or e */
+            LFlags f = G.extremities(I);
+            switch (bitCount(f & G.star(n)))  /* short branches */
+              {
+              case 3:  /* type is D4 */
+                return Type('D');
+              case 2:  /*  type is Dn, n >= 5 */
+                return Type('D');
+              case 1: { /* type is E6, E7, E8, e8 or e9 */
+                /* trim branches by one */
+                LFlags J = I & ~f;
+                f = G.extremities(J);
+                switch (bitCount(f & G.star(n)))
+                  {
+                  case 0:  /* two branches of length > 2 */
+                    if (bitCount(I) == 8)  /* type e8 */
+                      return Type('e');
+                    return Type('X');
+                  case 1:  /* one branch of length 2 */
+                    switch (bitCount(I))
+                      {
+                      case 7:  /* type E7 */
+                      case 8:  /* type E8 */
+                        return Type('E');
+                      case 9:  /* type e9 */
+                        return Type('e');
+                      default:  /* unknown type */
+                        return Type('X');
+                      };
+                  case 2:  /* two branches of length 2 */
+                    if (bitCount(I) == 6)  /* type E6 */
+                      return Type('E');
+                    return Type('X');
+                  };
+              }
+              case 0:  /* type has to be e7 */
+                if (bitCount(I) == 7)
+                  return Type('e');
+                return Type('X');
+              };
+          }
+          case 4:  /* type is d5 */
+            if (bitCount(I) == 5)
+              return Type('d');
+            return Type('X');
+          default:  /* unknown type */
+            return type;
+          };
       }
       case 2: {
-	LFlags f = G.extremities(I);
-	if (bitCount(f) > 4)  /* unknown type */
-	  return type;
-	/* from here on each node has three branches */
-	LFlags J = I & ~f;
-	f = G.extremities(J);
-	if (f == fn)  /* type d */
-	  type[0] = 'd';
-	return type;
+        LFlags f = G.extremities(I);
+        if (bitCount(f) > 4)  /* unknown type */
+          return type;
+        /* from here on each node has three branches */
+        LFlags J = I & ~f;
+        f = G.extremities(J);
+        if (f == fn)  /* type d */
+          return Type('d');
+        return Type('X');
       }
       default:  /* unknown type */
-	return type;
+        return Type('X');
       };
   }
   case 4: { /* type is B, F, b, c or f if known */
     switch (bitCount(G.nodes(I)))
       {
       case 0: { /* graph is a string : type is B, F, c or f */
-	LFlags f = G.extremities(I);
-	LFlags J = I & ~f;
-	switch (maxCoefficient(G,J))
-	  {
-	  case 1:
-	  case 3: { /* type is B or c */
-	    type[0] = 'B';
-	    Generator s = firstBit(f);
-	    Generator t = firstBit(G.star(s));
-	    CoxEntry m1 = G.M(s,t);
-	    if (m1 == 3)
-	      return type;
-	    f &= f-1;
-	    s = firstBit(f);
-	    t = firstBit(G.star(s));
-	    m1 = G.M(s,t);
-	    if (m1 == 4)
-	      type[0] = 'c';
-	    return type;
-	  }
-	  case 4:  /* type is F or f, if known */
-	    switch (bitCount(I))
-	      {
-	      case 4:  /* type F4 */
-		type[0] = 'F';
-		return type;
-	      case 5: {
-		CoxEntry m1 = minCoefficient(G,J);
-		if (m1 == 3)  /* type f5 */
-		  type[0] = 'f';
-		return type;
-	      }
-	      default:  /* unknown type */
-		return type;
-	      };
-	  default: /* unknown type */
-	    return type;
-	  };
+        LFlags f = G.extremities(I);
+        LFlags J = I & ~f;
+        switch (maxCoefficient(G,J))
+          {
+          case 1:
+          case 3: { /* type is B or c */
+            Generator s = firstBit(f);
+            Generator t = firstBit(G.star(s));
+            CoxEntry m1 = G.M(s,t);
+            if (m1 == 3)
+              return Type('B');
+            f &= f-1;
+            s = firstBit(f);
+            t = firstBit(G.star(s));
+            m1 = G.M(s,t);
+            if (m1 == 4)
+              return Type('c');
+            return Type('B');
+          }
+          case 4:  /* type is F or f, if known */
+            switch (bitCount(I))
+              {
+              case 4:  /* type F4 */
+                return Type('F');
+              case 5: {
+                CoxEntry m1 = minCoefficient(G,J);
+                if (m1 == 3)  /* type f5 */
+                  return Type('f');
+                return Type('X');
+              }
+              default:  /* unknown type */
+                return Type('X');
+              };
+          default: /* unknown type */
+            return Type('X');
+          };
       }
       case 1: { /* type is b if known */
-	LFlags f = G.extremities(I);
-	if (bitCount(f) > 3)  /* more than three branches */
-	  return type;
-	LFlags J = I & ~f;
-	if (!isSimplyLaced(G,J))  /* unknown type */
-	  return type;
-	Generator n = firstBit(G.nodes(I));
-	f &= G.star(n);
-	switch (bitCount(f))
-	  {
-	  case 2: /* exactly one long branch */
-	    J = f | lmask[n];
-	    if (isSimplyLaced(G,J))  /* type is b */
-	      type[0] = 'b';
-	    return type;
-	  case 3: /* type is b4 */
-	    type[0] = 'b';
-	    return type;
-	  default: /* more than one long branch */
-	    return type;
-	  };
+        LFlags f = G.extremities(I);
+        if (bitCount(f) > 3)  /* more than three branches */
+          return Type('X');
+        LFlags J = I & ~f;
+        if (!isSimplyLaced(G,J))  /* unknown type */
+          return Type('X');
+        Generator n = firstBit(G.nodes(I));
+        f &= G.star(n);
+        switch (bitCount(f))
+          {
+          case 2: /* exactly one long branch */
+            J = f | lmask[n];
+            if (isSimplyLaced(G,J))  /* type is b */
+              return Type('b');
+            return Type('X');
+          case 3: /* type is b4 */
+            return Type('b');
+          default: /* more than one long branch */
+            return type;
+          };
       }
       default:  /* unknown type */
-	return type;
+        return Type('X');
       };
   }
   case 5: { /* type must be H3 or H4 if known */
     switch (bitCount(I))
       {
       case 3: {
-	CoxEntry m1 = minCoefficient(G,I);
-	if (m1 == 3)
-	  type[0] = 'H';
-	return type;
+        CoxEntry m1 = minCoefficient(G,I);
+        if (m1 == 3)
+          return Type('H');
+        return Type('X');
       }
       case 4: {
-	if (G.nodes(I))  /* graph is not a string */
-	  return type;
-	LFlags f = G.extremities(I);
-	LFlags J = I & ~f;
-	if (!isSimplyLaced(G,J))  /* unknown type */
-	  return type;
-	J = 0;
-	for (; f; f &= f-1)
-	  {
-	    Generator s = firstBit(f);
-	    J |= G.star(s);
-	  }
-	CoxEntry m1 = minCoefficient(G,J);
-	if (m1 == 3)
-	  type[0] = 'H';
-	return type;
+        if (G.nodes(I))  /* graph is not a string */
+          return Type('X');
+        LFlags f = G.extremities(I);
+        LFlags J = I & ~f;
+        if (!isSimplyLaced(G,J))  /* unknown type */
+          return Type('X');
+        J = 0;
+        for (; f; f &= f-1)
+          {
+            Generator s = firstBit(f);
+            J |= G.star(s);
+          }
+        CoxEntry m1 = minCoefficient(G,J);
+        if (m1 == 3)
+          return Type('H');
+        return Type('X');
       }
       default:
-	return type;
+        return Type('X');
       };
     break;
   }
@@ -1175,26 +1158,27 @@ const Type& irrType(CoxGraph& G, LFlags I)
     switch(bitCount(I))
       {
       case 3: {
-	CoxEntry m1 = minCoefficient(G,I);
-	if (m1 == 3)
-	  type[0] = 'g';
-	return type;
+        CoxEntry m1 = minCoefficient(G,I);
+        if (m1 == 3)
+          return Type('g');
+        return Type('X');
       }
       default:
-	return type;
+        return Type('X');
       };
   }
   default:  /* unknown type */
-    return type;
+    return Type('X');
   };
 
-  return type; // unreachable
+  return Type('X'); // unreachable
 }
 
 };
 
 namespace graph {
 
+// FIXME: Type was changed to assume a single connected component
 const Type& type(CoxGraph& G, LFlags I)
 
 /*
@@ -1367,12 +1351,12 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
   I1 = I & ~lmask[s];
   const Type& t1 = irrType(G,I1);
 
-  switch (t[0])
+  switch (t.name())
     {
     case 'A':
       return (ParSize)(l+1);
     case 'B':
-      switch (t1[0])
+      switch (t1.name())
 	{
 	case 'A':  /* return 2^l */
 	  if (l == BITS(ParSize))
@@ -1383,7 +1367,7 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
 	  return (ParSize)(2*l);
 	};
     case 'D':
-      switch (t1[0])
+      switch (t1.name())
 	{
 	case 'A':  /* return 2^(l-1) */
 	  return (ParSize)1 << (l-1);
@@ -1394,7 +1378,7 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
       switch (l)
 	{
 	case 6:
-	  switch (t1[0])
+	  switch (t1.name())
 	    {
 	    case 'A':
 	      return (ParSize)72;
@@ -1402,7 +1386,7 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
 	      return (ParSize)27;
 	    };
 	case 7:
-	  switch (t1[0])
+	  switch (t1.name())
 	    {
 	    case 'A':
 	      return (ParSize)576;
@@ -1412,7 +1396,7 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
 	      return (ParSize)56;
 	    };
 	case 8:
-	  switch (t1[0])
+	  switch (t1.name())
 	    {
 	    case 'A':
 	      return (ParSize)17280;
@@ -1432,7 +1416,7 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
 	case 2:
 	  return (ParSize)5;	  
 	case 3:
-	  switch (t1[0])
+	  switch (t1.name())
 	    {
 	    case 'H':
 	      return (ParSize)12;
@@ -1440,7 +1424,7 @@ ParSize extrQuotOrder(CoxGraph& G, LFlags I, Generator s)
 	      return (ParSize)20;
 	    };
 	case 4:
-	  switch (t1[0])
+	  switch (t1.name())
 	    {
 	    case 'H':
 	      return (ParSize)120;
@@ -1474,7 +1458,7 @@ CoxSize finiteOrder(const Type& type, const Rank& rank)
 */
 
 {
-  switch (type[0]) {
+  switch (type.name()) {
   case 'A':
     return A_order(rank);
   case 'B':
@@ -1519,7 +1503,7 @@ ParSize lastQuotOrder(const Type& type, Rank rank)
 */
 
 {
-  switch (type[0]) {
+  switch (type.name()) {
   case 'A':
     return static_cast<ParSize>(rank+1);
   case 'B':
@@ -1621,7 +1605,7 @@ ParSize quotOrder(CoxGraph& G, LFlags I, LFlags J)
   /* now I is irreducible */
 
   const Type& type = irrType(G,I);
-  if (strchr("ABCDEFGHI",type[0]) == NULL)  /* group is infinite */
+  if (strchr("ABCDEFGHI",type.name()) == NULL)  /* group is infinite */
     return 0;
 
   Rank l = bitCount(I);
@@ -1780,7 +1764,7 @@ Generator lastGenerator(CoxGraph& G, LFlags I)
   const Type& x = irrType(G,I);
   LFlags f = G.extremities(I);
 
-  switch (x[0])
+  switch (x.name())
     {
     case 'A':
       return firstBit(f);
@@ -1888,7 +1872,7 @@ Generator lastGenerator(CoxGraph& G, LFlags I)
     case 'f': {
       Generator s = firstBit(f);
       LFlags I1 = I & ~(lmask[s]);
-      switch ((irrType(G,I1))[0])
+      switch ((irrType(G,I1)).name())
 	{
 	case 'B':
 	  f &= ~(lmask[s]);

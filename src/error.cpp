@@ -558,6 +558,10 @@ void klCoeffNegative(const CoxNbr& x, const CoxNbr& y)
 */
 
 {
+  /*
+     FIXME: Move the error message about negative coefficients for
+       KL polynomials into this code.
+  */
   fprintf(stderr,
      "A negative coefficient occurred in a Kazhdan-Lusztig polynomial\n");
   fprintf(stderr,"(x = %s%lu, y = %s%lu)\n","%",

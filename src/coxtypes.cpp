@@ -6,6 +6,7 @@
 */
 
 #include "coxtypes.h"
+#include <iostream>
 
 /****************************************************************************
 
@@ -191,24 +192,19 @@ bool operator< (const CoxWord& g, const CoxWord& h)
  This section provides some input/output functions for the basic types 
  defined in this module. The following functions are provided :
 
- - append(str,x) : appends a CoxNbr to the string;
+ - operator<<(os, x) : adds a CoxNbr to the ostream;
  - print(file,a,l) : prints the array a in rank l on the file;
 
  ****************************************************************************/
 
 namespace coxtypes {
 
-String& append(String& str, const CoxNbr& x)
-
+std::ostream& operator<<(std::ostream &os, const CoxNbr& x)
 /*
-  Appends x to str in numeral form; uses buf to write out the value.
+  Appends x to str in numeral form.
 */
-
 {
-  static String buf(digits(COXNBR_MAX,10)+1);
-  buf.setLength(sprintf(buf.ptr(),"%lu",static_cast<Ulong>(x)));
-  append(str,buf);
-  return str;
+  return os<<static_cast<Ulong>(x)));
 }
 
 void print(FILE *outputfile, CoxArr a, Rank l)

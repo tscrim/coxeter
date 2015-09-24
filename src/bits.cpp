@@ -8,6 +8,7 @@
 #include "bits.h"
 
 #include <limits.h>
+#include <iostream>
 
 /*****************************************************************************
 
@@ -1168,48 +1169,25 @@ void bits::memSet(void *dest, void *source, Ulong size, Ulong count)
   This section contains i/o functions for the classes defined in this
   module :
 
-   - append(l,map) : appends the BitMap map to the string l;
-   - print(file,map) : prints the map to the file;
+   - operator<<
 
  *****************************************************************************/
 
-namespace bits {
-
-String& append(String& l, const BitMap& map)
-
+std::ostream& operator<<(std::ostream &os, const BitMap &map)
 /*
-  Appends the map to the string. Uses a representation in terms of zeroes
+  Add the map to the ostream. Uses a representation in terms of zeroes
   and ones.
 */
-
 {
   for (Ulong j = 0; j < map.size(); ++j) {
     if (map.getBit(j)) /* bit is set */
-      append(l,"1");
+      os<<1;
     else
-      append(l,"0");
+      os<<0;
   }
 
-  return l;
+  return os;
 }
-
-void print(FILE* file, const BitMap& map)
-
-/*
-  Prints the map to the file. Uses append.
-*/
-
-{
-  static String buf(0);
-
-  reset(buf);
-  append(buf,map);
-  print(file,buf);
-
-  return;
-}
-
-};
 
 /*****************************************************************************
 

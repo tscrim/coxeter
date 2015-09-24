@@ -10,7 +10,7 @@
 namespace {
   using namespace type;
 
-  const char* affinetypes ="abcdefg";
+  const char *affinetypes = "abcdefg"; // const char* const?
   const char *finitetypes = "ABCDEFGHI";
 };
 
@@ -24,7 +24,7 @@ namespace {
 
 namespace type {
 
-Type::Type():d_name("")
+Type::Type():d_name('\0')
 
 /*
   Default constructor; yields the undefined type.
@@ -32,20 +32,16 @@ Type::Type():d_name("")
 
 {}
 
-Type::Type(const char* str):d_name(str)
-
+Type::Type(const char &n):d_name(n)
 /*
-  Makes the type with name str.
+  Makes the type with name n.
 */
-
 {}
 
 Type::~Type()
-
 /*
   Just destroy the corresponding String.
 */
-
 {}
 
 };

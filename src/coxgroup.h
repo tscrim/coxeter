@@ -75,6 +75,8 @@ namespace coxgroup {
 #include "transducer.h"
 #include "uneqkl.h"
 
+#include <string>
+
 namespace coxgroup {
   using namespace coxtypes;
   using namespace files;
@@ -223,15 +225,6 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   /* elementary i/o functions */
 
   const Permutation& ordering() const;                           /* inlined */
-  
-  String& append(String& str, const Generator& s) const;         /* inlined */
-  String& append(String& str, const CoxWord& g) const;           /* inlined */
-  String& append(String& str, const LFlags& f) const;            /* inlined */
-
-  void printSymbol(FILE* file, const Generator& s) const;        /* inlined */
-  void print(FILE* file, const CoxWord& g) const;                /* inlined */
-  void print(FILE* file, const CoxNbr& x) const;                 /* inlined */
-  void printFlags(FILE* file, const LFlags& f) const;            /* inlined */
 
   void parse(ParseInterface& P) const;
   virtual bool parseGroupElement(ParseInterface& P) const;
@@ -245,15 +238,15 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
 
   template<class C> void setOutputTraits(C);
 
-  void setInPostfix(const String& a);                            /* inlined */
-  void setInPrefix(const String& a);                             /* inlined */
-  void setInSeparator(const String& a);                          /* inlined */
-  void setInSymbol(const Generator& s, const String& a);         /* inlined */
+  void setInPostfix(const string& a);                            /* inlined */
+  void setInPrefix(const string& a);                             /* inlined */
+  void setInSeparator(const string& a);                          /* inlined */
+  void setInSymbol(const Generator& s, const string& a);         /* inlined */
   void setOrdering(const Permutation& order);                    /* inlined */
-  void setOutPostfix(const String& a);                           /* inlined */
-  void setOutPrefix(const String& a);                            /* inlined */
-  void setOutSeparator(const String& a);                         /* inlined */
-  void setOutSymbol(const Generator& s, const String& a);        /* inlined */
+  void setOutPostfix(const string& a);                           /* inlined */
+  void setOutPrefix(const string& a);                            /* inlined */
+  void setOutSeparator(const string& a);                         /* inlined */
+  void setOutSymbol(const Generator& s, const string& a);        /* inlined */
 
   template <class H> void printHeckeElt(FILE* file, const H& h); /* inlined */
 };
@@ -359,6 +352,11 @@ inline bool CoxGroup::inOrder(const CoxNbr& x, const CoxNbr& y) const
 inline const Permutation& CoxGroup::ordering() const 
   {return interface().order();}
 
+/*
+  TODO: Fix this into proper ostreams!
+  FIXME: Almost all of the remainder of this file is related to the
+    interface and needs to be moved
+*/
 inline String& CoxGroup::append(String& str, const Generator& s) 
   const {return appendSymbol(str,s,interface());}
 inline String& CoxGroup::append(String& str, const CoxWord& g) const
@@ -374,24 +372,25 @@ inline void CoxGroup::print(FILE* file, const CoxNbr& x) const
  {return schubert().print(file,x,interface());}
 inline void CoxGroup::printFlags(FILE* file, const LFlags& f) const
  {return interface::print(file,f,interface());}
+// TODO: Fix everything before this
 
-inline void CoxGroup::setInPostfix(const String& a)
+inline void CoxGroup::setInPostfix(const string& a)
   {interface().setInPostfix(a);}
-inline void CoxGroup::setInPrefix(const String& a)
+inline void CoxGroup::setInPrefix(const string& a)
   {interface().setInPrefix(a);}
-inline void CoxGroup::setInSeparator(const String& a)
+inline void CoxGroup::setInSeparator(const string& a)
   {interface().setInSeparator(a);}
-inline void CoxGroup::setInSymbol(const Generator& s, const String& a)
+inline void CoxGroup::setInSymbol(const Generator& s, const string& a)
   {interface().setInSymbol(s,a);}
 inline void CoxGroup::setOrdering(const Permutation& order)
   {interface().setOrder(order);}
-inline void CoxGroup::setOutPostfix(const String& a)
+inline void CoxGroup::setOutPostfix(const string& a)
   {interface().setOutPostfix(a);}
-inline void CoxGroup::setOutPrefix(const String& a)
+inline void CoxGroup::setOutPrefix(const string& a)
   {interface().setOutPrefix(a);}
-inline void CoxGroup::setOutSeparator(const String& a)
+inline void CoxGroup::setOutSeparator(const string& a)
   {interface().setOutSeparator(a);}
-inline void CoxGroup::setOutSymbol(const Generator& s, const String& a)
+inline void CoxGroup::setOutSymbol(const Generator& s, const string& a)
   {interface().setOutSymbol(s,a);}
 
 template <class H>

@@ -50,7 +50,7 @@ namespace typeA {
 
 namespace typeA {
 
-class TypeACoxGroup:public FiniteCoxGroup {
+class TypeACoxGroup: public FiniteCoxGroup {
   TypeAInterface* d_typeAInterface;
  public:
 // constructors and destructors
@@ -74,7 +74,7 @@ class TypeACoxGroup:public FiniteCoxGroup {
   virtual bool parseGroupElement(ParseInterface& P) const;
 };
 
-class TypeABigRankCoxGroup:public TypeACoxGroup {
+class TypeABigRankCoxGroup: public TypeACoxGroup {
  public:
 // constructors and destructors
   void* operator new(size_t size) {return arena().alloc(size);}
@@ -85,7 +85,7 @@ class TypeABigRankCoxGroup:public TypeACoxGroup {
   virtual ~TypeABigRankCoxGroup() {};
 };
 
-class GeneralTypeABRCoxGroup:public TypeABigRankCoxGroup { // leaf class
+class GeneralTypeABRCoxGroup: public TypeABigRankCoxGroup { // leaf class
  public:
 // constructors and destructors
   void* operator new(size_t size) {return arena().alloc(size);}
@@ -96,7 +96,7 @@ class GeneralTypeABRCoxGroup:public TypeABigRankCoxGroup { // leaf class
   ~GeneralTypeABRCoxGroup() {};
 };
 
-class TypeAMedRankCoxGroup:public TypeACoxGroup {
+class TypeAMedRankCoxGroup: public TypeACoxGroup {
  public:
 // constructors and destructors
   void* operator new(size_t size) {return arena().alloc(size);}
@@ -107,7 +107,7 @@ class TypeAMedRankCoxGroup:public TypeACoxGroup {
   virtual ~TypeAMedRankCoxGroup();
 };
 
-class GeneralTypeAMRCoxGroup:public TypeAMedRankCoxGroup { // leaf class
+class GeneralTypeAMRCoxGroup: public TypeAMedRankCoxGroup { // leaf class
  public:
 // constructors and destructors
   void* operator new(size_t size) {return arena().alloc(size);}
@@ -129,7 +129,7 @@ class TypeASmallRankCoxGroup:public TypeAMedRankCoxGroup {
   virtual ~TypeASmallRankCoxGroup() {};
 };
 
-class GeneralTypeASRCoxGroup:public TypeASmallRankCoxGroup { // leaf class
+class GeneralTypeASRCoxGroup: public TypeASmallRankCoxGroup { // leaf class
  public:
 // constructors and destructors
   void* operator new(size_t size) {return arena().alloc(size);}
@@ -156,7 +156,7 @@ class TypeASmallCoxGroup: public TypeASmallRankCoxGroup {
   virtual bool parseGroupElement(ParseInterface& P) const;
 };
 
-class GeneralTypeASCoxGroup:public TypeASmallCoxGroup { // leaf class
+class GeneralTypeASCoxGroup: public TypeASmallCoxGroup { // leaf class
  public:
 // constructors and destructors
   void* operator new(size_t size) {return arena().alloc(size);}
@@ -167,7 +167,7 @@ class GeneralTypeASCoxGroup:public TypeASmallCoxGroup { // leaf class
   ~GeneralTypeASCoxGroup() {};
 };
 
-class TypeAInterface:public Interface {
+class TypeAInterface: public Interface {
   Interface* d_pInterface;
   bool d_hasPermutationInput;
   bool d_hasPermutationOutput;

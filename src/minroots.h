@@ -38,17 +38,14 @@ namespace minroots {
 #include "bits.h"
 #include "coxtypes.h"
 #include "dotval.h"
-#include "io.h"
 
 namespace minroots {
   using namespace bits;
   using namespace coxtypes;
   using namespace dotval;
-  using namespace io;
 };
 
 namespace minroots {
-  String& append(String& str, const DotVal& a);
   LFlags descent(MinTable& T, MinNbr r);
   Length depth(MinTable& T, MinNbr r);
   void print(FILE *file, MinTable& T);

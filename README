@@ -1,5 +1,10 @@
 
-This is the README file for Coxeter version 3.0.
+This is the README file for Coxeter.
+
+This is a continuation of Fokko du Cloux's Coxeter3 as Fokko passed away
+in 2006. The source code for Coxeter3 is located on Fokko's website:
+
+http://math.univ-lyon1.fr/~ducloux/coxeter/coxeter3/english/coxeter3_e.html
 
 This file mostly contains practical hints for the compilation and installation
 of the program. For a detailed overview of the program, its capabilities and
@@ -19,4 +24,17 @@ run much faster) say "make optimize=true".
 
 % explain installation in general directory
 % explain known compilation problems
+
+Layout
+------
+
+This is organized into 2 main directories::
+
+    coxeter
+    | src
+    ` interface
+
+- ``src`` contains all code pertaining to the library.
+- ``interface`` contains the top-level interface (which can be built
+  separately from the library)
 

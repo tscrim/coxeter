@@ -1646,56 +1646,54 @@ LFlags minroots::support(MinTable& T, MinNbr r)
 
  ****************************************************************************/
 
-String& minroots::append(String& str, const DotVal& a)
-
+std::ostream & operator<<(std::ostream &os, const DotVal& a)
 {
   switch (a)
     {
     case undef_dotval:
-      io::append(str,"undef_minnbr");
-      return str;
+      os<<"undef_minnbr";
+      break;
     case undef_negdot:
-      io::append(str,"-c(*)/2");
-      return str;
-    case locked :
-      io::append(str,"*");
-      return str;
-    case neg_cos :
-      io::append(str,"-c/2");
-      return str;
-    case neg_cos2 :
-      io::append(str,"-c(2)/2");
-      return str;
-    case neg_half :
-      io::append(str,"-1/2");
-      return str;
-    case neg_hinvgold :
-      io::append(str,"-c(2,5)/2");
-      return str;
-    case zero :
-      io::append(str,"0");
-      return str;
-    case hinvgold :
-      io::append(str,"c(2,5)/2");
-      return str;
-    case half :
-      io::append(str,"1/2");
-      return str;
-    case cos2 :
-      io::append(str,"c(2)/2");
-      return str;
-    case dotval::cos :
-      io::append(str,"c/2");
-      return str;
-    case dotval::one :
-      io::append(str,"1");
-      return str;
+      os<<"-c(*)/2";
+      break;
+    case locked:
+      os<<"*";
+      break;
+    case neg_cos:
+      os<<"-c/2";
+      break;
+    case neg_cos2:
+      os<<"-c(2)/2";
+      break;
+    case neg_half:
+      os<<"-1/2";
+      break;
+    case neg_hinvgold:
+      os<<"-c(2,5)/2";
+      break;
+    case zero:
+      os<<"0";
+      break;
+    case hinvgold:
+      os<<"c(2,5)/2";
+      break;
+    case half:
+      os<<"1/2";
+      break;
+    case cos2:
+      os<<"c(2)/2";
+      break;
+    case dotval::cos:
+      os<<"c/2";
+      break;
+    case dotval::one:
+      os<<"1";
+      break;
     case undef_posdot:
-      io::append(str,"c(*)/2");
-      return str;
-    default: // should not happen
-      return str;
+      os<<"c(*)/2";
+      break;
     };
+  return os;
 }
 
 

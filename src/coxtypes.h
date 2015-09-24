@@ -16,8 +16,7 @@
 
 #include "globals.h"
 #include <limits.h>
-
-#include "io.h"
+#include <iostream>
 
 namespace coxtypes {
   using namespace globals;
@@ -73,8 +72,6 @@ namespace coxtypes {
 
 /* functions provided by coxtypes.h */
 
-#include "io.h"
-
 namespace coxtypes {
   using namespace io;
 };
@@ -83,7 +80,6 @@ namespace coxtypes {
   bool operator== (const CoxWord& g, const CoxWord& h);
   bool operator< (const CoxWord& g, const CoxWord& h);
   bool operator> (const CoxWord& g, const CoxWord& h);           /* inlined */
-  String& append(String& str, const CoxNbr& x);
   void print(FILE *outputfile, CoxArr a, Rank l);
 };
 
