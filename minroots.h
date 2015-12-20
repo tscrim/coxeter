@@ -9,66 +9,52 @@
 #define MINROOTS_H
 
 #include <limits.h>
+
 #include "globals.h"
+#include "bits.h"
+#include "coxtypes.h"
+#include "dotval.h"
+#include "io.h"
+#include "graph.h"
+#include "list.h"
+#include "memory.h"
 
 namespace minroots {
   using namespace coxeter;
-};
+  using namespace bits;
+  using namespace coxtypes;
+  using namespace dotval;
+  using namespace io;
+  using namespace graph;
+  using namespace list;
+  using namespace memory;
 
-/******** type declarations *************************************************/
+//******** type declarations *************************************************
 
-namespace minroots {
   typedef unsigned MinNbr;
   typedef char DotProduct;
   class MinTable;
-};
 
 /* constants */
 
-namespace minroots {
   const MinNbr MINNBR_MAX = UINT_MAX-4;  /* top values are reserved */
   const MinNbr MINROOT_MAX = MINNBR_MAX; /* should not exceed MINNBR_MAX */
   const MinNbr undef_minnbr = MINNBR_MAX + 1;
   const MinNbr not_minimal = MINNBR_MAX + 2;
   const MinNbr not_positive = MINNBR_MAX + 3;
-};
 
-/******** function declarations *********************************************/
+//******** function declarations *********************************************
 
-#include "bits.h"
-#include "coxtypes.h"
-#include "dotval.h"
-#include "io.h"
-
-namespace minroots {
-  using namespace bits;
-  using namespace coxtypes;
-  using namespace dotval;
-  using namespace io;
-};
-
-namespace minroots {
   String& append(String& str, const DotVal& a);
   LFlags descent(MinTable& T, MinNbr r);
   Length depth(MinTable& T, MinNbr r);
   void print(FILE *file, MinTable& T);
   CoxWord& reduced(MinTable& T, MinNbr r);
   LFlags support(MinTable& T, MinNbr r);
-};
 
-/******* type definitions ****************************************************/
+//******* type definitions ****************************************************
 
-#include "graph.h"
-#include "list.h"
-#include "memory.h"
-
-namespace minroots {
-  using namespace graph;
-  using namespace list;
-  using namespace memory;
-};
-
-class minroots::MinTable {
+class MinTable {
  protected:
   Rank d_rank;
   MinNbr d_size;
@@ -107,9 +93,7 @@ class minroots::MinTable {
   const CoxWord& power(CoxWord& a, const Ulong& m) const;
 };
 
-/******** Inline definitions **********************************************/
-
-namespace minroots {
+//******** Inline definitions **********************************************
 
 inline DotVal MinTable::dot(MinNbr r, Generator s) const
   {return DotVal(d_dot[r][s]);}
@@ -118,6 +102,6 @@ inline MinNbr MinTable::min(MinNbr r, Generator s) const
 inline Rank MinTable::rank() const {return d_rank;}
 inline MinNbr MinTable::size() const {return d_size;}
 
-};
+}
 
 #endif

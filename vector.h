@@ -1,4 +1,4 @@
-/*
+/**
   This is vector.h
 
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
@@ -19,12 +19,7 @@ namespace vector {
   using namespace list;
   using namespace memory;
 
-/* type declarations */
-
-template <class T>
-class Vector;
-
-/********* implementation **************************************************/
+//********* implementation **************************************************
 
 template <class T>
 class Vector

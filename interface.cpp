@@ -1,6 +1,6 @@
 /*
   This is interface.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -23,7 +23,7 @@ namespace {
 
   const char *alphabet = "abcdefghijklmnopqrstuvwxyz";
   const char *affine = "abcdefg";
-  
+
   const Token not_token = RANK_MAX+1;
   const Token prefix_token = RANK_MAX+2;
   const Token postfix_token = RANK_MAX+3;
@@ -35,7 +35,7 @@ namespace {
   const Token power_token = RANK_MAX+9;
   const Token contextnbr_token = RANK_MAX+10;
   const Token densearray_token = RANK_MAX+11;
-  
+
   const unsigned prefix_bit = 0;
   const unsigned postfix_bit = 1;
   const unsigned separator_bit = 2;
@@ -73,9 +73,9 @@ namespace {
    integer in {1,...,n}, where n is the rank, there is associated a symbol
    (in fact two symbols, an input symbol --- some non-empty string --- and
    an output symbol, an arbitrary string). The default is input = output =
-   the decimal representation of the number. Furthermore, there are three 
+   the decimal representation of the number. Furthermore, there are three
    arbitrary strings : prefix, postfix and separator, also with
-   an input and an output version. Default is prefix and postfix empty, 
+   an input and an output version. Default is prefix and postfix empty,
    separator empty if the rank is <= 9, "." otherwise.
 
    The second level is the possibility to define an arbitrary ordering on
@@ -86,8 +86,8 @@ namespace {
 
    This setup is easy to implement, and gives more than enough flexibility
    to read from and write to programs like Gap, Magma or Maple, or even TeX,
-   and to perform some other nifty output tricks (outputting a k-l basis 
-   element in Gap format, say, is a breeze.) Also the program can read from 
+   and to perform some other nifty output tricks (outputting a k-l basis
+   element in Gap format, say, is a breeze.) Also the program can read from
    one program and write to another, functioning as a pipe.
 
  ****************************************************************************/
@@ -102,7 +102,7 @@ namespace {
   The following functions are defined :
 
    constructors :
-  
+
    - Interface(x,l) : constructs the standard interface in type x and rank l;
    - ~Interface() : (not implemented yet);
 
@@ -233,7 +233,7 @@ void Interface::readSymbols()
 
 void Interface::setAutomaton()
 
-{  
+{
   LFlags f = 0;
 
   using constants::lmask;
@@ -275,7 +275,7 @@ void Interface::setDescent(GAP)
 void Interface::setIn(const GroupEltInterface& i)
 
 /*
-  Resets d_in to i. 
+  Resets d_in to i.
 */
 
 {
@@ -317,10 +317,10 @@ void Interface::setOut(const GroupEltInterface& i)
 /******** input-output *******************************************************/
 
 bool Interface::parseCoxWord(ParseInterface& P, const MinTable& T) const
-     
+
 /*
   This function parses a CoxWord from the line, starting at position r, and
-  increments the CoxWord g with it. The syntax for a group element is as 
+  increments the CoxWord g with it. The syntax for a group element is as
   follows :
 
     prefix [generator [separator generator]*] postfix
@@ -374,7 +374,7 @@ bool Interface::parseCoxWord(ParseInterface& P, const MinTable& T) const
 }
 
 bool Interface::readCoxElt(ParseInterface& P) const
-     
+
 /*
   This function attempts to read a Coxeter element from P. It does not
   have to worry about word reduction because all the generators read have
@@ -554,7 +554,7 @@ void DescentSetInterface::setTwosidedSeparator(const String& str)
      - setPrefix(a) : sets the prefix to a;
      - setSeparator(a) : sets the separator to a;
      - setSymbol(s,a) : sets symbol # s to a;
-     
+
  ****************************************************************************/
 
 namespace interface {
@@ -725,10 +725,10 @@ void GroupEltInterface::setSeparator(const String& a)
 void GroupEltInterface::setSymbol(const Generator& s, const String& a)
 
 /*
-  Sets the symbol for generator s to a. Remember that the relation between 
-  symbols and numbers is not affected by the ordering of the generators; if 
-  the user changes the ordering, so that a generator previously numbered i is 
-  now numbered j, that generator will be represented by symbol j instead of 
+  Sets the symbol for generator s to a. Remember that the relation between
+  symbols and numbers is not affected by the ordering of the generators; if
+  the user changes the ordering, so that a generator previously numbered i is
+  now numbered j, that generator will be represented by symbol j instead of
   symbol i; this is the expected behaviour, I think.
 */
 
@@ -787,7 +787,7 @@ ReservedSymbols::~ReservedSymbols()
 
   - decimalSymbols() : returns a pointer to the list of decimal integers;
   - hexSymbols() : returns a pointer to the list of hexadecimal integers;
-  - hexSymbolsFromZero() : returns a pointer to the list of hexadecimal 
+  - hexSymbolsFromZero() : returns a pointer to the list of hexadecimal
     integers, starting from zero;
   - twohexSymbols() : returns a pointer to the list of two-digit hex symbols;
   - alphabeticSymbols() : returns a pointer to the list of alphabetic symbols;
@@ -1025,9 +1025,9 @@ TokenTree::~TokenTree()
 Ulong TokenTree::find(const String& str, const Ulong& n, Token& val) const
 
 /*
-  Finds the longest initial substring in str from position n which is a valid 
-  token, and puts the value of the token in val. Returns the length of the 
-  token string (i.e., the number of characters read.) It is assumed that the 
+  Finds the longest initial substring in str from position n which is a valid
+  token, and puts the value of the token in val. Returns the length of the
+  token string (i.e., the number of characters read.) It is assumed that the
   empty string is always a valid token, with value 0, and that this value is
   characteristic of the empty token.
 
@@ -1117,17 +1117,15 @@ void TokenTree::insert(const String& str, const Token& val)
 
 namespace interface {
 
-String& append(String& str, const CoxWord& g, const GroupEltInterface& GI)
-
-/*
+/**
   Appends the string g to the string str in the output format defined by I.
 */
-
+String& append(String& str, const CoxWord& g, const GroupEltInterface& GI)
 {
   io::append(str,GI.prefix);
 
   for (Ulong j = 0; j < g.length(); ++j) {
-    Generator s = g[j]-1;
+    Generator s = g[j]-1; // Conversion CoxLetter -> Generator
     io::append(str,GI.symbol[s]);
     if (j+1 < g.length())  /* more to come */
       io::append(str,GI.separator);
@@ -1138,80 +1136,74 @@ String& append(String& str, const CoxWord& g, const GroupEltInterface& GI)
   return str;
 }
 
-String& append(String& str, const LFlags& f, const Interface& I)
-
-/*
+/**
   Appends to str the representation of f as a one-sided descent set,
   according to the current DescentSetIntrface in I.
 */
-
+String& append(String& str, const LFlags& f, const Interface& I)
 {
   const DescentSetInterface& d = I.descentInterface();
 
   io::append(str,d.prefix);
 
   for (LFlags f1 = f; f1;)
-    {
-      Generator s = bits::firstBit(f1);
-      appendSymbol(str,s,I);
-      f1 &= f1-1;
-      if (f1)  /* there is more to come */
-	io::append(str,d.separator);
-    }
+  {
+    Generator s = bits::firstBit(f1);
+    appendSymbol(str,s,I);
+    f1 &= f1-1;
+    if (f1)  /* there is more to come */
+      io::append(str,d.separator);
+  }
 
   io::append(str,d.postfix);
 
   return str;
 }
 
-String& appendTwosided(String& str, const LFlags& f, const Interface& I)
-
-/*
+/**
   Appends to str the representation of f as a two-sided descent set,
   according to the current DescentSetIntrface in I.
 */
-
+String& appendTwosided(String& str, const LFlags& f, const Interface& I)
 {
   const DescentSetInterface& d = I.descentInterface();
 
   io::append(str,d.twosidedPrefix);
 
   for (LFlags f1 = f>>I.rank(); f1;) // left descents
-    {
-      Generator s = bits::firstBit(f1);
-      appendSymbol(str,s,I);
-      f1 &= f1-1;
-      if (f1)  /* there is more to come */
-	io::append(str,d.separator);
-    }
+  {
+    Generator s = bits::firstBit(f1);
+    appendSymbol(str,s,I);
+    f1 &= f1-1;
+    if(f1)  /* there is more to come */
+      io::append(str,d.separator);
+  }
 
   io::append(str,d.twosidedSeparator);
 
   for (LFlags f1 = f&leqmask[I.rank()-1]; f1;) // right descents
-    {
-      Generator s = bits::firstBit(f1);
-      appendSymbol(str,s,I);
-      f1 &= f1-1;
-      if (f1)  /* there is more to come */
-	io::append(str,d.separator);
-    }
+  {
+    Generator s = bits::firstBit(f1);
+    appendSymbol(str,s,I);
+    f1 &= f1-1;
+    if (f1)  /* there is more to come */
+      io::append(str,d.separator);
+  }
 
   io::append(str,d.twosidedPostfix);
 
   return str;
 }
 
-void print(FILE *file, const CoxWord& g, const GroupEltInterface& GI)
-
-/*
+/**
   Prints the CoxWord g to the file in GI's format.
 */
-
+void print(FILE *file, const CoxWord& g, const GroupEltInterface& GI)
 {
   io::print(file,GI.prefix);
 
   for (Ulong j = 0; j < g.length(); ++j) {
-    Generator s = g[j]-1;
+    Generator s = g[j]-1; // Conversion CoxLetter -> Generator
     io::print(file,GI.symbol[s]);
     if (j+1 < g.length())  /* more to come */
       io::print(file,GI.separator);
@@ -1220,61 +1212,57 @@ void print(FILE *file, const CoxWord& g, const GroupEltInterface& GI)
   io::print(file,GI.postfix);
 }
 
-void print(FILE *file, const LFlags& f, const DescentSetInterface& DI,
-	   const GroupEltInterface& GI)
-
-/*
+/**
   Prints f as a one-sided descent set, according to the current
   DescentSetInterface in I.
 */
-
+void print(FILE *file, const LFlags& f, const DescentSetInterface& DI,
+           const GroupEltInterface& GI)
 {
   io::print(file,DI.prefix);
 
   for (LFlags f1 = f; f1;)
-    {
-      Generator s = bits::firstBit(f1);
-      io::print(file,GI.symbol[s]);
-      f1 &= f1-1;
-      if (f1)  /* there is more to come */
-	io::print(file,DI.separator);
-    }
+  {
+    Generator s = bits::firstBit(f1);
+    io::print(file,GI.symbol[s]);
+    f1 &= f1-1;
+    if (f1)  /* there is more to come */
+      io::print(file,DI.separator);
+  }
 
   io::print(file,DI.postfix);
 
   return;
 }
 
-void printTwosided(FILE *file, const LFlags& f, const DescentSetInterface& DI,
-		   const GroupEltInterface& GI, const Rank& l)
-
-/*
+/**
   Prints f as a two-sided descent set, according to the current
   DescentSetInterface in I.
 */
-
+void printTwosided(FILE *file, const LFlags& f, const DescentSetInterface& DI,
+                   const GroupEltInterface& GI, const Rank& l)
 {
   io::print(file,DI.twosidedPrefix);
 
   for (LFlags f1 = f>>l; f1;) // left descents
-    {
-      Generator s = bits::firstBit(f1);
-      io::print(file,GI.symbol[s]);
-      f1 &= f1-1;
-      if (f1)  /* there is more to come */
-	io::print(file,DI.separator);
-    }
+  {
+    Generator s = bits::firstBit(f1);
+    io::print(file,GI.symbol[s]);
+    f1 &= f1-1;
+    if(f1)  /* there is more to come */
+      io::print(file,DI.separator);
+  }
 
   io::print(file,DI.twosidedSeparator);
 
   for (LFlags f1 = f&leqmask[l-1]; f1;) // right descents
-    {
-      Generator s = bits::firstBit(f1);
-      io::print(file,GI.symbol[s]);
-      f1 &= f1-1;
-      if (f1)  /* there is more to come */
-	io::print(file,DI.separator);
-    }
+  {
+    Generator s = bits::firstBit(f1);
+    io::print(file,GI.symbol[s]);
+    f1 &= f1-1;
+    if(f1)  /* there is more to come */
+      io::print(file,DI.separator);
+  }
 
   io::print(file,DI.twosidedPostfix);
 
@@ -1316,7 +1304,7 @@ const String* checkLeadingWhite(const GroupEltInterface& GI)
 
 /*
   Checks if GI constains a string starting with whitespace, as defined by
-  isspace(). If so, returns a pointer to the first such string; otherwise, 
+  isspace(). If so, returns a pointer to the first such string; otherwise,
   returns the null-pointer.
 */
 
@@ -1348,7 +1336,7 @@ bool checkRepeated(const GroupEltInterface& GI)
 
 {
   List<String> l(0);
-  
+
   if (GI.prefix.length())
     insert(l,GI.prefix);
   if (find(l,GI.separator) != not_found)
@@ -1359,7 +1347,7 @@ bool checkRepeated(const GroupEltInterface& GI)
     return false;
   if (GI.separator.length())
     insert(l,GI.postfix);
-    
+
   for (Generator s = 0; s < GI.symbol.size(); ++s) {
     if (find(l,GI.symbol[s]) != not_found)
       return false;
@@ -1377,7 +1365,7 @@ const String* checkReserved(const GroupEltInterface& GI, const Interface& I)
   a pointer to the first such string; otherwise, returns the null-pointer.
 */
 
-{  
+{
   if (I.isReserved(GI.prefix))
     return &GI.prefix;
   if (I.isReserved(GI.separator))
@@ -1467,11 +1455,11 @@ namespace {
 void makeSymbols(List<String>& list, const String* const symbol, Ulong n)
 
 /*
-  This function deep-copies the n first entries of symbol onto the 
+  This function deep-copies the n first entries of symbol onto the
   corresponding entries of list.
 */
 
-{  
+{
   list.setSize(n);
 
   for (Ulong j = 0; j < n; ++j) {
@@ -1594,7 +1582,7 @@ Automaton *tokenAut0()
   Word recognizer for the case where prefix, postfix and separator are all
   empty. There should never be tokens of postfix, prefix or generator type.
 */
-     
+
 {
   static ExplicitAutomaton aut(2,5);
 
@@ -1618,12 +1606,12 @@ Automaton *tokenAut0()
 }
 
 Automaton *tokenAut1()
-     
+
 /*
   Word recognizer for the case where postfix and separator are empty, but
   prefix is non-empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(3,5);
 
@@ -1653,12 +1641,12 @@ Automaton *tokenAut1()
 }
 
 Automaton *tokenAut2()
-     
+
 /*
   Word recognizer for the case where prefix and separator are empty,
   but postfix is non-empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(3,5);
 
@@ -1688,12 +1676,12 @@ Automaton *tokenAut2()
 }
 
 Automaton *tokenAut3()
-     
+
 /*
   Word recognizer for the case where prefix and postfix are non-empty,
   but separator is empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(4,5);
 
@@ -1729,12 +1717,12 @@ Automaton *tokenAut3()
 }
 
 Automaton *tokenAut4()
-     
+
 /*
   Word recognizer for the case where prefix and postfix are empty,
   but postfix is non-empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(4,5);
 
@@ -1771,12 +1759,12 @@ Automaton *tokenAut4()
 }
 
 Automaton *tokenAut5()
-     
+
 /*
   Word recognizer for the case where prefix and separator are non-empty,
   but postfix is empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(5,5);
 
@@ -1819,12 +1807,12 @@ Automaton *tokenAut5()
 }
 
 Automaton *tokenAut6()
-     
+
 /*
   Word recognizer for the case where postfix and separator are non-empty,
   but prefix is empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(5,5);
 
@@ -1866,12 +1854,12 @@ Automaton *tokenAut6()
 }
 
 Automaton *tokenAut7()
-     
+
 /*
   Word recognizer for the case where prefix, postfix and separator are all
   non-empty.
 */
-     
+
 {
   static ExplicitAutomaton aut(6,5);
 

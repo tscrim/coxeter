@@ -1,6 +1,6 @@
 /*
   This is fcoxgroup.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -49,7 +49,7 @@ namespace {
 
   The first one, which will work for any rank <= 255, represents the elements
   as arrays of rank ParNbr's. The computations in this representation are
-  made through a cascade of small transducers. The drawback of this 
+  made through a cascade of small transducers. The drawback of this
   representation is that the size of the automata depends strongly on the
   choice of ordering (as opposed to the minimal root machine, which is
   completely canonical.)
@@ -143,7 +143,7 @@ FiniteCoxGroup::FiniteCoxGroup(const Type& x, const Rank& l)
   Constructor for FiniteCoxGroup.
 */
 
-{  
+{
   d_transducer = new Transducer(graph());
 
   workspace().setSize(l);
@@ -204,32 +204,28 @@ bool FiniteCoxGroup::isFullContext() const
 
 /******** operations with arrays ********************************************/
 
-const CoxArr& FiniteCoxGroup::assign(CoxArr& a, const CoxWord& g) const
-
-/*
+/**
   This functions returns the array-form of the element of W represented
   by the word g. It returns the result in a.
 */
-
+const CoxArr& FiniteCoxGroup::assign(CoxArr& a, const CoxWord& g) const
 {
   setZero(a);
 
   for(Length i = 0; g[i]; ++i)
-    prodArr(a,g[i]-1);
+    prodArr(a,g[i]-1); // Conversion CoxLetter -> Generator
 
   return a;
 }
 
 
-const CoxArr& FiniteCoxGroup::inverseArr(CoxArr& a) const
-
-/*
+/**
   Inverse a. This is a "composite-assignment" type function, in consistency
   with our geneeral philosophy that they're the only ones really needed.
 
   Uses ica_arr() as workspace.
 */
-
+const CoxArr& FiniteCoxGroup::inverseArr(CoxArr& a) const
 {
   CoxArr b = workspace().ica_arr();
 
@@ -237,25 +233,23 @@ const CoxArr& FiniteCoxGroup::inverseArr(CoxArr& a) const
   setZero(a);
 
   for (const FiltrationTerm* X = transducer(); X; X = X->next())
-    {
-      const CoxWord& g = X->np(b[X->rank()-1]);
-      Ulong j = g.length();
-      while (j) {
-	j--;
-	prodArr(a,g[j]-1);
-      }
+  {
+    const CoxWord& g = X->np(b[X->rank()-1]);
+    Ulong j = g.length();
+    while (j) {
+      j--;
+      prodArr(a,g[j]-1); // Conversion CoxLetter -> Generator
     }
+  }
 
   return a;
 }
 
 
-Length FiniteCoxGroup::length(const CoxArr& a) const
-
-/*
+/**
   Returns the length of a --- overflow is not checked.
 */
-
+Length FiniteCoxGroup::length(const CoxArr& a) const
 {
   Length c = 0;
 
@@ -293,8 +287,8 @@ const CoxArr& FiniteCoxGroup::powerArr(CoxArr& a, const Ulong& m) const
 
   for (p = m; ~p & hi_bit; p <<= 1)  /* shift m up to high powers */
     ;
-    
-  for (Ulong j = m >> 1; j; j >>= 1) 
+
+  for (Ulong j = m >> 1; j; j >>= 1)
     {
       p <<= 1;
       prodArr(a,a);  /* a = a*a */
@@ -365,7 +359,7 @@ int FiniteCoxGroup::prodArr(CoxArr& a, const CoxWord& g) const
 
   for (Length j = 0; g[j]; ++j)
     l += prodArr(a,g[j]-1);
-  
+
   return l;
 }
 
@@ -404,7 +398,7 @@ LFlags FiniteCoxGroup::rDescent(const CoxArr& a) const
 const CoxWord& FiniteCoxGroup::reducedArr(CoxWord& g, const CoxArr& a) const
 
 /*
-  Returns in g a reduced expression (actually the ShortLex normal form in 
+  Returns in g a reduced expression (actually the ShortLex normal form in
   the internal numbering of the generators) of a.
 
   Here it is assumed that g is large enough to hold the result.
@@ -502,15 +496,15 @@ const List<CoxNbr>& FiniteCoxGroup::duflo()
 
     kl::KLContext& kl = d_kl[0];
     const SchubertContext& p = kl.schubert();
-    
+
     SubSet q(0);
 
     /* make sure left cell partition is available */
-    
+
     lCell();
-    
+
     /* load involutions in q */
-    
+
     q.bitMap().assign(kl.involution());
     q.readBitMap();
 
@@ -640,7 +634,7 @@ const Partition& FiniteCoxGroup::lUneqCell()
   is gotten from the right one, by inversing.
 */
 
-{  
+{
   if (d_luneqcell.classCount()) /* partition was already computed */
     return d_luneqcell;
 
@@ -662,7 +656,7 @@ const Partition& FiniteCoxGroup::rCell()
   This function returns the partition of the group in right cells.
 
   NOTE : to be on the safe side, we allow this function to respond only
-  for the full group context. If the context is not full, it extends it 
+  for the full group context. If the context is not full, it extends it
   first to the full group.
 
   NOTE : because this is a potentially very expensive operation, the
@@ -705,7 +699,7 @@ const Partition& FiniteCoxGroup::rUneqCell()
   parameters.
 
   NOTE : to be on the safe side, we allow this function to respond only
-  for the full group context. If the context is not full, it extends it 
+  for the full group context. If the context is not full, it extends it
   first to the full group.
 
   NOTE : because this is a potentially very expensive operation, the
@@ -814,16 +808,16 @@ const Partition& FiniteCoxGroup::lString()
   Returns the partition of the group in "left string classes" : the smallest
   subsets C with the property that for each x in C, and for each pair of
   non-commuting generators {s,t} such that L(x) contains exactly one of s,t,
-  say s, and the order m(s,t) of st is finite, the whole {s,t}-string 
+  say s, and the order m(s,t) of st is finite, the whole {s,t}-string
 
-         ... < tsx < sx < x < tx < stx ... 
+         ... < tsx < sx < x < tx < stx ...
 
   (the number of elements is m-1) passing through x is contained in C (see
   the INTRO file for more details.) It is known (and easy to see) that this
   partition is finer than the one by left cells.
 */
 
-{  
+{
   if (d_lstring.classCount()) /* partition was already computed */
     return d_lstring;
 
@@ -849,7 +843,7 @@ const Partition& FiniteCoxGroup::rString()
   cells.
 */
 
-{  
+{
   if (d_rstring.classCount()) /* partition was already computed */
     return d_rstring;
 
@@ -878,7 +872,7 @@ const Partition& FiniteCoxGroup::lTau()
   Is gotten from the corresponding right tau partition.
 */
 
-{  
+{
   if (d_ltau.classCount()) /* partition was already computed */
     return d_ltau;
 
@@ -900,7 +894,7 @@ const Partition& FiniteCoxGroup::rTau()
   Like lTau, but on the right. Coarser than the partition by left cells.
 */
 
-{  
+{
   if (d_rtau.classCount()) /* partition was already computed */
     return d_rtau;
 
@@ -1169,7 +1163,7 @@ bool SmallCoxGroup::parseGroupElement(ParseInterface& P) const
   // if we get to this point, we have to read a CoxWord
 
   interface().parseCoxWord(P,mintable());
-  
+
   if (ERRNO) { // no CoxWord could be parsed
     if (P.offset == r) { // nothing was parsed
       ERRNO = 0;
@@ -1305,40 +1299,36 @@ CoxSize order(FiniteCoxGroup *W)
 
   The functions provided are :
 
-  - isFiniteType(W) : recognizes a finite group --- defines the notion of 
+  - isFiniteType(W) : recognizes a finite group --- defines the notion of
     a finite group in this program.
   - maxSmallRank : the maximum rank for a SmallCoxGroup on the current
     machine;
 
  ****************************************************************************/
 
-bool fcoxgroup::isFiniteType(CoxGroup *W)
-
-/*
+/**
   Recognizes the type of a finite group. Non-irreducible types are
   allowed; they are words in the irreducible types. This function
   defines the class of groups that will be treated as finite groups
   in this program; the i/o setup is flexible enough that there is
   no reason that a finite group should be entered otherwise.
 */
-
+bool fcoxgroup::isFiniteType(CoxGroup *W)
 {
   return isFiniteType(W->type());
 }
 
 
-Rank fcoxgroup::maxSmallRank(const Type& x)
-
-/*
+/**
   Returns the smallest rank for which a CoxNbr holds the given element.
   It is assumed that x is one of the finite types A-I.
 */
-
+Rank fcoxgroup::maxSmallRank(const Type& x)
 {
   Rank l;
   unsigned long c;
 
-  switch(x[0]) 
+  switch(x[0])
     {
     case 'A':
       c = 1;

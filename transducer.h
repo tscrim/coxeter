@@ -9,44 +9,31 @@
 #define TRANSDUCER_H
 
 #include "globals.h"
-
-namespace transducer {
-  using namespace coxeter;
-};
-
-/******** type declarations *************************************************/
-
-namespace transducer {
-  class FiltrationTerm;
-  class SubQuotient;
-  class Transducer;
-};
-
-/******** constants *********************************************************/
-
 #include "coxtypes.h"
-
-namespace transducer {
-  using namespace coxtypes;
-};
-
-namespace transducer {
-  static const ParNbr undef_parnbr = PARNBR_MAX + 1;
-};
-
-/******** type definitions **************************************************/
-
 #include "graph.h"
 #include "list.h"
 #include "memory.h"
 
 namespace transducer {
+  using namespace coxeter;
+  using namespace coxtypes;
   using namespace list;
   using namespace memory;
   using namespace graph;
-};
 
-class transducer::SubQuotient {
+//******** type declarations *************************************************
+
+  class FiltrationTerm;
+  class SubQuotient;
+  class Transducer;
+
+//******** constants *********************************************************
+
+  static const ParNbr undef_parnbr = PARNBR_MAX + 1;
+
+//******** type definitions **************************************************
+
+class SubQuotient {
  private:
 /* typedef in class scope */
   typedef List<ParNbr> SubSet;
@@ -79,7 +66,7 @@ class transducer::SubQuotient {
   void schubertClosure(SubSet& Q, ParNbr x);
 };
 
-class transducer::FiltrationTerm {
+class FiltrationTerm {
   SubQuotient *d_X;
   FiltrationTerm *d_next;
   List<CoxWord> d_np;
@@ -105,7 +92,7 @@ class transducer::FiltrationTerm {
   Ulong size() const;                                         /* inlined */
 };
 
-class transducer::Transducer {
+class Transducer {
  private:
   List<FiltrationTerm> d_filtration;
  public:
@@ -121,9 +108,7 @@ class transducer::Transducer {
   const FiltrationTerm* transducer(const Rank& l) const;
 };
 
-/******** inline implementations ********************************************/
-
-namespace transducer {
+//******** inline implementations ********************************************
 
 /* SubQuotient */
 
@@ -158,6 +143,6 @@ inline Ulong FiltrationTerm::size() const {return d_X->size();}
 inline const FiltrationTerm* Transducer::transducer(const Rank& l) const
   {return d_filtration.ptr()+l;}
 
-};
+}
 
 #endif

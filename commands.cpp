@@ -1529,14 +1529,12 @@ void interval_f()
   return;
 }
 
-void inorder_f()
-
-/*
+/**
   Response to the inorder command. This will tell whether two elements
   are comparable in Bruhat order, using only the elementary string operations
   (and hence not consuming any memory.)
 */
-
+void inorder_f()
 {
   CoxWord g(0);
   CoxWord h(0);
@@ -1560,7 +1558,7 @@ void inorder_f()
     Ulong i = 0;
     for (Ulong j = 0; j < a.size(); ++j) {
       while (i < a[j]) {
-	W->printSymbol(stdout,h[i]-1);
+	W->printSymbol(stdout,h[i]-1); // Conversion CoxLetter -> Generator
 	++i;
       }
       fprintf(stdout,".");
@@ -3034,13 +3032,11 @@ void interface::permutation_f()
   return;
 }
 
-void interface::symbol_f()
-
-/*
+/**
   Resets a symbol in in_buf (this will become either an input or an output
   symbol).
 */
-
+void interface::symbol_f()
 {
   static String buf(0);
 

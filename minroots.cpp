@@ -1,61 +1,12 @@
-/*
+/**
   This is minroots.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
-*/
-
-#include "minroots.h"
-
-namespace {
-  using namespace minroots;
-
-  const Ulong dihedral = MINNBR_MAX + 4;
-  const int first_dotval = locked;
-  const int first_negdotval = neg_cos;
-  const int dotval_size = 13;
-  const int dotval_negsize = 4;
-};
-
-/* auxiliary classes */
-
-namespace {
-
-  class InitMinTable:public MinTable
-  {
-  public:
-    InitMinTable() {};
-    InitMinTable(CoxGraph& G);
-    MinNbr dihedralShift(MinNbr r, Generator s, Generator t, 
-			   Ulong c);
-    void initMinTable(CoxGraph& G);
-    void fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s);
-    void fillDihedralRoots(CoxGraph& G);
-    void fillDihedralRow(CoxGraph& G, MinNbr r, Generator s, Length d);
-    void fillMinTable(CoxGraph& G);
-    void fillReflectionRow(CoxGraph& G, MinNbr r, Generator s);
-    void newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s);
-    void newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s);
-    void newDihedralRoot(CoxGraph& G, MinNbr r, Generator s, Length d);
-    void newMinRoot(CoxGraph& G, MinNbr r, Generator s);
-    void setMinMemory(unsigned long n) {d_min.setSize(n); d_dot.setSize(n);}
-    inline MinNbr size() {return d_size;}
-  };
-
-  DotVal bondCosineSum(CoxEntry m, int a, int b);
-
-  DotVal *CS3;
-  DotVal *CS4;
-  DotVal *CS5;
-  DotVal *CS6;
-  DotVal *CSm;
-};
-
-/***************************************************************************
 
   This module implements a construction of the minimal root machine of
-  Brink and Howlett. We refer to Brink and Howlett's paper "A finiteness 
-  property and an automatic structure for Coxeter groups", Math. Annalen 296 
+  Brink and Howlett. We refer to Brink and Howlett's paper "A finiteness
+  property and an automatic structure for Coxeter groups", Math. Annalen 296
   (1993), pp. 179-190, for a description of the concept of a minimal root
   (called elementary roots by them), and a proof of their finiteness.
   See alos Casselman, ... , for a description of how this finite state
@@ -87,9 +38,9 @@ namespace {
   interior component. The connected components of the complement of the
   interior component are in 1-1 correspondence with the exterior points
   in the bonds. So each of these components has a well-defined cyclotomy
-  attached to it. In this case, it turns out that there is a unique minimal 
-  root with support I and all coefficients < 2; it has coefficient 1 on all 
-  interior points, and coefficient c_m on all point of an exterior component 
+  attached to it. In this case, it turns out that there is a unique minimal
+  root with support I and all coefficients < 2; it has coefficient 1 on all
+  interior points, and coefficient c_m on all point of an exterior component
   of cyclotomy m, where c_m = 2 cos(pi/m). This "basic root" r_I precedes
   all minimal roots with support I.
 
@@ -127,7 +78,7 @@ namespace {
     - +- cos(pi/m) (denoted cos, neg_cos) : here cos should be interpreted
       as "a number in [sqrt(2)/2,1["
     - +- (sqrt(5)-1)/4 (denoted hinvgold, neg_hinvgold), only when m = 5;
-    - +- cos(2 pi/m), (denoted cos2, neg_cos2), only when m > 6, 
+    - +- cos(2 pi/m), (denoted cos2, neg_cos2), only when m > 6,
       where cos2 should be interpreted as "a number in ]1/2,cos["
     - +- cos(k pi/m) (denoted undef_posdot, undef_negdot), only when
       m > 6, and only when the root is dihedral, where undef_posdot
@@ -145,8 +96,8 @@ namespace {
       <s.v,e_t> = <v,e_t> + c(s,t)<v,e_s> if s != t
 
   We will always assume in the sequel that <v,e_t> is not already locked.
-  Then we need to do a formal evalution of the above. Now if t is in the 
-  support of the root, and if we agree to treat interior points in all cases 
+  Then we need to do a formal evalution of the above. Now if t is in the
+  support of the root, and if we agree to treat interior points in all cases
   as if they had cyclotomy five, then the results of Brink alluded to above
   show that in all cases the above computation can be done within the
   cyclotomy of s, i.e., we may compute :
@@ -178,8 +129,53 @@ namespace {
   is neg_hinvgold which is in any case < -sqrt(2)/2; so we have enough
   information to lock t in that case also, even computing within the
   cyclotomy of c(s,t).
+*/
 
- ***************************************************************************/
+#include "minroots.h"
+
+namespace {
+  using namespace minroots;
+
+  const Ulong dihedral = MINNBR_MAX + 4;
+  const int first_dotval = locked;
+  const int first_negdotval = neg_cos;
+  const int dotval_size = 13;
+  const int dotval_negsize = 4;
+};
+
+/* auxiliary classes */
+
+namespace {
+
+  class InitMinTable:public MinTable
+  {
+  public:
+    InitMinTable() {};
+    InitMinTable(CoxGraph& G);
+    MinNbr dihedralShift(MinNbr r, Generator s, Generator t,
+			   Ulong c);
+    void initMinTable(CoxGraph& G);
+    void fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s);
+    void fillDihedralRoots(CoxGraph& G);
+    void fillDihedralRow(CoxGraph& G, MinNbr r, Generator s, Length d);
+    void fillMinTable(CoxGraph& G);
+    void fillReflectionRow(CoxGraph& G, MinNbr r, Generator s);
+    void newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s);
+    void newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s);
+    void newDihedralRoot(CoxGraph& G, MinNbr r, Generator s, Length d);
+    void newMinRoot(CoxGraph& G, MinNbr r, Generator s);
+    void setMinMemory(unsigned long n) {d_min.setSize(n); d_dot.setSize(n);}
+    inline MinNbr size() {return d_size;}
+  };
+
+  DotVal bondCosineSum(CoxEntry m, int a, int b);
+
+  DotVal *CS3;
+  DotVal *CS4;
+  DotVal *CS5;
+  DotVal *CS6;
+  DotVal *CSm;
+};
 
 /****************************************************************************
 
@@ -234,7 +230,7 @@ InitStaticConstants::InitStaticConstants()
   CS3[-11] = locked;          /* - cos - cos(*) */
   CS3[-10] = undef_dotval;    /* - cos2 - cos(*) : can't occur */
   CS3[-9] = undef_dotval;     /* - half - cos(*) : can't occur */
-  CS3[-8] = undef_dotval;     /* - hinvgold - cos(*) : can't occur */ 
+  CS3[-8] = undef_dotval;     /* - hinvgold - cos(*) : can't occur */
   CS3[-7] = undef_dotval;     /* zero - cos(*) : can't occur */
   CS3[-6] = undef_dotval;     /* hinvgold - cos(*) : can't occur */
   CS3[-5] = neg_hinvgold;     /* half - cos(*) : can't occur */
@@ -248,7 +244,7 @@ InitStaticConstants::InitStaticConstants()
   CS3[2] = locked;            /* - cos - cos */
   CS3[3] = locked;            /* - cos2 - cos */
   CS3[4] = locked;            /* - half - cos */
-  CS3[5] = locked;            /* - hinvgold - cos */ 
+  CS3[5] = locked;            /* - hinvgold - cos */
   CS3[6] = neg_cos;           /* zero - cos */
   CS3[7] = neg_half;          /* hinvgold - cos in cyclotomy 5 */
   CS3[8] = neg_hinvgold;      /* half - cos in cyclotomy 5 */
@@ -262,7 +258,7 @@ InitStaticConstants::InitStaticConstants()
   CS3[15] = locked;           /* - cos - cos2 */
   CS3[16] = locked;           /* - cos2 - cos2 */
   CS3[17] = locked;           /* - half - cos2 */
-  CS3[18] = undef_dotval;     /* - hinvgold - cos2 : can't occur */ 
+  CS3[18] = undef_dotval;     /* - hinvgold - cos2 : can't occur */
   CS3[19] = neg_cos2;         /* zero - cos2 */
   CS3[20] = undef_dotval;     /* hinvgold - cos2 : can't occur */
   CS3[21] = undef_dotval;     /* half - cos2 : can't occur */
@@ -276,7 +272,7 @@ InitStaticConstants::InitStaticConstants()
   CS3[28] = locked;           /* - cos - half */
   CS3[29] = locked;           /* - cos2 - half */
   CS3[30] = locked;           /* - half - half */
-  CS3[31] = neg_cos;          /* - hinvgold - half in cyclotomy 5 */ 
+  CS3[31] = neg_cos;          /* - hinvgold - half in cyclotomy 5 */
   CS3[32] = neg_half;         /* zero - half */
   CS3[33] = undef_dotval;     /* hinvgold - half : can't occur */
   CS3[34] = zero;             /* half - half */
@@ -290,7 +286,7 @@ InitStaticConstants::InitStaticConstants()
   CS3[41] = locked;           /* - cos - hinvgold */
   CS3[42] = locked;           /* - cos2 - hinvgold : can't occur */
   CS3[43] = neg_cos;          /* - half - hinvgold in cyclotomy 5 */
-  CS3[44] = undef_dotval;     /* - hinvgold - hinvgold : can't occur */ 
+  CS3[44] = undef_dotval;     /* - hinvgold - hinvgold : can't occur */
   CS3[45] = neg_hinvgold;     /* zero - hinvgold */
   CS3[46] = zero;             /* hinvgold - hinvgold */
   CS3[47] = undef_dotval;     /* half - hinvgold : can't occur */
@@ -321,7 +317,7 @@ InitStaticConstants::InitStaticConstants()
   CS4[15] = locked;         /* - cos - sqrt(2).cos2 */
   CS4[16] = locked;         /* - cos2 - sqrt(2).cos2 : can't occur */
   CS4[17] = locked;         /* - half - sqrt(2).cos2 */
-  CS4[18] = locked;         /* - hinvgold - sqrt(2).cos2 : can't occur */ 
+  CS4[18] = locked;         /* - hinvgold - sqrt(2).cos2 : can't occur */
   CS4[19] = locked;         /* zero - sqrt(2).cos2 */
   CS4[20] = undef_dotval;   /* hinvgold - sqrt(2).cos2 : can't occur */
   CS4[21] = undef_dotval;   /* half - sqrt(2).cos2 : can't occur */
@@ -335,7 +331,7 @@ InitStaticConstants::InitStaticConstants()
   CS4[28] = locked;         /* - cos - sqrt(2).half */
   CS4[29] = locked;         /* - cos2 - sqrt(2).half */
   CS4[30] = locked;         /* - half - sqrt(2).half */
-  CS4[31] = undef_dotval;   /* - hinvgold - sqrt(2).half : can't occur */ 
+  CS4[31] = undef_dotval;   /* - hinvgold - sqrt(2).half : can't occur */
   CS4[32] = neg_cos;        /* zero - sqrt(2).half */
   CS4[33] = undef_dotval;   /* hinvgold - sqrt(2).half : can't occur */
   CS4[34] = undef_dotval;   /* half - sqrt(2).half : can't occur */
@@ -349,7 +345,7 @@ InitStaticConstants::InitStaticConstants()
   CS4[41] = locked;         /* - cos - sqrt(2).hinvgold */
   CS4[42] = locked;         /* - cos2 - sqrt(2).hinvgold : can't occur */
   CS4[43] = neg_cos;        /* - half - sqrt(2).hinvgold in cyclotomy 5 */
-  CS4[44] = undef_dotval;   /* - hinvgold - sqrt(2).hinvgold : can't occur */ 
+  CS4[44] = undef_dotval;   /* - hinvgold - sqrt(2).hinvgold : can't occur */
   CS4[45] = neg_hinvgold;   /* zero - sqrt(2).hinvgold */
   CS4[46] = zero;           /* hinvgold - sqrt(2).hinvgold */
   CS4[47] = undef_dotval;   /* half - sqrt(2).hinvgold : can't occur */
@@ -367,7 +363,7 @@ InitStaticConstants::InitStaticConstants()
   CS5[2] = locked;            /* - cos - 2 cos.cos */
   CS5[3] = locked;            /* - cos2 - 2 cos.cos */
   CS5[4] = locked;            /* - half - 2 cos.cos */
-  CS5[5] = locked;            /* - hinvgold - 2 cos.cos */ 
+  CS5[5] = locked;            /* - hinvgold - 2 cos.cos */
   CS5[6] = locked;            /* zero - 2 cos.cos */
   CS5[7] = locked;            /* hinvgold - 2 cos.cos in cyclotomy 5 */
   CS5[8] = neg_cos;           /* half - 2 cos.cos in cyclotomy 5 */
@@ -381,7 +377,7 @@ InitStaticConstants::InitStaticConstants()
   CS5[15] = locked;           /* - cos - 2 cos.cos2 */
   CS5[16] = locked;           /* - cos2 - 2 cos.cos2 */
   CS5[17] = locked;           /* - half - 2 cos.cos2 */
-  CS5[18] = locked;           /* - hinvgold - 2 cos.cos2 : can't occur */ 
+  CS5[18] = locked;           /* - hinvgold - 2 cos.cos2 : can't occur */
   CS5[19] = locked;           /* zero - 2 cos.cos2 */
   CS5[20] = undef_dotval;     /* hinvgold - 2 cos.cos2 : can't occur */
   CS5[21] = undef_dotval;     /* half - 2 cos.cos2 : can't occur */
@@ -395,7 +391,7 @@ InitStaticConstants::InitStaticConstants()
   CS5[28] = locked;           /* - cos - cos */
   CS5[29] = locked;           /* - cos2 - cos */
   CS5[30] = locked;           /* - half - cos */
-  CS5[31] = locked;           /* - hinvgold - cos = - sqrt(5)/2 < -1 */ 
+  CS5[31] = locked;           /* - hinvgold - cos = - sqrt(5)/2 < -1 */
   CS5[32] = neg_cos;          /* zero - cos */
   CS5[33] = neg_half;         /* hinvgold - cos */
   CS5[34] = neg_hinvgold;     /* half - cos */
@@ -409,7 +405,7 @@ InitStaticConstants::InitStaticConstants()
   CS5[41] = locked;           /* - cos - half */
   CS5[42] = locked;           /* - cos2 - half : can't occur */
   CS5[43] = locked;           /* - half - half */
-  CS5[44] = neg_cos;          /* - hinvgold - half */ 
+  CS5[44] = neg_cos;          /* - hinvgold - half */
   CS5[45] = neg_half;         /* zero - half */
   CS5[46] = undef_dotval;     /* hinvgold - half : can't occur*/
   CS5[47] = zero;             /* half - half */
@@ -426,7 +422,7 @@ InitStaticConstants::InitStaticConstants()
   CS6[2] = locked;          /* - cos - sqrt(3).cos */
   CS6[3] = locked;          /* - cos2 - sqrt(3).cos */
   CS6[4] = locked;          /* - half - sqrt(3).cos */
-  CS6[5] = locked;          /* - hinvgold - sqrt(3).cos */ 
+  CS6[5] = locked;          /* - hinvgold - sqrt(3).cos */
   CS6[6] = locked;          /* zero - sqrt(3).cos */
   CS6[7] = undef_dotval;    /* hinvgold - sqrt(3).cos : can't occur */
   CS6[8] = locked;          /* half - sqrt(3).cos in cyclotomy 6 */
@@ -440,7 +436,7 @@ InitStaticConstants::InitStaticConstants()
   CS6[15] = locked;         /* - cos - sqrt(3).cos2 */
   CS6[16] = locked;         /* - cos2 - sqrt(3).cos2 */
   CS6[17] = locked;         /* - half - sqrt(3).cos2 */
-  CS6[18] = locked;         /* - hinvgold - sqrt(3).cos2 */ 
+  CS6[18] = locked;         /* - hinvgold - sqrt(3).cos2 */
   CS6[19] = locked;         /* zero - sqrt(3).cos2 */
   CS6[20] = undef_dotval;   /* hinvgold - sqrt(3).cos2 : can't occur */
   CS6[21] = undef_dotval;   /* half - sqrt(3).cos2 : can't occur */
@@ -454,7 +450,7 @@ InitStaticConstants::InitStaticConstants()
   CS6[28] = locked;         /* - cos - sqrt(3).half */
   CS6[29] = locked;         /* - cos2 - sqrt(3).half */
   CS6[30] = locked;         /* - half - sqrt(3).half */
-  CS6[31] = locked;         /* - hinvgold - sqrt(3).half */ 
+  CS6[31] = locked;         /* - hinvgold - sqrt(3).half */
   CS6[32] = neg_cos;        /* zero - sqrt(3).half */
   CS6[33] = undef_dotval;   /* hinvgold - sqrt(3).half : can't occur */
   CS6[34] = undef_dotval;   /* half - sqrt(3).half : can't occur */
@@ -468,7 +464,7 @@ InitStaticConstants::InitStaticConstants()
   CS6[41] = locked;         /* - cos - sqrt(3).hinvgold */
   CS6[42] = locked;         /* - cos2 - sqrt(3).hinvgold */
   CS6[43] = locked;         /* - half - sqrt(3).hinvgold */
-  CS6[44] = undef_dotval;   /* - hinvgold - sqrt(3).hinvgold : can't occur */ 
+  CS6[44] = undef_dotval;   /* - hinvgold - sqrt(3).hinvgold : can't occur */
   CS6[45] = undef_dotval;   /* zero - sqrt(3).hinvgold : can't occur */
   CS6[46] = undef_dotval;   /* hinvgold - sqrt(3).hinvgold : can't occur*/
   CS6[47] = undef_dotval;   /* half - sqrt(3).hinvgold : can't occur */
@@ -477,7 +473,7 @@ InitStaticConstants::InitStaticConstants()
   CS6[50] = undef_dotval;   /* undef_posdot - sqrt(3).hinvgold : can't occur */
   CS6[51] = undef_dotval;   /* one - sqrt(3).hinvgold : can't occur */
 
-  /* the matrix CSm gives a + 2 2 cos.b, for b < 0, assuming cyclotomy m > 6 
+  /* the matrix CSm gives a + 2 2 cos.b, for b < 0, assuming cyclotomy m > 6
      we have the identities c_m.cos(pi/m) = cos(pi/m) + 1, c_m.cos(2pi/m) =
      cos(3pi/m) + cos(pi/m) and since cos(3pi/7) + cos(pi/7) = 1 + cos(2pi/7)
      > 2, c_m.cos(2pi/m) > 2 for all m > 6 */
@@ -487,7 +483,7 @@ InitStaticConstants::InitStaticConstants()
   CSm[-11] = locked;          /* - cos - c_m.cos(*) */
   CSm[-10] = locked;          /* - cos2 - c_m.cos(*) */
   CSm[-9] = undef_dotval;     /* - half - c_m.cos(*) : can't occur */
-  CSm[-8] = undef_dotval;     /* - hinvgold - c_m.cos(*) : can't occur */ 
+  CSm[-8] = undef_dotval;     /* - hinvgold - c_m.cos(*) : can't occur */
   CSm[-7] = undef_dotval;     /* zero - c_m.cos(*) : can't occur */
   CSm[-6] = undef_dotval;     /* hinvgold - c_m.cos(*) : can't occur */
   CSm[-5] = undef_dotval;     /* half - c_m.cos(*) : can't occur */
@@ -501,7 +497,7 @@ InitStaticConstants::InitStaticConstants()
   CSm[2] = locked;            /* - cos - c_m.cos */
   CSm[3] = locked;            /* - cos2 - c_m.cos */
   CSm[4] = locked;            /* - half - c_m.cos */
-  CSm[5] = locked;            /* - hinvgold - c_m.cos */ 
+  CSm[5] = locked;            /* - hinvgold - c_m.cos */
   CSm[6] = locked;            /* zero - c_m.cos */
   CSm[7] = undef_dotval;      /* hinvgold - c_m.cos : can't occur */
   CSm[8] = locked;            /* half - c_m.cos */
@@ -515,7 +511,7 @@ InitStaticConstants::InitStaticConstants()
   CSm[15] = locked;           /* - cos - c_m.cos2 */
   CSm[16] = locked;           /* - cos2 - c_m.cos2 */
   CSm[17] = locked;           /* - half - c_m.cos2 */
-  CSm[18] = locked;           /* - hinvgold - c_m.cos2 */ 
+  CSm[18] = locked;           /* - hinvgold - c_m.cos2 */
   CSm[19] = locked;           /* zero - c_m.cos2 */
   CSm[20] = undef_dotval;     /* hinvgold - c_m.cos2 : can't occur */
   CSm[21] = undef_dotval;     /* half - c_m.cos2 : can't occur */
@@ -543,7 +539,7 @@ InitStaticConstants::InitStaticConstants()
   CSm[41] = locked;           /* - cos - c_m.hinvgold */
   CSm[42] = locked;           /* - cos2 - c_m.hinvgold */
   CSm[43] = locked;           /* - half - c_m.hinvgold */
-  CSm[44] = undef_dotval;     /* - hinvgold - c_m.hinvgold : can't occur */ 
+  CSm[44] = undef_dotval;     /* - hinvgold - c_m.hinvgold : can't occur */
   CSm[45] = undef_dotval;     /* zero - c_m.hinvgold : can't occur */
   CSm[46] = undef_dotval;     /* hinvgold - c_m.hinvgold : can't occur */
   CSm[47] = undef_dotval;     /* half - c_m.hinvgold : can't occur */
@@ -565,7 +561,7 @@ InitStaticConstants::InitStaticConstants()
   construction of MinTable.
 
   NOTE : this looks a rather clumsy, and could probably be improved.
-  The problem is that the constructing functions need access to the 
+  The problem is that the constructing functions need access to the
   representation, but we don't want them to be member functions. An
   alternative would be to make them private members.
 
@@ -574,8 +570,7 @@ InitStaticConstants::InitStaticConstants()
 namespace {
 
 InitMinTable::InitMinTable(CoxGraph& G)
-
-{ 
+{
   static InitStaticConstants a;
 
   d_rank = G.rank();
@@ -585,7 +580,6 @@ InitMinTable::InitMinTable(CoxGraph& G)
 }
 
 void InitMinTable::initMinTable(CoxGraph& G)
-
 {
   d_min.setSize(rank());
   d_dot.setSize(rank());
@@ -630,13 +624,10 @@ void InitMinTable::initMinTable(CoxGraph& G)
   return;
 }
 
-MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t, 
-				    Ulong c)
-
-/*
+/**
   This function shifts r by stst... (c terms).
 */
-
+MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t, Ulong c)
 {
   Ulong j;
   Generator u;
@@ -657,14 +648,12 @@ MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t,
 }
 
 
-void InitMinTable::fillDihedralRoots(CoxGraph& G)
-
-/*
+/**
   Assuming M has been initialized by InitMinTable, fills in the
   rows corresponding to the dihedral roots.
 */
-
-{  
+void InitMinTable::fillDihedralRoots(CoxGraph& G)
+{
   MinNbr r = 0;
 
   /* fill in roots of depth 1 */
@@ -707,7 +696,6 @@ void InitMinTable::fillDihedralRoots(CoxGraph& G)
 
 
 void InitMinTable::fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s)
-
 {
   Generator u = min(r,s);
   MinNbr* ps = d_min[s];
@@ -748,9 +736,7 @@ void InitMinTable::fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s)
 }
 
 
-void InitMinTable::fillDihedralRow(CoxGraph& G, MinNbr r, Generator s,
-				  Length d)
-
+void InitMinTable::fillDihedralRow(CoxGraph& G, MinNbr r, Generator s, Length d)
 {
   MinNbr p = min(r,s);
 
@@ -800,19 +786,17 @@ void InitMinTable::fillDihedralRow(CoxGraph& G, MinNbr r, Generator s,
       break;
     }
   }
-  
+
   return;
 }
 
 
-void InitMinTable::fillReflectionRow(CoxGraph& G, MinNbr r, Generator s)
-
-/*
-  This function fills in d_min[r], where r has just been created through s, 
-  and d_dot[r] is filled in. It is assumed that d_min[r][s] is already filled 
+/**
+  This function fills in d_min[r], where r has just been created through s,
+  and d_dot[r] is filled in. It is assumed that d_min[r][s] is already filled
   in.
 */
-
+void InitMinTable::fillReflectionRow(CoxGraph& G, MinNbr r, Generator s)
 {
   for (Generator t = 0; t < rank(); t++) {
     if (t == s)
@@ -859,8 +843,7 @@ void InitMinTable::fillReflectionRow(CoxGraph& G, MinNbr r, Generator s)
 
 
 void InitMinTable::fillMinTable(CoxGraph& G)
-
-{  
+{
   fillDihedralRoots(G);
 
   for (Ulong r = rank(); r < d_size; r++) {
@@ -879,7 +862,6 @@ void InitMinTable::fillMinTable(CoxGraph& G)
 
 
 void InitMinTable::newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s)
-
 {
   setMinMemory(d_size+1);
 
@@ -896,7 +878,7 @@ void InitMinTable::newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s)
     Generator t = bits::firstBit(f);
     if (dot(r,t) == locked)
       continue;
-    d_dot[d_size][t] = 
+    d_dot[d_size][t] =
       bondCosineSum(G.M(s,t),dot(r,t),dot(r,s));
   }
 
@@ -907,7 +889,6 @@ void InitMinTable::newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s)
 
 
 void InitMinTable::newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s)
-
 {
   setMinMemory(d_size+1);
 
@@ -924,7 +905,7 @@ void InitMinTable::newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s)
     Generator t = bits::firstBit(f);
     if (dot(r,t) == locked)
       continue;
-    d_dot[d_size][t] = 
+    d_dot[d_size][t] =
       bondCosineSum(G.M(s,t),dot(r,t),dot(r,s));
   }
 
@@ -934,9 +915,7 @@ void InitMinTable::newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s)
 }
 
 
-void InitMinTable::newDihedralRoot(CoxGraph& G, MinNbr r, Generator s, 
-				  Length d)
-
+void InitMinTable::newDihedralRoot(CoxGraph& G, MinNbr r, Generator s, Length d)
 {
   setMinMemory(d_size+1);
 
@@ -954,11 +933,11 @@ void InitMinTable::newDihedralRoot(CoxGraph& G, MinNbr r, Generator s,
     if (dot(r,t) == locked)
       continue;
     CoxEntry m = G.M(s,t);
-    d_dot[d_size][t] = 
+    d_dot[d_size][t] =
       bondCosineSum(m,dot(r,t),dot(r,s));
-    
+
     /* correction if maximal depth is reached */
-    
+
     if (dot(d_size,t) == undef_negdot)  /* t is the other element */
       if (d == (m-1)/2)
 	d_dot[d_size][t] = -d_dot[d_size][t];
@@ -971,7 +950,6 @@ void InitMinTable::newDihedralRoot(CoxGraph& G, MinNbr r, Generator s,
 
 
 void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
-
 {
   setMinMemory(d_size+1);
 
@@ -988,12 +966,12 @@ void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
     Generator t = bits::firstBit(f);
     if (dot(r,t) == locked)
       continue;
-    d_dot[d_size][t] = 
+    d_dot[d_size][t] =
       bondCosineSum(G.M(s,t),dot(r,t),dot(r,s));
   }
 
   fillReflectionRow(G,d_size,s);
-  
+
   return;
 }
 
@@ -1017,7 +995,7 @@ void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
   - ldescent(g) : left descent set;
   - rdescent(g) : right descent set;
 
-  the fundamental string operations which are the raison d'etre of minroot 
+  the fundamental string operations which are the raison d'etre of minroot
   tables :
 
   - insert(g,s) : inserts the generator s into the normal form g;
@@ -1037,15 +1015,12 @@ void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
 namespace minroots {
 
 MinTable::MinTable(CoxGraph& G)
-
 {
   new(this) InitMinTable(G);
   return;
 }
 
-MinTable::~MinTable()
-
-/*
+/**
   The things that have to be destructed are the tables d_min and d_dot.
   They have been allocated on a per-element basis, each row having a
   fixed size (except for the first allocation, which is for d_rank
@@ -1054,7 +1029,7 @@ MinTable::~MinTable()
   NOTE : this is another instance where things can be made cleaner
   and more efficient by having min and dot have their own arenas.
 */
-
+MinTable::~MinTable()
 {
   /* undo general allocations */
 
@@ -1074,14 +1049,12 @@ MinTable::~MinTable()
   return;
 }
 
-LFlags MinTable::descent(const CoxWord& g) const
-
-/*
+/**
   Returns the two-sided descent set of g, in the usual format : the right
   descent set is contained in the rank rightmost bits, the left descent
   set in the next rank bits.
 */
-
+LFlags MinTable::descent(const CoxWord& g) const
 {
   static CoxWord h(0);
 
@@ -1103,13 +1076,11 @@ LFlags MinTable::descent(const CoxWord& g) const
   return f;
 }
 
-LFlags MinTable::ldescent(const CoxWord& g) const
-
-/*
+/**
   Returns the left descent set of g.
 */
-
-{  
+LFlags MinTable::ldescent(const CoxWord& g) const
+{
   static CoxWord h(0);
 
   h = g;
@@ -1124,12 +1095,10 @@ LFlags MinTable::ldescent(const CoxWord& g) const
   return f;
 }
 
-LFlags MinTable::rdescent(const CoxWord& g) const
-
-/*
+/**
   Returns the right descent set of g.
 */
-
+LFlags MinTable::rdescent(const CoxWord& g) const
 {
   LFlags f = 0;
 
@@ -1142,19 +1111,15 @@ LFlags MinTable::rdescent(const CoxWord& g) const
 }
 
 void MinTable::fill(CoxGraph& G)
-
 {
   InitMinTable* T = (InitMinTable *)this;
   T->fillMinTable(G);
 }
 
-int MinTable::insert(CoxWord& g, const Generator& s, 
-		     const Permutation& order) const
-
-/*
+/**
   This function is like prod below, except that it is now assumed that
   g is a ShortLex Normal form (always w.r.t. the ordering defined by
-  order), and we wish the result to be again a normal form. It is known 
+  order), and we wish the result to be again a normal form. It is known
   that this will be achieved by an appropriate insertion or deletion.
 
   More precisely, if the word gs is non-reduced, there is only one
@@ -1167,7 +1132,7 @@ int MinTable::insert(CoxWord& g, const Generator& s,
 
   As below, the return value is +1 if gs is reduced, -1 otherwise.
 */
-
+int MinTable::insert(CoxWord& g, const Generator& s, const Permutation& order) const
 {
   MinNbr r = s;
   Generator i = s;
@@ -1175,42 +1140,40 @@ int MinTable::insert(CoxWord& g, const Generator& s,
   Ulong q = p;
 
   for (Ulong j = p; j;)
-    {
-      --j;
-      r = min(r,g[j]-1);
+  {
+    --j;
+    r = min(r,g[j]-1); // Conversion CoxLetter -> Generator
 
-      if (r == not_positive) { /* reduction */
-	g.erase(j);
-	return -1;
-      }
-      
-      if ((r < rank()) && (order[r] < order[g[j]-1])) { 
-	/* better insertion point */
-	i = r;
-	q = j;
-      }
-
-      if (r == not_minimal) /* no further insertions */
-	break;
+    if (r == not_positive) { /* reduction */
+      g.erase(j);
+      return -1;
     }
+
+    if ((r < rank()) && (order[r] < order[g[j]-1])) { // Conversion CoxLetter -> Generator
+      /* better insertion point */
+      i = r;
+      q = j;
+    }
+
+    if (r == not_minimal) /* no further insertions */
+      break;
+  }
 
   /* if we get here g.s is reduced */
 
-  g.insert(q,i+1);
+  g.insert(q,i+1); // Conversion Generator -> CoxLetter
 
   return 1;
 }
 
-bool MinTable::inOrder(const CoxWord& d_g, const CoxWord& d_h) const
-
-/*
+/**
   This function tells whether g <= h using the well-known elementary
   algorithm : choose s s.t. hs < h; then if gs < g, we have g <= h
   iff gs <= hs; else g <= h iff g <= hs.
 
   As always, it is assumed that g and h are reduced expressions.
 */
-
+bool MinTable::inOrder(const CoxWord& d_g, const CoxWord& d_h) const
 {
   CoxWord g(d_g);
   CoxWord h(d_h);
@@ -1218,7 +1181,7 @@ bool MinTable::inOrder(const CoxWord& d_g, const CoxWord& d_h) const
   if (h.length() == 0)
     return g.length() == 0;
 
-   Generator s = h[h.length()-1]-1; // last term of h
+   Generator s = h[h.length()-1]-1; // last term of h // Conversion CoxLetter -> Generator
    if (isDescent(g,s))
      prod(g,s);
    h.erase(h.length()-1);
@@ -1226,16 +1189,13 @@ bool MinTable::inOrder(const CoxWord& d_g, const CoxWord& d_h) const
    return inOrder(g,h);
 }
 
-bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g, 
-		       const CoxWord& d_h) const
-
-/*
+/**
   Like the previous inOrder, but puts in a the places where the erasures take
   place.
 
   The list a is not disturbed if the comparison yields false.
 */
-
+bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g, const CoxWord& d_h) const
 {
   if (!inOrder(d_g,d_h))
     return false;
@@ -1263,9 +1223,7 @@ bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g,
   return true;
 }
 
-const CoxWord& MinTable::inverse(CoxWord& g) const
-
-/*
+/**
   Inverses g. As we have made the assummption that only reduced words
   enter the program, this is trivial! We only return a reduced expression,
   not necessarily a normal form.
@@ -1273,7 +1231,7 @@ const CoxWord& MinTable::inverse(CoxWord& g) const
   NOTE : this has nothing to do with the minroot table, but it has seemed
   better to regroup all the elementary string operations in one place.
 */
-
+const CoxWord& MinTable::inverse(CoxWord& g) const
 {
   Length p = g.length();
 
@@ -1286,13 +1244,10 @@ const CoxWord& MinTable::inverse(CoxWord& g) const
   return g;
 }
 
-
-bool MinTable::isDescent(const CoxWord& g, const Generator& s) const
-
-/*
+/**
   Returns true if s is a descent generator of g, false otherwise.
 */
-
+bool MinTable::isDescent(const CoxWord& g, const Generator& s) const
 {
   MinNbr r = s;
 
@@ -1307,19 +1262,15 @@ bool MinTable::isDescent(const CoxWord& g, const Generator& s) const
       return false;
   }
 
-  /* if we get here g.s is reduced */
-
+  // if we get here g.s is reduced
   return false;
 }
 
-
-const CoxWord& MinTable::normalForm(CoxWord& g, const Permutation& order) const
-
-/*
-  Transforms g into its shortlex normal form (as defined by order) by a 
+/**
+  Transforms g into its shortlex normal form (as defined by order) by a
   sequence of insertions. As always, it is assumed that g is reduced.
 */
-
+const CoxWord& MinTable::normalForm(CoxWord& g, const Permutation& order) const
 {
   Ulong p = g.length();
 
@@ -1328,19 +1279,17 @@ const CoxWord& MinTable::normalForm(CoxWord& g, const Permutation& order) const
   g.setLength(0);
 
   for (Ulong j = 0; j < p; ++j)
-    insert(g,g[j+1]-1,order);
+    insert(g,g[j+1]-1,order); // Conversion CoxLetter -> Generator
 
   return g;
 }
 
-const CoxWord& MinTable::power(CoxWord& g, const Ulong& m) const
-
-/*
+/**
   Raises a to the m-th power. This can be done very quickly, by squarings
   and multiplications with the original value of a (stored in b), by
   looking at the bit-pattern of m.
 */
-
+const CoxWord& MinTable::power(CoxWord& g, const Ulong& m) const
 {
   static Ulong hi_bit = (Ulong)1 << BITS(Ulong) - 1;
 
@@ -1352,23 +1301,20 @@ const CoxWord& MinTable::power(CoxWord& g, const Ulong& m) const
   CoxWord h = g;
   Ulong p;
 
-  for (p = m; ~p & hi_bit; p <<= 1)  /* shift m up to high powers */
-    ;
-    
-  for (Ulong j = m >> 1; j; j >>= 1) 
-    {
-      p <<= 1;
-      prod(g,g);  /* g = g*g */
-      if (p & hi_bit)
-	prod(g,h);  /* g = g*h */
-    }
+  for(p = m; ~p & hi_bit; p <<= 1);  /* shift m up to high powers */
+
+  for (Ulong j = m >> 1; j; j >>= 1)
+  {
+    p <<= 1;
+    prod(g,g);  /* g = g*g */
+    if (p & hi_bit)
+      prod(g,h);  /* g = g*h */
+  }
 
   return g;
 }
 
-int MinTable::prod(CoxWord& g, const Generator& s) const
-
-/*
+/**
   This is the fundamental function provided by the mintable structure. It
   takes as input a coxword g, assumed to be reduced, as all words in
   this program, an transforms it into gs by doing an appropriate insertion
@@ -1389,7 +1335,7 @@ int MinTable::prod(CoxWord& g, const Generator& s) const
   --- the main theorem in B&H --- is that when we reach a value not_minimal
   in the mintable, we can stop altogether : the word is reduced.
 */
-
+int MinTable::prod(CoxWord& g, const Generator& s) const
 {
   MinNbr r = s;
   Length p = g.length();
@@ -1399,15 +1345,15 @@ int MinTable::prod(CoxWord& g, const Generator& s) const
       --j;
       Generator t = g[j]-1;
       r = min(r,t);
-      if (r == not_positive) { /* found reduction */
+      if (r == not_positive) { // found reduction
 	g.erase(j);
 	return -1;
       }
-      if (r == not_minimal) /* no reduction */
+      if (r == not_minimal) // no reduction
 	break;
     }
 
-  /* if we get here g.s is reduced */
+  // if we get here g.s is reduced
 
   g.setLength(p+1);
   g[p] = s+1;
@@ -1416,18 +1362,16 @@ int MinTable::prod(CoxWord& g, const Generator& s) const
 }
 
 
-int MinTable::prod(CoxWord& g, CoxLetter *const h, const Ulong& n) const
-
-/*
+/**
   Does the product consecutively by the letters in h. Returns the
   length difference.
 */
-
+int MinTable::prod(CoxWord& g, CoxLetter *const h, const Ulong& n) const
 {
   int p = 0;
 
   for (Ulong j = 0; j < n; ++j) {
-    Generator s = h[j] - 1;
+    Generator s = h[j] - 1; // CoxLetter to Generator conversion
     p += prod(g,s);
   }
 
@@ -1435,15 +1379,13 @@ int MinTable::prod(CoxWord& g, CoxLetter *const h, const Ulong& n) const
 }
 
 
-int MinTable::prod(CoxWord& g, const CoxWord& h) const
-
-/*
+/**
   Does the product consecutively by the letters in h. Returns the
   length difference.
 
   NOTE : needs to save h in buf because it might be that h = g.
 */
-
+int MinTable::prod(CoxWord& g, const CoxWord& h) const
 {
   static CoxWord buf(0);
 
@@ -1458,22 +1400,19 @@ int MinTable::prod(CoxWord& g, const CoxWord& h) const
   return p;
 }
 
-
-const CoxWord& MinTable::reduced(CoxWord& g, CoxWord& h) const
-
-/*
+/**
   Writes in g a reduced word corresponding to the arbitrary generator
   string h. This is the only instance in the whole program where a
   coxword might be non-reduced; it is not used in the program, but
   provided for convenience.
 */
-
+const CoxWord& MinTable::reduced(CoxWord& g, CoxWord& h) const
 {
   g.setLength(0);
   g[0] = 0;
 
   for (Ulong j = 0; j < h.length(); ++j)
-    prod(g,h[j]-1);
+    prod(g,h[j]-1); // Conversion CoxLetter -> Generator
 
   return g;
 
@@ -1538,7 +1477,6 @@ DotVal bondCosineSum(CoxEntry m, int a, int b)
  ****************************************************************************/
 
 Length minroots::depth(MinTable& T, MinNbr r)
-
 {
   Length d = 0;
   MinNbr& rv = r;
@@ -1559,7 +1497,6 @@ Length minroots::depth(MinTable& T, MinNbr r)
 
 
 LFlags minroots::descent(MinTable& T, MinNbr r)
-
 {
   LFlags A = 0;
 
@@ -1570,16 +1507,13 @@ LFlags minroots::descent(MinTable& T, MinNbr r)
   return A;
 }
 
-
-CoxWord& minroots::reduced(MinTable& T, MinNbr r)
-
-/*
+/**
   Returns a reduced expression for the reflection corresponding to r.
 
-  The expression is returned in &buf, which is a safe place until the next 
+  The expression is returned in &buf, which is a safe place until the next
   call to reduced.
 */
-
+CoxWord& minroots::reduced(MinTable& T, MinNbr r)
 {
   static CoxWord buf(0);
 
@@ -1605,17 +1539,14 @@ CoxWord& minroots::reduced(MinTable& T, MinNbr r)
     buf[d+j] = buf[d-j];
 
   buf[2*d+1] = '\0';
-    
+
   return buf;
 }
 
-
-LFlags minroots::support(MinTable& T, MinNbr r)
-
-/*
+/**
   Returns the support fo the root of index r.
 */
-
+LFlags minroots::support(MinTable& T, MinNbr r)
 {
   LFlags f = 0;
 
@@ -1647,7 +1578,6 @@ LFlags minroots::support(MinTable& T, MinNbr r)
  ****************************************************************************/
 
 String& minroots::append(String& str, const DotVal& a)
-
 {
   switch (a)
     {
@@ -1698,17 +1628,14 @@ String& minroots::append(String& str, const DotVal& a)
     };
 }
 
-
-void minroots::print(FILE *file, MinTable& T)
-
-/*
+/**
   This function prints out the abstract minimal root table,
   without reference to any explicit geometric or combinatorial
   representation. The vertices are enumerated in a sort of
   "short-lex" order (depth-first, always looking at first descent;
   this will in fact be "inverse short lex" toward the center.)
 */
-
+void minroots::print(FILE *file, MinTable& T)
 {
   MinNbr r;
   MinNbr& rv = r;

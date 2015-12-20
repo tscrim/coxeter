@@ -86,7 +86,7 @@ class CoxWord {
   CoxWord(const Ulong& n);
   ~CoxWord();
 /* accessors */
-  const CoxLetter& operator[] (const Length& j) const;        /* inlined */
+  const Generator& operator[] (const Length& j) const;        /* inlined */
   Length length() const;                                      /* inlined */
 /* modifiers */
   CoxWord& operator= (const CoxWord& h);                      /* inlined */

@@ -1,4 +1,4 @@
-/*
+/**
   This is memory.h
 
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux

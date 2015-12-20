@@ -149,9 +149,7 @@ bool TypeASmallCoxGroup::parseDenseArray(ParseInterface& P) const
   return true;
 }
 
-bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
-
-/*
+/**
   This is the parseGroupElement function for the SmallCoxGroup type. In
   this class, we have one additional representation of elements, viz. the
   densearray representation. This means that an element that would be
@@ -161,7 +159,7 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
   between group elements and numbers in the range [0,N-1], where N is
   the size of the group.
 */
-
+bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
 {
   Ulong r = P.offset;
 
@@ -217,13 +215,11 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
     return true;
 }
 
-int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
-
-/*
+/**
   Does the multiplication of g by x, by recovering the normal pieces of x.
   returns the length increase.
 */
-
+int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
 {
   const Transducer& T = d_transducer[0];
 
@@ -250,8 +246,7 @@ int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
 
 *****************************************************************************/
 
-TypeAInterface::TypeAInterface(const Rank& l):Interface(Type("A"),l)
-
+TypeAInterface::TypeAInterface(const Rank& l) : Interface(Type("A"), l)
 {
   d_pInterface = new Interface(Type("A"),l+1);
   GroupEltInterface GI(l+1,HexadecimalFromZero());
@@ -260,18 +255,15 @@ TypeAInterface::TypeAInterface(const Rank& l):Interface(Type("A"),l)
 };
 
 TypeAInterface::~TypeAInterface()
-
 {
   delete d_pInterface;
 };
 
-String& TypeAInterface::append(String& str, const CoxWord& g) const
-
-/*
+/**
   Special append function for type A. If hasPermutationOutput is true,
   it outputs elements in permutation form.
 */
-
+String& TypeAInterface::append(String& str, const CoxWord& g) const
 {
   if (hasPermutationOutput()) { // print out as permutation
     CoxWord a(0);
@@ -284,13 +276,11 @@ String& TypeAInterface::append(String& str, const CoxWord& g) const
   }
 }
 
-bool TypeAInterface::parsePermutation(ParseInterface& P) const
-
-/*
+/**
   Parses a permutation. For us, a permutation should be represented as a
   Coxeter element in a group of rank one bigger.
 */
-
+bool TypeAInterface::parsePermutation(ParseInterface& P) const
 {
   Ulong r = P.offset;
 
@@ -308,13 +298,11 @@ bool TypeAInterface::parsePermutation(ParseInterface& P) const
   return true;
 }
 
-void TypeAInterface::print(FILE* file, const CoxWord& g) const
-
-/*
+/**
   Special print function for type A. If hasPermutationOutput is true,
   it outputs elements in permutation form.
 */
-
+void TypeAInterface::print(FILE* file, const CoxWord& g) const
 {
   if (hasPermutationOutput()) { // print out as permutation
     CoxWord a(0);
@@ -329,12 +317,10 @@ void TypeAInterface::print(FILE* file, const CoxWord& g) const
   return;
 }
 
-void TypeAInterface::setIn(const GroupEltInterface& i)
-
-/*
+/**
   Resets d_in to i, and clears hasPermutationInput.
 */
-
+void TypeAInterface::setIn(const GroupEltInterface& i)
 {
   delete d_in;
   d_in = new GroupEltInterface(i);
@@ -346,12 +332,10 @@ void TypeAInterface::setIn(const GroupEltInterface& i)
   return;
 }
 
-void TypeAInterface::setOut(const GroupEltInterface& i)
-
-/*
+/**
   Resets d_out to i, and clears hasPermutationOutput.
 */
-
+void TypeAInterface::setOut(const GroupEltInterface& i)
 {
   delete d_out;
   d_out = new GroupEltInterface(i);
@@ -373,9 +357,7 @@ void TypeAInterface::setOut(const GroupEltInterface& i)
 
 ******************************************************************************/
 
-void coxWordToPermutation(CoxWord& a, const CoxWord& g)
-
-/*
+/**
   Puts in a the permutation of the numbers {0,...,l} whose reduced
   expression is contained in g. It should be safe to even when a = g
   (i.e., we make a copy of g before overwriting a).
@@ -383,15 +365,15 @@ void coxWordToPermutation(CoxWord& a, const CoxWord& g)
   NOTE : it is assumed that a.length() = rank+1 is alreaady set to the
   correct size.
 */
-
+void coxWordToPermutation(CoxWord& a, const CoxWord& g)
 {
   CoxWord h(g);
 
   for (Ulong j = 0; j < a.length(); ++j)
-    a[j] = j+1;
+    a[j] = j+1; // Conversion Generator -> CoxLetter
 
   for (Ulong j = 0; j < h.length(); ++j) {
-    Generator s = h[j]-1;
+    Generator s = h[j]-1; // Conversion CoxLetter -> Generator
     // interchange a[s] and a[s+1]
     Generator t = a[s+1];
     a[s+1] = a[s];
@@ -401,9 +383,7 @@ void coxWordToPermutation(CoxWord& a, const CoxWord& g)
   return;
 }
 
-void permutationToCoxWord(CoxWord& g, const CoxWord& a)
-
-/*
+/**
   Puts in g the standard normal form of a, which is assumed to hold
   a permutation of the integers {0,...,l}. It should be safe even when
   a = g (i.e., we make a copy of a before overwriting g).
@@ -414,16 +394,15 @@ void permutationToCoxWord(CoxWord& g, const CoxWord& a)
   finally put l-j into a[l]. This will be the length of the last
   "slice" s_l...s_{j+1} in the normal form. Then iterate.
 */
-
+void permutationToCoxWord(CoxWord& g, const CoxWord& a)
 {
   CoxWord b(a);
   Length c = 0;
 
   for (Rank l = b.length()-1; l; --l) {
     Rank j = 0;
-    for (; b[l-j] != l+1; ++j)
-      ;
-    for (Rank i = l-j; i < l; ++i)
+    for(; b[l-j] != l+1; ++j) ; // Advance to the right position
+    for(Rank i = l-j; i < l; ++i)
       b[i] = b[i+1];
     b[l] = j;
     c += j;

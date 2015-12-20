@@ -135,7 +135,7 @@ void CoxGroup::coatoms(List<CoxWord>& c, const CoxWord& g) const
       h.append(g[i]);
     ++i;
     for (; i < g.length(); ++i) {
-      Generator s = g[i]-1;
+      Generator s = g[i]-1; // Conversion CoxLetter -> Generator
       int d = prod(h,s);
       if (d == -1)
 	goto next;
@@ -398,16 +398,14 @@ bool CoxGroup::parseEndGroup(ParseInterface& P) const
   return true;
 }
 
-bool CoxGroup::parseGroupElement(ParseInterface& P) const
-
-/*
+/**
   This function parses a group element from the string. A group element
   is one of (a) a coxword (b) a context number
   followed by a (possibly empty) string of modifiers. The modifiers
   are all treated as unary postfix operators (so that, for instance,
   g!^2* means (((g)!)^2)*).
 */
-
+bool CoxGroup::parseGroupElement(ParseInterface& P) const
 {
   Ulong r = P.offset;
 
@@ -453,9 +451,7 @@ bool CoxGroup::parseGroupElement(ParseInterface& P) const
     return true;
 }
 
-bool CoxGroup::parseModifier(ParseInterface& P) const
-
-/*
+/**
   This function parses a modifier from P.str at P.offset, and acts upon
   it accordingly : in case of success, it applies the modifier to P.c,
   and advances the offset.
@@ -463,7 +459,7 @@ bool CoxGroup::parseModifier(ParseInterface& P) const
   This is the default implementation, which doesn't allow the * modifier;
   this is accepted only for finite groups.
 */
-
+bool CoxGroup::parseModifier(ParseInterface& P) const
 {
   Token tok = 0;
   const Interface& I = interface();
@@ -487,14 +483,12 @@ bool CoxGroup::parseModifier(ParseInterface& P) const
   return true;
 }
 
-int CoxGroup::prod(CoxNbr& x, const Generator& s) const
-
-/*
+/**
   This function increments x by right multiplication with s (i.e., it could
   have been written as x *= s). Returns +1 if the length goes up, -1 if the
   length goes down. Values of rank <= s < 2*rank correspond to right products.
 */
-
+int CoxGroup::prod(CoxNbr& x, const Generator& s) const
 {
   CoxNbr x_old = x;
   x = schubert().shift(x,s);
@@ -505,18 +499,16 @@ int CoxGroup::prod(CoxNbr& x, const Generator& s) const
     return -1;
 }
 
-int CoxGroup::prod(CoxNbr& x, const CoxWord& g) const
-
-/*
+/**
   Multiplies x consecutively by the terms in g. Stops at the first undefined
   operation. Returns the length increase.
 */
-
+int CoxGroup::prod(CoxNbr& x, const CoxWord& g) const
 {
   int l = 0;
 
   for (Ulong j = 0; j < g.length(); ++j) {
-    l += prod(x,g[j]-1);
+    l += prod(x,g[j]-1); // Conversion CoxLetter -> Generator
     if (x == undef_coxnbr)
       break;
   }
@@ -524,12 +516,10 @@ int CoxGroup::prod(CoxNbr& x, const CoxWord& g) const
   return l;
 }
 
-int CoxGroup::prod(CoxWord& g, const CoxNbr& d_x) const
-
-/*
+/**
   Multiplies g by the terms in x. Returns the length increase.
 */
-
+int CoxGroup::prod(CoxWord& g, const CoxNbr& d_x) const
 {
   int l = 0;
   CoxNbr x = d_x;
@@ -543,7 +533,7 @@ int CoxGroup::prod(CoxWord& g, const CoxNbr& d_x) const
   return l;
 }
 
-/******** manipulators ******************************************************/
+//******** manipulators ******************************************************
 
 void CoxGroup::activateKL()
 

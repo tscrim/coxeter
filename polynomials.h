@@ -1,4 +1,4 @@
-/*
+/**
   This is polynomials.h
 
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
@@ -8,42 +8,37 @@
 #ifndef POLYNOMIALS_H  /* include guard */
 #define POLYNOMIALS_H
 
-#include "globals.h"
 #include <limits.h>
+
+#include "globals.h"
+#include "io.h"
+#include "vector.h"
 
 namespace polynomials {
   using namespace coxeter;
-};
+  using namespace io;
+  using namespace vector;
 
-/******** type declarations **************************************************/
+//******** type declarations **************************************************/
 
-namespace polynomials {
   typedef Ulong Degree;
   typedef long SDegree;
   class Monomial;
-  template <class T> class Polynomial;
-  template <class T> class LaurentPolynomial;
-};
+  template <class T>
+  class Polynomial;
+  template <class T>
+  class LaurentPolynomial;
 
-/******** constants **********************************************************/
+//******** constants **********************************************************/
 
-namespace polynomials {
   const Degree undef_degree = ~0;
   const Degree DEGREE_MAX = ULONG_MAX-1;
   const SDegree SDEGREE_MAX = LONG_MAX;
   const SDegree SDEGREE_MIN = LONG_MIN+1;
   const SDegree undef_valuation = LONG_MIN;
-};
 
-/******** function definitions ***********************************************/
+//******** function definitions ***********************************************/
 
-#include "io.h"
-
-namespace polynomials {
-  using namespace io;
-};
-
-namespace polynomials {
   template <class T>
   bool operator== (const Polynomial<T>& p, const Polynomial<T>& q);
   template <class T>
@@ -86,19 +81,11 @@ namespace polynomials {
   template <class T>
   SDegree sumValuation(const LaurentPolynomial<T>& p,
 		       const LaurentPolynomial<T>& q);
-};
 
-/******** type definitions ***************************************************/
+//******** type definitions ***************************************************/
 
-#include "vector.h"
-
-namespace polynomials {
-  using namespace vector;
-};
-
-namespace polynomials {
-
-template <class T> class Polynomial {
+template <class T>
+class Polynomial {
  protected:
   Vector<T> v;
  public:
@@ -107,10 +94,10 @@ template <class T> class Polynomial {
   void operator delete(void* ptr)
     {return arena().free(ptr,sizeof(Polynomial<T>));}
   Polynomial<T>(){};
-  Polynomial<T>(Degree d):v(d+1) {};
-  Polynomial<T>(const Polynomial<T>& q):v(q.v) {};
-  Polynomial<T>(T* const& ptr, const Degree& d):v(ptr,d+1) {};
-  Polynomial<T>(const T& c, const_tag):v(1) {v[0] = c; setDegValue(0);}
+  Polynomial<T>(Degree d) : v(d+1) {};
+  Polynomial<T>(const Polynomial<T>& q) : v(q.v) {};
+  Polynomial<T>(T* const& ptr, const Degree& d) : v(ptr,d+1) {};
+  Polynomial<T>(const T& c, const_tag) : v(1) {v[0] = c; setDegValue(0);}
   ~Polynomial<T>();
 /* manipulators */
   T& operator[] (const Ulong& j);                                /* inlined */
@@ -141,10 +128,11 @@ class Monomial
   private:
     Degree n;
   public:
-    Monomial(Degree d){n = d;};
+    Monomial(Degree d) : n(d) {};
   };
 
-template <class T> class LaurentPolynomial {
+template <class T>
+class LaurentPolynomial {
  protected:
   Polynomial<T> d_pol;
   SDegree d_valuation; /* degree of first non-zero coefficient */
@@ -181,11 +169,7 @@ template <class T> class LaurentPolynomial {
   void setZero();                                                 /* inlined */
 };
 
-};
-
-/******** inline definitions **************************************************/
-
-namespace polynomials {
+//******** inline definitions **************************************************/
 
 template <class T>
 inline bool operator!= (const Polynomial<T>& p, const Polynomial<T>& q)
@@ -259,7 +243,7 @@ template<class T> inline bool Polynomial<T>::isZero() const
 template<class T> inline const Vector<T>& Polynomial<T>::vect() const
   {return v;}
 
-};
+}
 
 #include "polynomials.hpp"
 
