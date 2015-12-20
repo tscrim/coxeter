@@ -1,6 +1,6 @@
 /*
   This is fcoxgroup.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -24,7 +24,7 @@
 
 namespace fcoxgroup {
   using namespace globals;
-  using namespace coxgroup;
+  using namespace coxeter;
 };
 
 /******** type declarations *************************************************/
@@ -88,7 +88,7 @@ class FiniteCoxGroup : public CoxGroup {
   virtual ~FiniteCoxGroup();
 
 /* accessors */
-  
+
   bool isFullContext() const;
   const CoxArr& longest_coxarr() const;                          /* inlined */
   const CoxWord& longest_coxword() const;                        /* inlined */
@@ -243,7 +243,7 @@ namespace fcoxgroup {
 
 inline const CoxArr& FiniteCoxGroup::assign(CoxArr& a, const CoxArr& b) const
   {memmove(a,b,rank()*sizeof(ParNbr)); return a;}
-inline void FiniteCoxGroup::fullContext() 
+inline void FiniteCoxGroup::fullContext()
   {extendContext(d_longest_coxword);}
 inline const CoxArr& FiniteCoxGroup::longest_coxarr() const
   {return d_longest_coxarr;}

@@ -1,6 +1,6 @@
 /*
   This is coxgroup.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -55,7 +55,7 @@
 
  *************************************************************************/
 
-namespace coxgroup {
+namespace coxeter {
 
   class CoxGroup::CoxHelper {
   private:
@@ -70,10 +70,6 @@ namespace coxgroup {
     void checkInverses();
   };
 
-};
-
-namespace coxgroup {
-
 CoxGroup::CoxGroup(const Type& x, const Rank& l)
 
 /*
@@ -86,7 +82,7 @@ CoxGroup::CoxGroup(const Type& x, const Rank& l)
   - the kazhdan-lusztig context;
 */
 
-{  
+{
   d_graph = new CoxGraph(x,l);
   if (ERRNO) /* problem with the Coxeter matrix */
     return;
@@ -426,7 +422,7 @@ bool CoxGroup::parseGroupElement(ParseInterface& P) const
 
   {
     interface().parseCoxWord(P,mintable());
-    
+
     if (ERRNO) { // no CoxWord could be parsed
     if (P.offset == r) { // nothing was parsed
       ERRNO = 0;
@@ -692,7 +688,7 @@ void CoxGroup::fillIMu()
 
 /*
   This function fills the whole mu-table up to the size of the current
-  schubert context, for the inverse kazhdan-lusztig polynomials, after having 
+  schubert context, for the inverse kazhdan-lusztig polynomials, after having
   activated the context if necessary.
 */
 
@@ -734,8 +730,8 @@ void CoxGroup::fillMu()
 void CoxGroup::fillUEKL()
 
 /*
-  This function fills the whole unequal-parameter k-l table up to the size 
-  of the current schubert context, after having activated the context if 
+  This function fills the whole unequal-parameter k-l table up to the size
+  of the current schubert context, after having activated the context if
   necessary.
 */
 
@@ -749,8 +745,8 @@ void CoxGroup::fillUEKL()
 void CoxGroup::fillUEMu()
 
 /*
-  This function fills the whole unequal-parameter mu-tables up to the size of 
-  the current schubert context, after having activated the context if 
+  This function fills the whole unequal-parameter mu-tables up to the size of
+  the current schubert context, after having activated the context if
   necessary.
 */
 
@@ -768,7 +764,7 @@ const invkl::KLPol& CoxGroup::invklPol(const CoxNbr& x, const CoxNbr& y)
   if necessary.
 */
 
-{  
+{
   activateIKL();
 
   return d_invkl->klPol(x,y);
@@ -777,8 +773,8 @@ const invkl::KLPol& CoxGroup::invklPol(const CoxNbr& x, const CoxNbr& y)
 void CoxGroup::invklRow(invkl::HeckeElt& h, const CoxNbr& y)
 
 /*
-  Puts in h the data of the full row for y in the inverse k-l context 
-  corresponding to y, sorted in the order of the current normal forms. 
+  Puts in h the data of the full row for y in the inverse k-l context
+  corresponding to y, sorted in the order of the current normal forms.
   Activates the context if necessary.
 */
 
@@ -795,7 +791,7 @@ const kl::KLPol& CoxGroup::klPol(const CoxNbr& x, const CoxNbr& y)
   if necessary.
 */
 
-{  
+{
   activateKL();
 
   return d_kl->klPol(x,y);
@@ -822,7 +818,7 @@ KLCoeff CoxGroup::mu(const CoxNbr& x, const CoxNbr& y)
   if necessary.
 */
 
-{  
+{
   activateKL();
 
   return d_kl->mu(x,y);
@@ -834,7 +830,7 @@ void CoxGroup::permute(const Permutation& a)
   This function permutes all the active contexts w.r.t. the permutation a.
   The idea is that we _renumber_ the context; a is the permutation of the
   range [0,size[ which gives for each number x the new number of the same
-  group element. So in terms of group elements the correspondence is that 
+  group element. So in terms of group elements the correspondence is that
   new[a(x)] = old[x].
 
   Applying the permutation to group-valued functions is trivial : just permute
@@ -851,7 +847,7 @@ void CoxGroup::permute(const Permutation& a)
     - permute the extrList;
     - permute the various kl-contexts;
 
-  Note that extrList should be seen as a table of enumerated subsets of the 
+  Note that extrList should be seen as a table of enumerated subsets of the
   group. The various kllists are tables of sequences of polynomials,
   enumerated in accordance with the extrList. The mulists are also tables
   of enumerated subsets of the group, together with additional data. A
@@ -897,17 +893,17 @@ void CoxGroup::uneqcBasis(uneqkl::HeckeElt& h, const CoxNbr& y)
 const uneqkl::KLPol& CoxGroup::uneqklPol(const CoxNbr& x, const CoxNbr& y)
 
 /*
-  Returns the unequal-parameter k-l polynomial P_{x,y}, after activating the 
+  Returns the unequal-parameter k-l polynomial P_{x,y}, after activating the
   context if necessary.
 */
 
-{  
+{
   activateUEKL();
 
   return d_uneqkl->klPol(x,y);
 }
 
-const uneqkl::MuPol& CoxGroup::uneqmu(const Generator& s, const CoxNbr& x, 
+const uneqkl::MuPol& CoxGroup::uneqmu(const Generator& s, const CoxNbr& x,
 				      const CoxNbr& y)
 
 /*
@@ -915,7 +911,7 @@ const uneqkl::MuPol& CoxGroup::uneqmu(const Generator& s, const CoxNbr& x,
   the context if necessary.
 */
 
-{  
+{
   activateUEKL();
 
   return d_uneqkl->mu(s,x,y);
@@ -925,18 +921,16 @@ void CoxGroup::uneqklRow(uneqkl::HeckeElt& h, const CoxNbr& y)
 
 /*
   Puts in e_row and kl_row the data of the full row of the unequal-parameter
-  k-l context corresponding to y, sorted in the short-lex order of the 
+  k-l context corresponding to y, sorted in the short-lex order of the
   current normal forms. Activates the context if necessary.
 */
 
-{  
+{
   activateUEKL();
 
   d_uneqkl->row(h,y);
   return;
 }
-
-};
 
 /*****************************************************************************
 
@@ -951,8 +945,6 @@ void CoxGroup::uneqklRow(uneqkl::HeckeElt& h, const CoxNbr& y)
 
  *****************************************************************************/
 
-namespace coxgroup {
-
 CoxGroup::CoxHelper::CoxHelper(CoxGroup* W):d_W(W)
 
 {}
@@ -962,13 +954,12 @@ CoxGroup::CoxHelper::~CoxHelper()
 {}
 
 void CoxGroup::CoxHelper::sortContext()
-
 /*
   This function is an auxiliary to permute; it takes care of putting
   things in increasin context number order after the permutation.
 */
 
-{    
+{
   KLSupport* kls = d_W->d_klsupport;
 
   for (CoxNbr y = 0; y < d_W->contextSize(); ++y) {

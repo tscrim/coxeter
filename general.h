@@ -1,6 +1,6 @@
 /*
   This is general.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -13,7 +13,7 @@
 
 namespace general {
   using namespace globals;
-  using namespace coxgroup;
+  using namespace coxeter;
 };
 
 /******** type declarations **************************************************/

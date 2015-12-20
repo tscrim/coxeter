@@ -1,6 +1,6 @@
 /*
   This is coxtypes.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -26,7 +26,7 @@ namespace coxtypes {
 
 /* type declarations and bounds */
 
-namespace coxgroup {
+namespace coxeter {
   class CoxGroup; // forward declaration
 };
 
@@ -119,7 +119,7 @@ class CoxWord {
   CoxWord& insert(const Length& j, const CoxLetter& a);
   CoxWord& reset();
   void setLength(Length n);                                   /* inlined */
-  CoxWord& setSubWord(const CoxWord& h, const Length& first, 
+  CoxWord& setSubWord(const CoxWord& h, const Length& first,
 		      const Length& r);
 };
 

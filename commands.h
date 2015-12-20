@@ -1,6 +1,6 @@
 /*
   This is commands.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -32,7 +32,7 @@ namespace commands {
 /******** function declarations ********************************************/
 
 namespace commands {
-  coxgroup::CoxGroup* currentGroup();
+  coxeter::CoxGroup* currentGroup();
   void default_error(char* str);
   void execute();
   CommandTree* interfaceCommandTree();
@@ -69,7 +69,7 @@ struct CommandData {
   void* operator new(size_t size) {return arena().alloc(size);}
   void operator delete(void* ptr)
     {return arena().free(ptr,sizeof(CommandData));}
-  CommandData(const char* const& str, const char* const& t, void (*a)(), 
+  CommandData(const char* const& str, const char* const& t, void (*a)(),
 	      void (*h)(), bool rep);
   ~CommandData();
 };
@@ -87,11 +87,11 @@ class CommandTree:public Dictionary<CommandData> {
   void operator delete(void* ptr)
     {return arena().free(ptr,sizeof(CommandTree));}
   CommandTree(const char *str, void (*action)(), void (*entry)() = &relax_f,
-	      void (*error)(char*) = &default_error, 
+	      void (*error)(char*) = &default_error,
 	      void (*exit)() = &relax_f, void (*h)() = 0);
   ~CommandTree();
 /* modifiers */
-  void add(const char* name, const char* tag, void (*action)(), 
+  void add(const char* name, const char* tag, void (*action)(),
 	   void (*help)() = default_help, bool rep = true);
   void setAction(const char* str, void (*a)());
   void setRepeat(const char* str, bool b);

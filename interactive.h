@@ -1,6 +1,6 @@
 /*
   This is interactive.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -29,7 +29,7 @@ namespace interactive {
 
 namespace interactive {
   using namespace bits;
-  using namespace coxgroup;
+  using namespace coxeter;
   using namespace coxtypes;
   using namespace graph;
   using namespace interface;
@@ -54,9 +54,9 @@ namespace interactive {
   Generator getGenerator(CoxGroup *W, const LFlags& f);
   void getLength(List<Length>& L, const CoxGraph& G, const Interface& I);
   Rank getRank(const Type& type);
-  void printInterface(FILE* file, const GroupEltInterface& GI, 
+  void printInterface(FILE* file, const GroupEltInterface& GI,
 			const Permutation& a);
-  void printInterface(FILE* file, const GroupEltInterface& GI, 
+  void printInterface(FILE* file, const GroupEltInterface& GI,
 		      const GroupEltInterface& WI, const Permutation& a);
   void printMatrix(FILE *file, const CoxGroup* W);
   void printOrdering(FILE* file, const CoxGroup* W);

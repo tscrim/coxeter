@@ -1,6 +1,6 @@
 /*
   This is coxgroup.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -57,7 +57,7 @@
 
 #include "globals.h"
 
-namespace coxgroup {
+namespace coxeter {
   using namespace globals;
 };
 
@@ -75,7 +75,7 @@ namespace coxgroup {
 #include "transducer.h"
 #include "uneqkl.h"
 
-namespace coxgroup {
+namespace coxeter {
   using namespace coxtypes;
   using namespace files;
   using namespace graph;
@@ -84,9 +84,8 @@ namespace coxgroup {
   using namespace klsupport;
   using namespace minroots;
   using namespace transducer;
-};
 
-class coxgroup::CoxGroup { // has been declared in coxtypes.h
+class CoxGroup { // has been declared in coxtypes.h
 
  protected:
 
@@ -113,7 +112,7 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
 
   CoxGroup(const Type& x, const Rank& l);
   virtual ~CoxGroup();
-  
+
   CoxGraph& graph();                                             /* inlined */
   virtual Interface& interface();                                /* inlined */
   MinTable& mintable();                                          /* inlined */
@@ -135,7 +134,7 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   void activateKL();
   void activateIKL();
   void activateUEKL();
-  
+
   /* graph data */
 
   CoxEntry M(Generator s, Generator t) const;                    /* inlined */
@@ -143,11 +142,11 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   const Type& type() const;                                      /* inlined */
   virtual CoxSize order() const = 0;
   virtual bool isFullContext() const;                            /* inlined */
-  
+
 /******** Chapter I : Elementary operations ********************************/
 
   /* word operations */
-  
+
   virtual int insert(CoxWord& g, const Generator& s) const;      /* inlined */
   virtual const CoxWord& inverse(CoxWord& g) const;              /* inlined */
   virtual const CoxWord& normalForm(CoxWord& g) const;           /* inlined */
@@ -163,7 +162,7 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   virtual LFlags ldescent(const CoxWord& g) const;               /* inlined */
   virtual LFlags rdescent(const CoxWord& g) const;               /* inlined */
   bool isDescent(const CoxWord& g, const Generator& s) const;
-  
+
 /******** Chapter II : Schubert context **************************************/
 
   virtual CoxNbr contextNumber(const CoxWord& g) const;           /* inlined */
@@ -186,12 +185,12 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   virtual const List<CoxNbr>& extrList(const CoxNbr& x) const;    /* inlined */
 
 /******** Chapter III : Bruhat ordering **************************************/
-  
+
   virtual void coatoms(List<CoxWord>& c, const CoxWord& g) const;
   virtual const CoatomList& coatoms(const CoxNbr& x) const ;      /* inlined */
   virtual void extractClosure(BitMap& b, const CoxNbr& x) const;  /* inlined */
   virtual bool inOrder(const CoxWord& h, const CoxWord& g) const; /* inlined */
-  virtual bool inOrder(List<Length>& a, const CoxWord& h, const CoxWord& g) 
+  virtual bool inOrder(List<Length>& a, const CoxWord& h, const CoxWord& g)
     const;                                                        /* inlined */
   virtual bool inOrder(const CoxNbr& x, const CoxNbr& y) const;   /* inlined */
   virtual bool isDihedral(const CoxWord& g) const;
@@ -223,7 +222,7 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   /* elementary i/o functions */
 
   const Permutation& ordering() const;                           /* inlined */
-  
+
   String& append(String& str, const Generator& s) const;         /* inlined */
   String& append(String& str, const CoxWord& g) const;           /* inlined */
   String& append(String& str, const LFlags& f) const;            /* inlined */
@@ -240,7 +239,7 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
   bool parseEndGroup(ParseInterface& P) const;
   virtual bool parseModifier(ParseInterface& P) const;
   virtual void modify(ParseInterface& P, const Token& tok) const;
-  
+
   /* modifying the interface */
 
   template<class C> void setOutputTraits(C);
@@ -260,8 +259,6 @@ class coxgroup::CoxGroup { // has been declared in coxtypes.h
 
 /******** Inline implementations ******************************************/
 
-namespace coxgroup {
-
 /* Chapter 0 */
 
 inline CoxGraph& CoxGroup::graph() {return *d_graph;}
@@ -269,7 +266,7 @@ inline MinTable& CoxGroup::mintable() {return *d_mintable;}
 inline KLSupport& CoxGroup::klsupport() {return *d_klsupport;}
 inline kl::KLContext& CoxGroup::kl() {activateKL(); return *d_kl;}
 inline invkl::KLContext& CoxGroup::invkl() {activateIKL(); return *d_invkl;}
-inline uneqkl::KLContext& CoxGroup::uneqkl() 
+inline uneqkl::KLContext& CoxGroup::uneqkl()
   {activateUEKL(); return *d_uneqkl;}
 inline Interface& CoxGroup::interface() {return *d_interface;}
 inline OutputTraits& CoxGroup::outputTraits() {return *d_outputTraits;}
@@ -282,7 +279,7 @@ inline const uneqkl::KLContext& CoxGroup::uneqkl() const {return *d_uneqkl;}
 inline const SchubertContext& CoxGroup::schubert() const
   {return d_klsupport->schubert();}
 inline const Interface& CoxGroup::interface() const {return *d_interface;}
-inline const OutputTraits& CoxGroup::outputTraits() const 
+inline const OutputTraits& CoxGroup::outputTraits() const
   {return *d_outputTraits;}
 
 inline CoxEntry CoxGroup::M(Generator s, Generator t) const
@@ -294,11 +291,11 @@ inline bool CoxGroup::isFullContext() const {return false;}
 
 /* Chapter I */
 
-inline int CoxGroup::insert(CoxWord& g, const Generator& s) const 
+inline int CoxGroup::insert(CoxWord& g, const Generator& s) const
  {return mintable().insert(g,s,ordering());}
 inline const CoxWord& CoxGroup::inverse(CoxWord& g) const
  {return mintable().inverse(g);}
-inline const CoxWord& CoxGroup::normalForm(CoxWord& g) const 
+inline const CoxWord& CoxGroup::normalForm(CoxWord& g) const
  {return mintable().normalForm(g,interface().order());}
 
 inline const CoxWord& CoxGroup::power(CoxWord& g, const Ulong& m) const
@@ -306,7 +303,7 @@ inline const CoxWord& CoxGroup::power(CoxWord& g, const Ulong& m) const
 inline int CoxGroup::prod(CoxWord& g, const Generator& s) const
  {return mintable().prod(g,s);}
 inline int CoxGroup::prod(CoxWord& g, const CoxWord& h) const
- {return mintable().prod(g,h);}   
+ {return mintable().prod(g,h);}
 inline const CoxWord& CoxGroup::reduced(CoxWord& g, CoxWord& h) const
  {return mintable().reduced(g,h);}
 
@@ -322,7 +319,7 @@ inline LFlags CoxGroup::rdescent(const CoxWord& g) const
 inline CoxNbr CoxGroup::contextNumber(const CoxWord& g) const
  {return schubert().contextNumber(g);}
 inline CoxNbr CoxGroup::contextSize() const {return d_klsupport->size();}
-inline Length CoxGroup::length(const CoxNbr& x) const 
+inline Length CoxGroup::length(const CoxNbr& x) const
  {return d_klsupport->length(x);}
 
 inline LFlags CoxGroup::descent(const CoxNbr& x) const
@@ -348,7 +345,7 @@ inline void CoxGroup::extractClosure(BitMap& b, const CoxNbr& x) const
  {return schubert().extractClosure(b,x);}
 inline bool CoxGroup::inOrder(const CoxWord& g, const CoxWord& h) const
  {return mintable().inOrder(g,h);}
-inline bool CoxGroup::inOrder(List<Length>& a, const CoxWord& g, 
+inline bool CoxGroup::inOrder(List<Length>& a, const CoxWord& g,
 			      const CoxWord& h) const
  {return mintable().inOrder(a,g,h);}
 inline bool CoxGroup::inOrder(const CoxNbr& x, const CoxNbr& y) const
@@ -356,17 +353,17 @@ inline bool CoxGroup::inOrder(const CoxNbr& x, const CoxNbr& y) const
 
 /* Chapter V */
 
-inline const Permutation& CoxGroup::ordering() const 
+inline const Permutation& CoxGroup::ordering() const
   {return interface().order();}
 
-inline String& CoxGroup::append(String& str, const Generator& s) 
+inline String& CoxGroup::append(String& str, const Generator& s)
   const {return appendSymbol(str,s,interface());}
 inline String& CoxGroup::append(String& str, const CoxWord& g) const
  {return interface::append(str,g,interface());}
 inline String& CoxGroup::append(String& str, const LFlags& f) const
  {return interface::append(str,f,interface());}
 
-inline void CoxGroup::printSymbol(FILE* file, const Generator& s) 
+inline void CoxGroup::printSymbol(FILE* file, const Generator& s)
   const {return interface::printSymbol(file,s,interface());}
 inline void CoxGroup::print(FILE* file, const CoxWord& g) const
  {return interface().print(file,g);}
@@ -398,11 +395,7 @@ template <class H>
 inline void CoxGroup::printHeckeElt(FILE* file, const H& h)
   {files::printHeckeElt(file,h,schubert(),outputTraits());}
 
-};
-
 /******** template definitions ***********************************************/
-
-namespace coxgroup {
 
 template<class C> void CoxGroup::setOutputTraits(C)
  {new(d_outputTraits) OutputTraits(graph(),interface(),C());}
