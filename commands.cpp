@@ -1,6 +1,6 @@
 /*
   This is commands.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -36,7 +36,7 @@ namespace {
   struct Interface_tag {};
   struct Main_tag {};
   struct Uneq_tag {};
-  
+
   Stack<CommandTree *> treeStack;
   CoxGroup* W = 0;
 
@@ -108,7 +108,7 @@ namespace {
   const char* compute_tag = "prints out the normal form of an element";
   const char* descent_tag = "prints out the descent sets";
   const char* duflo_tag = "prints out the Duflo involutions";
-  const char* extremals_tag = 
+  const char* extremals_tag =
     "prints out the k-l polynomials for the extremal pairs";
   const char* fullcontext_tag = "sets the context to the full group";
   const char* help_tag = "enters help mode";
@@ -116,7 +116,7 @@ namespace {
   const char* input_tag = "(in help mode only) explains the input conventions";
   const char* interface_tag = "changes the interface";
   const char* interval_tag = "prints an interval in the Bruhat ordering";
-  const char* intro_tag = 
+  const char* intro_tag =
     "(in help mode only) prints a message for first time users";
   const char* inorder_tag = "tells whether two elements are in Bruhat order";
   const char* invpol_tag = "prints a single inverse k-l polynomial";
@@ -126,7 +126,7 @@ namespace {
   const char* lcwgraphs_tag = "prints out the W-graphs of the left k-l cells";
   const char* lrcorder_tag = "prints the two-sided cell order";
   const char* lrcells_tag = "prints out the tow-sided k-l cells";
-  const char* lrcwgraphs_tag = 
+  const char* lrcwgraphs_tag =
     "prints out the W-graphs of the two-sided k-l cells";
   const char* lrwgraph_tag = "prints out the two-sided W-graph";
   const char* lwgraph_tag = "prints out the left W-graph";
@@ -143,11 +143,11 @@ namespace {
   const char* schubert_tag = "prints out the kl data for a schubert variety";
   const char* show_tag = "maps out the computation of a k-l polynomial";
   const char* showmu_tag = "maps out the computation of a mu coefficient";
-  const char* slocus_tag = 
+  const char* slocus_tag =
     "prints the rational singular locus of the Schubert variety";
-  const char* sstratification_tag = 
+  const char* sstratification_tag =
     "prints the rational singular stratification of the Schubert variety";
-  const char* type_tag = 
+  const char* type_tag =
     "resets the type and rank (hence restarts the program)";
   const char* uneq_tag = "puts the program in unequal-parameter mode";
 
@@ -185,12 +185,12 @@ namespace commands {
 
     struct In_tag {};
     struct Out_tag {};
-    
+
     void in_entry();
     void in_exit();
     void out_entry();
     void out_exit();
-  
+
     void abort_f();
     void alphabetic_f();
     void bourbaki_f();
@@ -204,7 +204,7 @@ namespace commands {
     void symbol_f();
     void terse_f();
     void ordering_f();
-  
+
     const char* abort_tag = "leaves without modifying the interface";
     const char* alphabetic_tag = "sets alphabetic generator symbols";
     const char* bourbaki_tag = "sets Bourbaki conventions for i/o";
@@ -214,7 +214,7 @@ namespace commands {
     const char* hexadecimal_tag = "sets hexadecimal generator symbols";
     const char* in_tag = "enters reset-input mode";
     const char* out_tag = "enters reset-output mode";
-    const char* permutation_tag = 
+    const char* permutation_tag =
       "sets permutation notation for i/o (in type A only)";
     const char* ordering_tag = "modifies the ordering of the generators";
     const char* terse_tag = "sets i/o to terse mode";
@@ -231,15 +231,15 @@ namespace commands {
       void prefix_f();
       void separator_f();
       void terse_f();
-      const char* alphabetic_tag = 
+      const char* alphabetic_tag =
         "sets alphabetic generator symbols for input";
       const char* bourbaki_tag = "sets Bourbaki conventions for input";
       const char* decimal_tag = "sets decimal generator symbols for input";
       const char* default_tag = "sets default conventions for input";
       const char* gap_tag = "sets GAP conventions for input";
-      const char* hexadecimal_tag = 
+      const char* hexadecimal_tag =
         "sets hexadecimal generator symbols for input";
-      const char* permutation_tag = 
+      const char* permutation_tag =
         "sets permutation notation for input (in type A only)";
       const char* postfix_tag = "resets the input postfix";
       const char* prefix_tag = "resets the input prefix";
@@ -260,15 +260,15 @@ namespace commands {
       void prefix_f();
       void separator_f();
       void terse_f();
-      const char* alphabetic_tag = 
+      const char* alphabetic_tag =
         "sets alphabetic generator symbols for output";
       const char* bourbaki_tag = "sets Bourbaki conventions for output";
       const char* decimal_tag = "sets decimal generator symbols for output";
       const char* default_tag = "sets default conventions for output";
       const char* gap_tag = "sets GAP conventions for output";
-      const char* hexadecimal_tag = 
+      const char* hexadecimal_tag =
         "sets hexadecimal generator symbols for output";
-      const char* permutation_tag = 
+      const char* permutation_tag =
         "sets permutation notation for output (in type A only)";
       const char* postfix_tag = "resets the output postfix";
       const char* prefix_tag = "resets the output prefix";
@@ -315,9 +315,9 @@ namespace commands {
         Chapter I -- Running the program
 
   This section contains the following functions :
-  
+
   - ambigAction(str) : what to do with an ambiguous command;
-  - mainCommandTree() : returns a pointer to the initial command tree (and 
+  - mainCommandTree() : returns a pointer to the initial command tree (and
     builds it on first call);
   - relax_f() : does nothing;
   - run() : runs an interactive session;
@@ -394,7 +394,7 @@ void activate(CommandTree* tree)
 
 /*
   Puts the tree on top of treeStack, and executes the initialization function.
-  
+
 */
 
 {
@@ -451,7 +451,7 @@ void empty_error(char* str)
     return;
   }
   /* type and rank are set at this point */
-  if ((cd != tree->find("type")) && (cd != tree->find("rank"))) 
+  if ((cd != tree->find("type")) && (cd != tree->find("rank")))
     cd->action();
   if (cd->autorepeat) {
     tree->setAction("",cd->action);
@@ -476,7 +476,7 @@ void startup()
 
   if (ERRNO)
     Error(ERRNO);
-  
+
   return;
 }
 
@@ -538,11 +538,11 @@ void startup()
 
 namespace commands {
 
-CommandTree::CommandTree(const char* prompt, 
-			 void (*a)(), 
-			 void (*entry)(), 
-			 void (*error)(char*), 
-			 void (*exit)(), 
+CommandTree::CommandTree(const char* prompt,
+			 void (*a)(),
+			 void (*entry)(),
+			 void (*error)(char*),
+			 void (*exit)(),
 			 void (*h)())
   :d_prompt(prompt), d_entry(entry), d_error(error), d_exit(exit)
 
@@ -586,7 +586,7 @@ void CommandTree::prompt() const
 
 /******** manipulators ******************************************************/
 
-void CommandTree::add(const char* name, const char* tag, void (*a)(), 
+void CommandTree::add(const char* name, const char* tag, void (*a)(),
 		      void (*h)(), bool rep)
 
 /*
@@ -648,9 +648,9 @@ void CommandTree::setRepeat(const char* str, bool b)
 
 namespace commands {
 
-CommandData::CommandData(const char* const& str, const char* const& t, 
+CommandData::CommandData(const char* const& str, const char* const& t,
 			 void (*a)(), void (*h)(), bool rep)
-  :name(str), tag(t), action(a), help(h), autorepeat(rep) 
+  :name(str), tag(t), action(a), help(h), autorepeat(rep)
 
 {}
 
@@ -683,9 +683,9 @@ CommandData::~CommandData()
   - initCommandTree<Uneq_tag> : builds the command tree for unequal parameters;
   - interfaceCommandTree() : returns a pointer to the interface command tree;
   - mainCommandTree() : returns a pointer to the main command tree;
-  - uneqCommandTree() : returns a pointer to the unequal-parameter command 
+  - uneqCommandTree() : returns a pointer to the unequal-parameter command
     tree;
-  
+
  *****************************************************************************/
 
 namespace {
@@ -735,7 +735,7 @@ void commandCompletion(DictCell<CommandData>* cell)
   completion. This is done as follows. We traverse the command tree
   from the root. If node.fullname is true, we do nothing. Otherwise,
   if node.uniquePrefix is true, we set node.value to be equal to the
-  value of the unique completion of the string recognized by node in 
+  value of the unique completion of the string recognized by node in
   the dictionary. If node.uniquePrefix is false, we set node.value
   to ambigCommand().
 */
@@ -746,7 +746,7 @@ void commandCompletion(DictCell<CommandData>* cell)
 
   commandCompletion(cell->left);
   cellCompletion(cell);
-  commandCompletion(cell->right);  
+  commandCompletion(cell->right);
 }
 
 template<> CommandTree* initCommandTree<Empty_tag>()
@@ -940,7 +940,7 @@ CommandTree* interface::outCommandTree()
 CommandTree* interfaceCommandTree()
 
 /*
-  Returns a pointer to the interface command tree, building it on the first 
+  Returns a pointer to the interface command tree, building it on the first
   call.
 */
 
@@ -1046,7 +1046,7 @@ template<> CommandTree* initCommandTree<Uneq_tag>()
   unequal-parameter versions have been substituted for the k-l functions.
 */
 
-{  
+{
   static CommandTree tree("uneq",&relax_f,&uneq_entry,&default_error,
 			  &uneq_exit,&uneq_help);
 
@@ -1219,7 +1219,7 @@ void betti_f()
   betti(x,y) for x <= y.
 */
 
-{  
+{
   static CoxWord g(0);
 
   printf("enter your element (finish with a carriage return) :\n");
@@ -1248,7 +1248,7 @@ void coatoms_f()
   fashion.
 */
 
-{  
+{
   static CoxWord g(0);
 
   printf("enter your element (finish with a carriage return) :\n");
@@ -1307,7 +1307,7 @@ void descent_f()
 
 {
   static CoxWord g(0);
-  
+
   printf("enter your element (finish with a carriage return) :\n");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
@@ -1332,7 +1332,7 @@ void duflo_f()
   Prints the Duflo involutions. Works for finite groups only.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"duflo.mess",MESSAGE_DIR);
     return;
@@ -1400,7 +1400,7 @@ void fullcontext_f()
   group. Of course, it works only for finite groups.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"fullcontext.mess",MESSAGE_DIR);
     return;
@@ -1433,7 +1433,7 @@ void ihbetti_f()
   Prints out the IH betti numbers of [e,y].
 */
 
-{  
+{
   static CoxWord g(0);
 
   printf("enter your element (finish with a carriage return) :\n");
@@ -1579,7 +1579,7 @@ void inorder_f()
 void invpol_f()
 
 /*
-  Response to the invpol command. This prints out a single inverse k-l 
+  Response to the invpol command. This prints out a single inverse k-l
   polynomial, without details.
 */
 
@@ -1634,7 +1634,7 @@ void klbasis_f()
   defined by the current output mode.
 */
 
-{  
+{
   CoxWord g(0);
 
   printf("enter your element (finish with a carriage return) :\n");
@@ -1670,7 +1670,7 @@ void klbasis_f()
 void lcorder_f()
 
 /*
-  Prints the left cell order of the current group in a file. Works only for 
+  Prints the left cell order of the current group in a file. Works only for
   finite groups.
 */
 
@@ -1709,7 +1709,7 @@ void lcells_f()
   This function prints out the left cells in the group.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"lcells.mess",MESSAGE_DIR);
     return;
@@ -1733,7 +1733,7 @@ void lcwgraphs_f()
   It works only for finite groups currently.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"lcells.mess",MESSAGE_DIR);
     return;
@@ -1753,7 +1753,7 @@ void lcwgraphs_f()
 void lrcorder_f()
 
 /*
-  Prints the two-sided cell order of the current group in a file. Works only 
+  Prints the two-sided cell order of the current group in a file. Works only
   for finite groups.
 */
 
@@ -1793,7 +1793,7 @@ void lrcells_f()
   corresponding W-graphs. Works only for finite groups.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"lrcells.mess",MESSAGE_DIR);
     return;
@@ -1829,7 +1829,7 @@ void lrcwgraphs_f()
   It works only for finite groups currently.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"lcells.mess",MESSAGE_DIR);
     return;
@@ -2064,7 +2064,7 @@ void qq_f()
     tree->exit();
     treeStack.pop();
   }
-  
+
   exit(0);
 }
 
@@ -2090,7 +2090,7 @@ void rank_f()
 void rcorder_f()
 
 /*
-  Prints the right cell order of the current group in a file. Works only for 
+  Prints the right cell order of the current group in a file. Works only for
   finite groups.
 */
 
@@ -2130,7 +2130,7 @@ void rcells_f()
   corresponding W-graphs.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"rcells.mess",MESSAGE_DIR);
     return;
@@ -2166,7 +2166,7 @@ void rcwgraphs_f()
   It works only for finite groups currently.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"lcells.mess",MESSAGE_DIR);
     return;
@@ -2457,7 +2457,7 @@ void klbasis_f()
   defined by the current output mode.
 */
 
-{  
+{
   CoxWord g(0);
 
   printf("enter your element (finish with a carriage return) :\n");
@@ -2496,7 +2496,7 @@ void lcells_f()
   This function prints out the left cells in the group.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"lcells.mess",MESSAGE_DIR);
     return;
@@ -2564,7 +2564,7 @@ void lcorder_f()
 void lrcorder_f()
 
 /*
-  Prints the two-sided cell order of the closure of the current group in a 
+  Prints the two-sided cell order of the closure of the current group in a
   file. Works only for finite groups.
 */
 
@@ -2604,7 +2604,7 @@ void lrcells_f()
   finite groups.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"uneq/lrcells.mess",MESSAGE_DIR);
     return;
@@ -2765,7 +2765,7 @@ void rcells_f()
   groups.
 */
 
-{  
+{
   if (!isFiniteType(W)) {
     printFile(stderr,"rcells.mess",MESSAGE_DIR);
     return;
@@ -2797,7 +2797,7 @@ void rcells_f()
 void rcorder_f()
 
 /*
-  Prints the right cell order of the current group in a file. Works only for 
+  Prints the right cell order of the current group in a file. Works only for
   finite groups.
 */
 
@@ -3015,7 +3015,7 @@ void interface::permutation_f()
 */
 
 {
-  using namespace typeA;
+  using namespace coxeter;
 
   if (!isTypeA(W->type())) {
     printFile(stderr,"permutation.mess",MESSAGE_DIR);
@@ -3041,7 +3041,7 @@ void interface::symbol_f()
   symbol).
 */
 
-{  
+{
   static String buf(0);
 
   const Interface& I = W->interface();
@@ -3196,7 +3196,7 @@ void interface::in::permutation_f()
 */
 
 {
-  using namespace typeA;
+  using namespace coxeter;
 
   if (!isTypeA(W->type())) {
     printFile(stderr,"permutation.mess",MESSAGE_DIR);
@@ -3391,7 +3391,7 @@ void interface::out::permutation_f()
 */
 
 {
-  using namespace typeA;
+  using namespace coxeter;
 
   if (!isTypeA(W->type())) {
     printFile(stderr,"permutation.mess",MESSAGE_DIR);
@@ -3684,7 +3684,7 @@ void interface::out_exit()
   here.
 */
 
-{ 
+{
   if (in_buf == 0) // hack to prevent execution in special cases
     return;
 

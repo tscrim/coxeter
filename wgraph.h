@@ -1,6 +1,6 @@
 /*
   This is wgraph.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -12,7 +12,7 @@
 #include "list.h"
 
 namespace wgraph {
-  using namespace globals;
+  using namespace coxeter;
   using namespace list;
 };
 
@@ -37,9 +37,8 @@ namespace wgraph {
 namespace wgraph {
   using namespace bits;
   using namespace interface;
-};
 
-class wgraph::OrientedGraph {
+class OrientedGraph {
  private:
   List<EdgeList> d_edge;
  public:
@@ -63,7 +62,7 @@ class wgraph::OrientedGraph {
   void setSize(const Ulong& n);                                /* inlined */
 };
 
-class wgraph::WGraph {
+class WGraph {
  private:
   OrientedGraph* d_graph;
   List<CoeffList> d_coeff;
@@ -92,11 +91,9 @@ class wgraph::WGraph {
   void print(FILE* file, const Interface& I) const;
 };
 
-namespace wgraph {
-
   inline const CoeffList& WGraph::coeffList(const Vertex& x) const
     {return d_coeff[x];}
-  inline const LFlags& WGraph::descent(const Vertex& x) const 
+  inline const LFlags& WGraph::descent(const Vertex& x) const
     {return d_descent[x];}
   inline const EdgeList& WGraph::edge(const Vertex& x) const
     {return d_graph->edge(x);}
@@ -113,6 +110,6 @@ namespace wgraph {
   inline EdgeList& OrientedGraph::edge(const Vertex& x) {return d_edge[x];}
   inline void OrientedGraph::setSize(const Ulong& n) {d_edge.setSize(n);}
 
-};
+}
 
 #endif

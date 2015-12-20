@@ -1,6 +1,6 @@
 /*
   This is list.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,45 +8,35 @@
 #ifndef LIST_H  /* guarantee single inclusion */
 #define LIST_H
 
-#include "globals.h"
 #include <limits.h>
 
-namespace list {
-  using namespace globals;
-};
-
-/******** type declarations *************************************************/
-
-namespace list {
-  template <class T> class List;
-};
-
-/******** constants *********************************************************/
-
-namespace list {
-  const Ulong undef_size = ULONG_MAX;
-  const Ulong not_found = ULONG_MAX;
-}
-
-/******** functions provided by list.h **************************************/
-
-namespace list {
-  template <class T> Ulong find(const List<T>& l, const T& m);
-  template <class T> Ulong insert(List<T>& l, const T& m);
-  template <class T> void print(FILE* file, const List<T>& l);
-};
-
-/******** type definitions **************************************************/
-
+#include "globals.h"
 #include "memory.h"
 
 namespace list {
+  using namespace coxeter;
   using namespace memory;
-};
 
-namespace list {
+/******** type declarations *************************************************/
 
-template <class T> class List {
+  template <class T>
+  class List;
+
+/******** constants *********************************************************/
+
+  const Ulong undef_size = ULONG_MAX;
+  const Ulong not_found = ULONG_MAX;
+
+/******** functions provided by list.h **************************************/
+
+  template <class T> Ulong find(const List<T>& l, const T& m);
+  template <class T> Ulong insert(List<T>& l, const T& m);
+  template <class T> void print(FILE* file, const List<T>& l);
+
+/******** type definitions **************************************************/
+
+template <class T>
+class List {
  protected:
   T* d_ptr;
   Ulong d_size;
@@ -102,24 +92,20 @@ template <class T> class List {
   ConstIterator end() const;                                      /* inlined */
 };
 
-};
-
 /******** Implementation of inline functions *******************************/
-
-namespace list {
 
 /* class List */
 
 /* modifiers */
 
-template<class T> inline T& List<T>::operator[] (Ulong j) 
+template<class T> inline T& List<T>::operator[] (Ulong j)
   {return d_ptr[j];}
-template<class T> 
-inline void List<T>::setData(const T* source, Ulong r) 
+template<class T>
+inline void List<T>::setData(const T* source, Ulong r)
   {setData(source,0,r);}
 template<class T> void List<T>::setSizeValue(const Ulong& n)
   {d_size = n;}
-template<class T> inline void List<T>::setZero(Ulong first, Ulong r) 
+template<class T> inline void List<T>::setZero(Ulong first, Ulong r)
   {memset(d_ptr+first,0,r*sizeof(T));}
 template<class T> inline void List<T>::setZero(Ulong r) {setZero(0,r);}
 template<class T> inline void List<T>::setZero() {setZero(0,d_size);}
@@ -131,7 +117,7 @@ template<class T> Ulong& List<T>::size() {return d_size;}
 
 /* accessors */
 
-template <class T> inline const T& List<T>::operator[] (Ulong j) const 
+template <class T> inline const T& List<T>::operator[] (Ulong j) const
   {return(d_ptr[j]);}
 template<class T> inline bool List<T>::operator!= (const List<T>& w) const
   {return !operator==(w);}
@@ -140,16 +126,15 @@ template <class T> inline const Ulong& List<T>::size() const {return d_size;}
 
 /* iterators */
 
-template <class T> inline typename List<T>::Iterator List<T>::begin() 
+template <class T> inline typename List<T>::Iterator List<T>::begin()
   {return d_ptr;}
-template <class T> inline typename List<T>::Iterator List<T>::end() 
+template <class T> inline typename List<T>::Iterator List<T>::end()
   {return d_ptr+d_size;}
-template <class T> inline typename List<T>::ConstIterator List<T>::begin() 
+template <class T> inline typename List<T>::ConstIterator List<T>::begin()
   const {return d_ptr;}
 template <class T> inline typename List<T>::ConstIterator List<T>::end() const
   {return d_ptr+d_size;}
-
-};
+}
 
 #include "list.hpp"
 

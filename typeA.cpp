@@ -1,6 +1,6 @@
 /*
   This is typeA.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -18,7 +18,7 @@
 
 ******************************************************************************/
 
-namespace typeA {
+namespace coxeter {
 
 TypeACoxGroup::TypeACoxGroup(const Rank& l):FiniteCoxGroup(Type("A"),l)
 
@@ -56,7 +56,7 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
   else {
     interface().parseCoxWord(P,mintable());
   }
-  
+
   if (ERRNO) { // no CoxWord could be parsed
     if (P.offset == r) { // nothing was parsed
       ERRNO = 0;
@@ -86,7 +86,6 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
     return true;
 }
 
-};
 
 /****************************************************************************
 
@@ -96,8 +95,6 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
   the TypeAMedRankCoxGroup class, which fills in the minroot table.
 
 *****************************************************************************/
-
-namespace typeA {
 
 TypeAMedRankCoxGroup::TypeAMedRankCoxGroup(const Rank& l):TypeACoxGroup(l)
 
@@ -190,7 +187,7 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
   else {
     interface().parseCoxWord(P,mintable());
   }
-    
+
   if (ERRNO) { // no CoxWord could be parsed
     if (P.offset == r) { // nothing was parsed
       ERRNO = 0;
@@ -243,8 +240,6 @@ int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
   return l;
 }
 
-};
-
 /****************************************************************************
 
         Chapter III --- The TypeAInterface class
@@ -254,8 +249,6 @@ int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
   elements in a group one rank bigger.
 
 *****************************************************************************/
-
-namespace typeA {
 
 TypeAInterface::TypeAInterface(const Rank& l):Interface(Type("A"),l)
 
@@ -368,8 +361,6 @@ void TypeAInterface::setOut(const GroupEltInterface& i)
   return;
 }
 
-};
-
 /*****************************************************************************
 
         Chapter IV -- Functions declared in typeA.h
@@ -381,8 +372,6 @@ void TypeAInterface::setOut(const GroupEltInterface& i)
     - coxWordToPermutation(a,g) : the other way around;
 
 ******************************************************************************/
-
-namespace typeA {
 
 void coxWordToPermutation(CoxWord& a, const CoxWord& g)
 
@@ -449,8 +438,8 @@ void permutationToCoxWord(CoxWord& g, const CoxWord& a)
       g[c+i] = j-i;
     c += b[j];
   }
-  
+
   return;
 }
 
-};
+}

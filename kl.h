@@ -1,6 +1,6 @@
 /*
   This is kl.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,31 +8,36 @@
 #ifndef KL_H  /* guard against multiple inclusions */
 #define KL_H
 
-#include "globals.h"
-
 #include <limits.h>
 
-namespace kl {
-  using namespace globals;
-};
-
+#include "globals.h"
 #include "coxtypes.h"
 #include "klsupport.h"
 #include "hecke.h"
 #include "list.h"
 #include "polynomials.h"
+#include "bits.h"
+#include "io.h"
+#include "list.h"
+#include "interface.h"
+#include "search.h"
 
 namespace kl {
+  using namespace coxeter;
   using namespace coxtypes;
   using namespace hecke;
   using namespace klsupport;
   using namespace list;
   using namespace polynomials;
-};
+  using namespace bits;
+  using namespace io;
+  using namespace list;
+  using namespace coxtypes;
+  using namespace interface;
+  using namespace search;
 
 /******** type declarations *************************************************/
 
-namespace kl {
   class KLContext;
   struct KLStatus;
   struct MuData;
@@ -42,23 +47,11 @@ namespace kl {
   typedef List<const KLPol*> KLRow;
   typedef List<MuData> MuRow;
   typedef List<HeckeMonomial<KLPol> > HeckeElt;
-};
 
 /******** function declarations *********************************************/
 
-#include "bits.h"
-#include "io.h"
-#include "list.h"
-
-namespace kl {
-  using namespace bits;
-  using namespace io;
-  using namespace list;
-};
-
-namespace kl {
   void cBasis(HeckeElt& h, const CoxNbr& y, KLContext& kl);
-  void extractDufloInvolutions(const KLContext& kl, const Partition& pi, 
+  void extractDufloInvolutions(const KLContext& kl, const Partition& pi,
 			       BitMap& b);
   void genericSingularities(HeckeElt& h, const CoxNbr& y, KLContext& kl);
   void ihBetti(Homology& h, const CoxNbr& y, KLContext& kl);
@@ -72,20 +65,8 @@ namespace kl {
   void showMu(FILE* file, KLContext& kl, const CoxNbr& x, const CoxNbr& y,
 	      const Interface& I);
   void sortByPol(KLRow& row);
-};
 
 /******** type definitions **************************************************/
-
-#include "interface.h"
-#include "search.h"
-
-namespace kl {
-  using namespace coxtypes;
-  using namespace interface;
-  using namespace search;
-};
-
-namespace kl {
 
 class KLPol:public Polynomial<KLCoeff> {
 public:
@@ -182,7 +163,7 @@ class KLContext {
   void clearFullMu();                                           /* inlined */
   void fillKL();
   void fillMu();
-  const KLPol& klPol(const CoxNbr& x, const CoxNbr& y, 
+  const KLPol& klPol(const CoxNbr& x, const CoxNbr& y,
 		     const Generator& s = undef_generator);
   KLCoeff mu(const CoxNbr& x, const CoxNbr& y);
   void permute(const Permutation& a);
@@ -200,11 +181,7 @@ class KLContext {
   void compareMu();
 };
 
-};
-
 /******** inlined definitions **********************************************/
-
-namespace kl {
 
 inline bool MuData::operator> (const MuData& m) const {return x > m.x;}
 
@@ -213,13 +190,13 @@ inline bool MuFilter::operator() (const CoxNbr& x) const
 
 inline const ExtrRow& KLContext::extrList(const CoxNbr& y) const
   {return klsupport().extrList(y);}
-inline CoxNbr KLContext::inverse(const CoxNbr& x) const 
+inline CoxNbr KLContext::inverse(const CoxNbr& x) const
   {return d_klsupport->inverse(x);}
-inline const BitMap& KLContext::involution() const 
+inline const BitMap& KLContext::involution() const
   {return d_klsupport->involution();}
 inline bool KLContext::isExtrAllocated(const CoxNbr& x) const
   {return d_klsupport->isExtrAllocated(x);}
-inline bool KLContext::isFullKL() const 
+inline bool KLContext::isFullKL() const
   {return d_status->flags&KLStatus::kl_done;}
 inline bool KLContext::isFullMu() const
   {return d_status->flags&KLStatus::mu_done;}
@@ -230,16 +207,16 @@ inline bool KLContext::isMuAllocated(const CoxNbr& x) const
 inline const KLRow& KLContext::klList(const CoxNbr& y) const
   {return *d_klList[y];}
 inline const KLSupport& KLContext::klsupport() const {return *d_klsupport;}
-inline Generator KLContext::last(const CoxNbr& y) const 
+inline Generator KLContext::last(const CoxNbr& y) const
   {return d_klsupport->last(y);}
 inline const MuRow& KLContext::muList(const CoxNbr& y) const
   {return *d_muList[y];}
 inline Rank KLContext::rank() const {return d_klsupport->rank();}
-inline const SchubertContext& KLContext::schubert() const 
+inline const SchubertContext& KLContext::schubert() const
   {return d_klsupport->schubert();}
 inline Ulong KLContext::size() const {return d_klList.size();}
 inline const BinaryTree<KLPol>& KLContext::tree() const {return d_klTree;}
-inline void KLContext::print(FILE* file, const CoxNbr& x, const Interface& I) 
+inline void KLContext::print(FILE* file, const CoxNbr& x, const Interface& I)
   const {schubert().print(file,x,I);}
 
 inline void KLContext::applyIPermutation(const CoxNbr& y, const Permutation& a)
@@ -249,6 +226,6 @@ inline void KLContext::clearFullMu() {d_status->flags &= ~KLStatus::mu_done;}
 inline void KLContext::setFullKL() {d_status->flags |= KLStatus::kl_done;}
 inline void KLContext::setFullMu() {d_status->flags |= KLStatus::mu_done;}
 
-};
+}
 
 #endif

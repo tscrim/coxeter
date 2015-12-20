@@ -1,6 +1,6 @@
 /*
   This is posets.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -11,7 +11,7 @@
 #include "globals.h"
 
 namespace posets {
-  using namespace globals;
+  using namespace coxeter;
 };
 
 /******** type declarations *************************************************/
@@ -40,7 +40,7 @@ class Poset {
   List<BitMap> d_closure;
  public:
 /* constructors and destructors */
-  void operator delete(void* ptr, size_t size) 
+  void operator delete(void* ptr, size_t size)
     {return arena().free(ptr,sizeof(Poset));}
   Poset();
   Poset(const Ulong &n);

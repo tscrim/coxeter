@@ -1,6 +1,6 @@
 /*
   This is vector.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,33 +9,26 @@
 #define VECTOR_H
 
 #include "globals.h"
-
-namespace vector {
-  using namespace globals;
-};
-
-/* type declarations */
-
-namespace vector {
-  template <class T> class Vector;
-};
-
-/********* implementation **************************************************/
-
 #include "io.h"
 #include "list.h"
 #include "memory.h"
 
 namespace vector {
+  using namespace coxeter;
   using namespace io;
   using namespace list;
   using namespace memory;
-};
 
-namespace vector {
+/* type declarations */
 
-template <class T> class Vector
-  {
+template <class T>
+class Vector;
+
+/********* implementation **************************************************/
+
+template <class T>
+class Vector
+{
   private:
     List<T> d_list;
   public:
@@ -70,47 +63,43 @@ template <class T> class Vector
     const T* ptr() const;                                         /* inlined */
   };
 
-};
-
 /* inline implementations */
 
-namespace vector {
-
-template<class T> inline T& Vector<T>::operator[] (const Ulong& j) 
+template<class T> inline T& Vector<T>::operator[] (const Ulong& j)
   {return d_list[j];}
-template<class T> 
+template<class T>
 inline const Vector<T>& Vector<T>::operator= (const Vector<T>& w)
   {d_list.assign(w.list()); return *this;}
 template<class T> Ulong& Vector<T>::dim() {return d_list.size();}
 template<class T> inline T* Vector<T>::ptr() {return d_list.ptr();}
 template<class T> inline void Vector<T>::setDim(const Ulong& n)
   {Ulong d = dim(); d_list.setSize(n); if (n>d) setZero(d,n-d);}
-template<class T> inline void Vector<T>::setDimValue(const Ulong& n) 
+template<class T> inline void Vector<T>::setDimValue(const Ulong& n)
   {d_list.setSizeValue(n);}
-template<class T> 
-inline void Vector<T>::setVect(const T *source, const Ulong& first, 
+template<class T>
+inline void Vector<T>::setVect(const T *source, const Ulong& first,
 			       const Ulong& r)
   {d_list.setData(source,first,r);}
-template<class T> inline void Vector<T>::setVect(const T *source, 
-						 const Ulong& r) 
+template<class T> inline void Vector<T>::setVect(const T *source,
+						 const Ulong& r)
   {setVect(source,0,r);}
 template<class T> inline void Vector<T>::setZero(const Ulong& first,
-						 const Ulong& r) 
+						 const Ulong& r)
   {d_list.setZero(first,r);}
-template<class T> 
+template<class T>
   inline void Vector<T>::setZero(const Ulong& r) {d_list.setZero(0,r);}
 template<class T> inline void Vector<T>::setZero() {d_list.setZero();}
-template<class T> 
-  inline const T& Vector<T>::operator[] (const Ulong& j) const 
+template<class T>
+  inline const T& Vector<T>::operator[] (const Ulong& j) const
   {return d_list[j];}
-template<class T> 
+template<class T>
   inline const Ulong& Vector<T>::dim() const {return d_list.size();}
-template<class T> 
+template<class T>
   inline const List<T>& Vector<T>::list() const {return d_list;}
-template<class T> 
+template<class T>
   inline const T* Vector<T>::ptr() const {return d_list.ptr();}
 
-};
+}
 
 #include "vector.hpp"
 

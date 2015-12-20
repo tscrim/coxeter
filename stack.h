@@ -1,6 +1,6 @@
 /*
   This is stack.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,29 +9,21 @@
 #define STACK_H
 
 #include "globals.h"
-
-namespace stack {
-  using namespace globals;
-};
-
-/* class declarations */
-
-namespace stack {
-  template <class T> class Fifo;
-  template <class T> class Stack;
-};
-
-/******* class definitions *************************************************/
-
 #include "list.h"
 
 namespace stack {
+  using namespace coxeter;
   using namespace list;
-};
 
-namespace stack {
+/* class declarations */
 
-template <class T> class Fifo {
+  template <class T> class Fifo;
+  template <class T> class Stack;
+
+/******* class definitions *************************************************/
+
+template <class T>
+class Fifo {
  private:
   List<T> d_list;
   Ulong d_first;
@@ -51,7 +43,8 @@ template <class T> class Fifo {
   const T& top() const;
 };
 
-template <class T> class Stack {
+template <class T>
+class Stack {
  private:
   List<T> d_list;
  public:
@@ -68,21 +61,22 @@ template <class T> class Stack {
   const T& top() const;
 };
 
-};
-
 /******** Inline implementations ******************************************/
 
-namespace stack {
-  template <class T> inline Ulong Stack<T>::size() const
+  template <class T>
+  inline Ulong Stack<T>::size() const
     {return d_list.size();}
-  template <class T> inline const T& Stack<T>::top() const 
+  template <class T>
+  inline const T& Stack<T>::top() const
     {return d_list[d_list.size()-1];}
 
-  template <class T> inline Ulong Fifo<T>::size() const
+  template <class T>
+  inline Ulong Fifo<T>::size() const
     {return d_size;}
-  template <class T> inline const T& Fifo<T>::top() const 
+  template <class T>
+  inline const T& Fifo<T>::top() const
     {return d_list[d_first];}
-};
+}
 
 #include "stack.hpp"
 

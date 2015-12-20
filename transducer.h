@@ -1,6 +1,6 @@
 /*
   This is transducer.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -11,7 +11,7 @@
 #include "globals.h"
 
 namespace transducer {
-  using namespace globals;
+  using namespace coxeter;
 };
 
 /******** type declarations *************************************************/
@@ -135,16 +135,16 @@ inline Ulong SubQuotient::size() const {return d_size;}
 
 /* FiltrationTerm */
 
-inline ParNbr FiltrationTerm::extend(const ParNbr& x, const Generator& s) 
+inline ParNbr FiltrationTerm::extend(const ParNbr& x, const Generator& s)
   {return d_X->extend(x,s);}
-inline void FiltrationTerm::fill(const CoxGraph& G) 
+inline void FiltrationTerm::fill(const CoxGraph& G)
   {d_X->fill(G); fillNormalPieces();}
-inline CoxLetter FiltrationTerm::firstDescent (const ParNbr& x) const 
+inline CoxLetter FiltrationTerm::firstDescent (const ParNbr& x) const
   {return d_X->firstDescent(x);}
-inline Length FiltrationTerm::length(const ParNbr& x) const 
+inline Length FiltrationTerm::length(const ParNbr& x) const
   {return d_X->length(x);}
 inline FiltrationTerm* FiltrationTerm::next() const {return d_next;}
-inline const CoxWord& FiltrationTerm::np(const ParNbr& x) const 
+inline const CoxWord& FiltrationTerm::np(const ParNbr& x) const
   {return d_np[x];}
 inline Rank FiltrationTerm::rank() const {return d_X->rank();}
 inline CoxWord& FiltrationTerm::reduced(CoxWord& g, ParNbr x) const

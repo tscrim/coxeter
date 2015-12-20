@@ -1,6 +1,6 @@
 /*
   This is interactive.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -23,12 +23,11 @@
 namespace interactive {
   using namespace affine;
   using namespace automata;
+  using namespace coxeter;
   using namespace error;
   using namespace fcoxgroup;
   using namespace general;
   using namespace io;
-  using namespace type;
-  using namespace typeA;
 };
 
 /****************************************************************************
@@ -75,7 +74,7 @@ namespace {
 
       Chapter I -- The OutputFile class.
 
-  This class is a little convenience made possible by C++ : it will 
+  This class is a little convenience made possible by C++ : it will
   automatically ask the user for a filename when the file
   is created, and more importantly, close the file for him when it gets
   out of use. C++ magic!
@@ -86,7 +85,7 @@ namespace interactive {
 
 OutputFile::OutputFile()
 
-{  
+{
   static String buf(0);
 
   printf("Name an output file (hit return for stdout):\n");
@@ -105,8 +104,6 @@ OutputFile::~OutputFile()
   if (d_file != stdout)
     fclose(d_file);
 }
-
-};
 
 /****************************************************************************
 
@@ -131,8 +128,6 @@ OutputFile::~OutputFile()
   - readCoxEntry(i,j,inputfile) : reads a coxeter entry from an input file;
 
  ****************************************************************************/
-
-namespace interactive {
 
 CoxGroup* allocCoxGroup()
 
@@ -171,8 +166,8 @@ CoxGroup* allocCoxGroup(const Type& x)
 CoxGroup* coxeterGroup(const Type& x, const Rank& l)
 
 /*
-  This function allocates a CoxGroup of the given type and rank. More 
-  precisely, it allocates an object in the appropriate derived class of 
+  This function allocates a CoxGroup of the given type and rank. More
+  precisely, it allocates an object in the appropriate derived class of
   CoxGroup; in other words, it works as a virtual constructor for the
   CoxGroup class.
 */
@@ -235,7 +230,7 @@ CoxEntry getCoxEntry(const Rank& i, const Rank& j)
     getInput(stdin,buf);
     if (buf[0] == '\0') { /* abort */
       ERRNO = BAD_COXENTRY;
-      return undef_coxentry;	  
+      return undef_coxentry;
     }
     m = strtol(buf.ptr(),NULL,0);
     checkCoxEntry(i,j,m);
@@ -254,7 +249,7 @@ void getCoxFileName(String& str)
 /*
   This function gets from the user the name of the file containing the
   coxeter matrix. It is called if the type is set to X. It checks if
-  the given name corresponds to a file under coxeter_matrices. As usual, 
+  the given name corresponds to a file under coxeter_matrices. As usual,
   it prompts until it gets a valid name or a carriage return,
   taking the latter to mean an instruction to abort the procedure.
 */
@@ -279,7 +274,7 @@ void getCoxFileName(String& str)
     getInput(stdin,buf,buf.length());
     if (buf[c] == '\0') { /* abort */
       ERRNO = ABORT;
-      return;	  
+      return;
     }
     checkFilename(buf.ptr());
   }
@@ -463,8 +458,8 @@ Rank getRank(const Type& type)
 
 /*
   This function gets a rank from the user, corresponding to the given
-  type. In case of invalid input, it prompts for better input, until it 
-  gets it, or until it gets a carriage return, (in which case it quits 
+  type. In case of invalid input, it prompts for better input, until it
+  gets it, or until it gets a carriage return, (in which case it quits
   unsuccessfully).
 */
 
@@ -493,7 +488,7 @@ Rank getRank(const Type& type)
     getInput(stdin,buf);
     if (buf[0] == '\0') { /* abort */
       ERRNO = ERROR_WARNING;
-      return 0;	  
+      return 0;
     }
     l = (Rank)strtol(buf.ptr(),NULL,0);
     checkRank(l,type);
@@ -527,7 +522,7 @@ const Type& getType()
     getInput(stdin,name);
     if (name[0] == '\0') { /* abort */
       ERRNO = ABORT;
-      return undef_type;	  
+      return undef_type;
     }
     checkType(name);
   }
@@ -558,9 +553,6 @@ CoxEntry readCoxEntry(const Rank& i, const Rank& j, FILE *inputfile)
   return m;
 }
 
-};
-
-
 /*****************************************************************************
 
         Chapter III --- Configuration.
@@ -575,15 +567,13 @@ CoxEntry readCoxEntry(const Rank& i, const Rank& j, FILE *inputfile)
 ******************************************************************************/
 
 
-void interactive::changeOrdering(CoxGroup *W, Permutation& order)
-
 /*
   This function allows the user to specify a new ordering of the generators.
   He should input the standard generators in the ordering that he wants
   them (this is perhaps easier than to work from the current ordering,
-  which would have been another possibility.) 
+  which would have been another possibility.)
 */
-
+void changeOrdering(CoxGroup *W, Permutation& order)
 {
   static CoxWord g(0);
 
@@ -621,6 +611,7 @@ void interactive::changeOrdering(CoxGroup *W, Permutation& order)
   return;
 }
 
+}
 
 /*****************************************************************************
 
@@ -738,7 +729,7 @@ void checkRank(const Rank& l, const Type& type)
   virtual function maybe.)
 */
 
-{  
+{
   switch(type[0])
     {
     case 'A':
@@ -820,7 +811,7 @@ void checkType(String& str)
 /*
   Checks if the string s is a valid type for a Coxeter group. Currently
   the valid types are one-letter strings (this might change, for instance
-  if non-irreducible groups are permitted). 
+  if non-irreducible groups are permitted).
 
   The valid types are :
 
@@ -834,7 +825,7 @@ void checkType(String& str)
   the string holds at least a character.
 */
 
-{  
+{
   if (str.length() > 1) { /* string too long */
     ERRNO = WRONG_TYPE;
     return;
@@ -886,7 +877,7 @@ void checkType(String& str)
 
 namespace interactive {
 
-void printInterface(FILE* file, const GroupEltInterface& GI, 
+void printInterface(FILE* file, const GroupEltInterface& GI,
 		       const Permutation& a)
 
 {
@@ -910,7 +901,7 @@ void printInterface(FILE* file, const GroupEltInterface& GI,
   return;
 }
 
-void printInterface(FILE* file, const GroupEltInterface& GI, 
+void printInterface(FILE* file, const GroupEltInterface& GI,
 		    const GroupEltInterface& WI, const Permutation& a)
 
 {
@@ -952,7 +943,7 @@ void printMatrix(FILE* file, const CoxGroup* W)
     }
     fprintf(file,"\n");
   }
-  
+
   return;
 }
 
@@ -1198,7 +1189,7 @@ void printGDiagram(FILE* file, const CoxGroup* W)
   print(file,I.inSymbol(0));
   fprintf(file," - ");
   print(file,I.inSymbol(1));
-  
+
   return;
 }
 
@@ -1216,7 +1207,7 @@ void printHDiagram(FILE* file, const CoxGroup* W)
     fprintf(file," - ");
     print(file,I.inSymbol(s));
   }
-  
+
   return;
 }
 

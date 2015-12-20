@@ -9,30 +9,27 @@
 #define COMMANDS_H
 
 #include "globals.h"
+#include "coxgroup.h"
+#include "dictionary.h"
+#include "io.h"
 
 namespace commands {
-  using namespace globals;
-};
-
-#include "coxgroup.h"
+  using namespace coxeter;
+  using namespace dictionary;
+  using namespace io;
 
 /******** type declarations ************************************************/
 
-namespace commands {
   struct CommandData;
   class CommandTree;
-};
 
 /******** constants ********************************************************/
 
-namespace commands {
   extern void (*default_help)();
-};
 
 /******** function declarations ********************************************/
 
-namespace commands {
-  coxeter::CoxGroup* currentGroup();
+  CoxGroup* currentGroup();
   void default_error(char* str);
   void execute();
   CommandTree* interfaceCommandTree();
@@ -45,19 +42,8 @@ namespace commands {
     CommandTree* inCommandTree();
     CommandTree* outCommandTree();
   };
-};
 
 /******** Type definitions *************************************************/
-
-#include "dictionary.h"
-#include "io.h"
-
-namespace commands {
-  using namespace dictionary;
-  using namespace io;
-};
-
-namespace commands {
 
 struct CommandData {
   String name;
@@ -104,11 +90,7 @@ class CommandTree:public Dictionary<CommandData> {
   CommandTree* helpMode() const;                                 /* inlined */
 };
 
-};
-
 /******** Inline definitions *********************************************/
-
-namespace commands {
 
 inline void CommandTree::setEntry(void (*a)()) {d_entry = a;}
 inline void CommandTree::entry() const {return d_entry();}
@@ -116,6 +98,6 @@ inline void CommandTree::error(char *str) const {return d_error(str);}
 inline void CommandTree::exit() const {return d_exit();}
 inline CommandTree* CommandTree::helpMode() const {return d_help;}
 
-};
+}
 
 #endif

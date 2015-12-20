@@ -1,6 +1,6 @@
 /*
   This is files.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,19 +9,24 @@
 #define FILES_H
 
 #include "globals.h"
+#include "hecke.h"
+#include "invkl.h"
+#include "kl.h"
+#include "uneqkl.h"
+#include "wgraph.h"
 
 namespace files {
-  using namespace globals;
-};
+  using namespace coxeter;
+  using namespace hecke;
+  using namespace wgraph;
+  // do _not_ use namespace kl! creates conflicts in coxgroup
 
 /******** type declarations *************************************************/
 
-namespace files {
-
-  enum Header { bettiH, basisH, closureH, dufloH, extremalsH, ihBettiH, 
-		lCOrderH, lCellsH, lCellWGraphsH, lWGraphH, lrCOrderH, 
-		lrCellsH, lrCellWGraphsH, lrWGraphH, rCOrderH, rCellsH, 
-		rCellWGraphsH, rWGraphH, slocusH, sstratificationH, 
+  enum Header { bettiH, basisH, closureH, dufloH, extremalsH, ihBettiH,
+		lCOrderH, lCellsH, lCellWGraphsH, lWGraphH, lrCOrderH,
+		lrCellsH, lrCellWGraphsH, lrWGraphH, rCOrderH, rCellsH,
+		rCellWGraphsH, rWGraphH, slocusH, sstratificationH,
 		numHeaders};
 
   struct AddHeckeTraits;
@@ -31,44 +36,30 @@ namespace files {
   struct PosetTraits;
   struct PartitionTraits;
   struct WgraphTraits;
-};
 
 /******** function definitions **********************************************/
 
-#include "hecke.h"
-#include "invkl.h"
-#include "kl.h"
-#include "uneqkl.h"
-#include "wgraph.h"
-
-namespace files {
-  using namespace hecke;
-  using namespace wgraph;
-  // do _not_ use namespace kl! creates conflicts in coxgroup
-};
-
-namespace files {
 template <class C>
-  void appendCoefficient(String& str, const C& c, 
+  void appendCoefficient(String& str, const C& c,
 			PolynomialTraits& traits);
 template <class E>
   void appendExponent(String& str, const E& e, PolynomialTraits& traits);
 template <class M>
-  void appendHeckeMonomial(String& str, const M& m, const SchubertContext& p, 
-			   const Interface& I, HeckeTraits& hTraits, 
+  void appendHeckeMonomial(String& str, const M& m, const SchubertContext& p,
+			   const Interface& I, HeckeTraits& hTraits,
 			   PolynomialTraits& pTraits, const Length& l);
 void appendHomology(String& str, const Homology& h, OutputTraits& traits);
 template <class C>
   void appendMonomial(String& str, const C& c, const Ulong& e,
 		      PolynomialTraits& traits,
 		      const Ulong& d = 1, const long& m = 0);
-void appendModifier(String& str, const Ulong& d, const long& m, 
+void appendModifier(String& str, const Ulong& d, const long& m,
 		    PolynomialTraits& traits);
 template <class M>
-  void appendMuMark(String& str, const M& m, const SchubertContext& p, 
+  void appendMuMark(String& str, const M& m, const SchubertContext& p,
 		    const Length& l, HeckeTraits& traits);
 template <class P>
-  void appendPolynomial(String& str, const P& p, 
+  void appendPolynomial(String& str, const P& p,
 			PolynomialTraits& traits,
 			const Ulong& d = 1, const long& m = 0);
 void appendSeparator(String& str, const Ulong& n, HeckeTraits& traits);
@@ -77,7 +68,7 @@ template <class KL>
 void minReps(List<CoxNbr>& min, const Partition& pi, schubert::NFCompare& c);
 void pad(String& str, const Ulong& n, HeckeTraits& traits);
 template<class H>
-  void printAsBasisElt(FILE* file, const H& h, const SchubertContext& p, 
+  void printAsBasisElt(FILE* file, const H& h, const SchubertContext& p,
 		       Interface& I, OutputTraits& traits);
 void printBetti(FILE* file, const CoxNbr& y, const SchubertContext& p,
 		OutputTraits& traits);
@@ -90,31 +81,31 @@ template <class KL>
   void printClosure(FILE* file, const CoxNbr& y, KL& kl, const Interface& I,
 		    OutputTraits& traits);
 template <class C>
-  void printCoefficient(FILE* file, const C& c, 
+  void printCoefficient(FILE* file, const C& c,
 			PolynomialTraits& traits);
 void printDescents(FILE* file, const LFlags& df, const LFlags& f,
 		   const Interface& I, WgraphTraits& traits);
 template <class KL>
-  void printDuflo(FILE* file, const List<CoxNbr>& d, const Partition& pi, 
+  void printDuflo(FILE* file, const List<CoxNbr>& d, const Partition& pi,
 		  KL& kl, const Interface& I, OutputTraits& traits);
 void printEltData(FILE* file, const CoxNbr& y, const SchubertContext& p,
 		  const Interface& I, OutputTraits& traits);
 template <class E>
   void printExponent(FILE* file, const E& e, PolynomialTraits& traits);
 template <class KL>
-  void printExtremals(FILE* file, const CoxNbr& y, const KL& kl, 
+  void printExtremals(FILE* file, const CoxNbr& y, const KL& kl,
 		      const Interface& I, OutputTraits& traits);
 void printHeader(FILE* file, const Header& header, OutputTraits& traits);
 template <class H>
-  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p, 
-		     const Interface& I, OutputTraits& traits, 
+  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p,
+		     const Interface& I, OutputTraits& traits,
 		     const Length& l = undef_length);
 template <class H>
-  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p, 
-		     const Interface& I, OutputTraits& traits, 
+  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p,
+		     const Interface& I, OutputTraits& traits,
 		     const Length& l = undef_length);
 template <class H>
-  void printHeckeElt(FILE* file, const H& h, const Permutation& a, 
+  void printHeckeElt(FILE* file, const H& h, const Permutation& a,
 		     const SchubertContext& p, const Interface& I,
 		     HeckeTraits& hTraits,
 		     PolynomialTraits& pTraits,
@@ -123,22 +114,22 @@ void printHomology(FILE* file, const Homology& h, OutputTraits& traits);
 template <class KL>
   void printIHBetti(FILE* file, const CoxNbr& y, KL& kl, OutputTraits& traits);
 template <class KL>
-  void printLCOrder(FILE* file, KL& kl, const Interface& I, 
+  void printLCOrder(FILE* file, KL& kl, const Interface& I,
 		    OutputTraits& traits);
 template <class KL>
   void printLCells(FILE* file, const Partition& lp, KL& kl, const Interface& I,
 		   OutputTraits& traits);
 template <class KL>
-  void printLCellWGraphs(FILE* file, const Partition& lp, KL& kl, 
+  void printLCellWGraphs(FILE* file, const Partition& lp, KL& kl,
 			 const Interface& I, OutputTraits& traits);
 template <class KL>
   void printLRCOrder(FILE* file, KL& kl, const Interface& I,
 		     OutputTraits& traits);
 template <class KL>
-  void printLRCells(FILE* file, const Partition& lp, KL& kl, 
+  void printLRCells(FILE* file, const Partition& lp, KL& kl,
 		    const Interface& I, OutputTraits& traits);
 template <class KL>
-  void printLRCellWGraphs(FILE* file, const Partition& lp, KL& kl, 
+  void printLRCellWGraphs(FILE* file, const Partition& lp, KL& kl,
 			  const Interface& I, OutputTraits& traits);
 template <class KL>
   void printLRWGraph(FILE* file, KL& kl, const Interface& I,
@@ -150,10 +141,10 @@ template <class C>
   void printMonomial(FILE* file, const C& c, const Ulong& e,
 		     PolynomialTraits& traits,
 		     const Ulong& d = 1, const long& m = 0);
-void printModifier(FILE* file, const Ulong& d, const long& m, 
+void printModifier(FILE* file, const Ulong& d, const long& m,
 		   PolynomialTraits& traits);
 template <class M>
-  void printMuMark(FILE* file, const M& m, const SchubertContext& p, 
+  void printMuMark(FILE* file, const M& m, const SchubertContext& p,
 		   const Length& l, HeckeTraits& traits);
 void printPartition(FILE* file, const Partition& pi, const SchubertContext& p,
 		    const Interface& I, PartitionTraits& traits);
@@ -167,35 +158,32 @@ template <class KL>
   void printRCells(FILE* file, const Partition& lp, KL& kl, const Interface& I,
 		   OutputTraits& traits);
 template <class KL>
-  void printRCellWGraphs(FILE* file, const Partition& lp, KL& kl, 
+  void printRCellWGraphs(FILE* file, const Partition& lp, KL& kl,
 			 const Interface& I, OutputTraits& traits);
 template <class KL>
   void printRWGraph(FILE* file, KL& kl, const Interface& I,
 		    OutputTraits& traits);
 void printSeparator(FILE* file, const Ulong& n, HeckeTraits& traits);
 template <class KL>
-  void printSingularLocus(FILE* file, const CoxNbr& y, KL& kl, 
+  void printSingularLocus(FILE* file, const CoxNbr& y, KL& kl,
 			  const Interface& I, OutputTraits& traits);
 template <class KL>
-  void printSingularStratification(FILE* file, const CoxNbr& y, KL& kl, 
+  void printSingularStratification(FILE* file, const CoxNbr& y, KL& kl,
 				   const Interface& I, OutputTraits& traits);
 void printWGraph(FILE* file, const WGraph& X, const LFlags& f,
 		 const Interface& I, WgraphTraits& traits);
 template <class KL>
-  void printWGraphList(FILE* file, const Partition& pi, const LFlags& f, 
+  void printWGraphList(FILE* file, const Partition& pi, const LFlags& f,
 		       const Interface& I, KL& kl, OutputTraits& traits);
 template <class H>
   bool setTwoSided(const H& h, const Permutation& a, const SchubertContext& p,
 		   const Interface& I, HeckeTraits& hTraits,
 		   PolynomialTraits& pTraits, const Length& l = undef_length);
-void sortLists(List<List<CoxNbr> >& lc, schubert::NFCompare& nfc, 
+void sortLists(List<List<CoxNbr> >& lc, schubert::NFCompare& nfc,
 	       Permutation& a);
 void writeClasses(List<List<CoxNbr> >& lc, const Partition& pi);
-};
 
 /******** type definitions **************************************************/
-
-namespace files {
 
 struct PolynomialTraits {
   String prefix;
@@ -442,7 +430,7 @@ struct OutputTraits {
   void setDefaultTraits(HeckeTraits& hTraits);
 };
 
-};
+}
 
 /******** inline definitions *************************************************/
 

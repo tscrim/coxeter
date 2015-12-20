@@ -1,6 +1,6 @@
 /*
   This is uneqkl.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,28 +9,28 @@
 #define UNEQKL_H
 
 #include "globals.h"
-
-namespace uneqkl {
-  using namespace globals;
-};
-
-/******** type declarations **************************************************/
-
 #include "coxtypes.h"
 #include "hecke.h"
 #include "klsupport.h"
 #include "list.h"
 #include "polynomials.h"
+#include "bits.h"
+#include "memory.h"
+#include "search.h"
 
 namespace uneqkl {
+  using namespace coxeter;
   using namespace coxtypes;
   using namespace hecke;
   using namespace klsupport;
   using namespace list;
   using namespace polynomials;
-};
+  using namespace bits;
+  using namespace memory;
+  using namespace search;
 
-namespace uneqkl {
+/******** type declarations **************************************************/
+
   class KLContext;
   class KLPol;
   class MuPol;
@@ -42,31 +42,16 @@ namespace uneqkl {
   typedef List<MuData> MuRow;
   typedef List<MuRow*> MuTable;
   typedef List<HeckeMonomial<KLPol> > HeckeElt;
-};
 
 /******** function declarations **********************************************/
 
-namespace uneqkl {
   void cBasis(HeckeElt& h, const CoxNbr& y, KLContext& kl);
   const MuPol& errorMuPol();
   const KLPol& errorPol();
   const KLPol& one();
   const MuPol& zero();
-};
 
 /******** type definitions ***************************************************/
-
-#include "bits.h"
-#include "memory.h"
-#include "search.h"
-
-namespace uneqkl {
-  using namespace bits;
-  using namespace memory;
-  using namespace search;
-};
-
-namespace uneqkl {
 
 class KLPol:public Polynomial<SKLCoeff> {
   static const SKLCoeff min_coeff = SKLCOEFF_MIN;
@@ -169,11 +154,7 @@ class KLContext {
   void setSize(const Ulong& n);
 };
 
-};
-
 /******** inline definitions ************************************************/
-
-namespace uneqkl {
 
 inline bool MuData::operator> (const MuData& m) const {return x > m.x;}
 inline bool MuData::operator< (const MuData& m) const {return x < m.x;}
@@ -197,14 +178,14 @@ inline Ulong KLContext::length(const CoxNbr& x) const {return d_length[x];}
 inline const MuRow& KLContext::muList(const Generator& s, const CoxNbr& y)
   const {return d_muTable[s][0][y][0];}
 inline Rank KLContext::rank() const {return d_klsupport->rank();}
-inline const SchubertContext& KLContext::schubert() const 
+inline const SchubertContext& KLContext::schubert() const
   {return klsupport().schubert();}
 inline Ulong KLContext::size() const {return d_klList.size();}
 
-inline void KLContext::applyIPermutation(const CoxNbr& y, 
+inline void KLContext::applyIPermutation(const CoxNbr& y,
 					 const Permutation& a)
   {return rightRangePermute(*d_klList[y],a);}
 
-};
+}
 
 #endif

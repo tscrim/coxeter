@@ -1,6 +1,6 @@
 /*
   This is interface.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,14 +9,24 @@
 #define INTERFACE_H
 
 #include "globals.h"
+#include "automata.h"
+#include "coxtypes.h"
+#include "io.h"
+#include "list.h"
+#include "memory.h"
+#include "minroots.h"
+#include "transducer.h"
 
 namespace interface {
-  using namespace globals;
-};
+  using namespace coxeter;
+  using namespace automata;
+  using namespace coxtypes;
+  using namespace list;
+  using namespace minroots;
+  using namespace transducer;
 
 /******** type declarations *************************************************/
 
-namespace interface {
   struct DescentSetInterface;
   struct GroupEltInterface;
   struct ReservedSymbols;
@@ -38,27 +48,8 @@ namespace interface {
   struct HexadecimalFromZero {};
   struct Decimal {};
   struct Alphabetic {};
-};
-
-#include "automata.h"
-#include "coxtypes.h"
-#include "io.h"
-#include "list.h"
-#include "memory.h"
-#include "minroots.h"
-#include "transducer.h"
-
-namespace interface {
-  using namespace automata;
-  using namespace coxtypes;
-  using namespace list;
-  using namespace minroots;
-  using namespace transducer;
-};
 
 /******** constants **********************************************************/
-
-namespace interface {
 
   const Letter empty_type = 0;
   const Letter generator_type = 1;
@@ -68,12 +59,9 @@ namespace interface {
   const Letter modifier_type = 5;
   const Letter grouping_type = 6;
   const Letter number_type = 7;
-  
-};
 
 /******** function declarations **********************************************/
 
-namespace interface {
   const String* alphabeticSymbols(Ulong n);
   String& append(String& str, const CoxWord& g, const GroupEltInterface& GI);
   String& append(String& buf, const LFlags& f, const Interface& I);
@@ -100,19 +88,16 @@ namespace interface {
   void print(FILE *file, const LFlags& f, const DescentSetInterface& DI,
 	     const GroupEltInterface& GI);
   void printSymbol(FILE *file, const Generator& s, const Interface& I);
-  void printTwosided(FILE *file, const LFlags& f, 
-		     const DescentSetInterface& DI, 
+  void printTwosided(FILE *file, const LFlags& f,
+		     const DescentSetInterface& DI,
 		     const GroupEltInterface& GI, const Rank& l);
   void printTwosided(FILE *file, const LFlags& f, const Interface& I);
                                                                  /* inlined */
   CoxNbr readCoxNbr(ParseInterface& P, Ulong size);
   Letter tokenType(const Token& tok);
   const String* twohexSymbols(Ulong n);
-};
 
 /******** type definitions ***************************************************/
-
-namespace interface {
 
 struct ParseInterface {
   String str;
@@ -285,15 +270,11 @@ class Interface {
   virtual void print(FILE* file, const CoxWord& g) const;
 };
 
-};
-
 /******** inline implementations *******************************************/
-
-namespace interface {
 
 inline String& append(String& str, const CoxWord& g, const Interface& I)
   {return append(str,g,I.outInterface());}
-inline String& appendSymbol(String& str, const Generator& s, 
+inline String& appendSymbol(String& str, const Generator& s,
 			    const Interface& I)
   {return io::append(str,I.outSymbol(s));}
 inline void print(FILE *file, const LFlags& f, const Interface& I)
@@ -318,7 +299,7 @@ inline const String& Interface::inPrefix() const {return d_in->prefix;}
 inline const String& Interface::inSeparator() const {return d_in->separator;}
 inline const String& Interface::inSymbol(const Generator& s) const
   {return d_in->symbol[s];}
-inline bool Interface::isReserved(const String& str) const 
+inline bool Interface::isReserved(const String& str) const
   {return find(d_reserved,str) != ~static_cast<Ulong>(0);}
 inline const GroupEltInterface& Interface::outInterface() const
   {return *d_out;}
@@ -338,7 +319,7 @@ inline void Interface::setInSymbol(const Generator& s, const String& a)
   {return d_in->setSymbol(s,a);}
 inline void Interface::setOutPostfix(const String& a) {d_out->setPostfix(a);}
 inline void Interface::setOutPrefix(const String& a) {d_out->setPrefix(a);}
-inline void Interface::setOutSeparator(const String& a) 
+inline void Interface::setOutSeparator(const String& a)
   {d_out->setSeparator(a);}
 inline void Interface::setOutSymbol(const Generator& s, const String& a)
   {return d_out->setSymbol(s,a);}
@@ -348,6 +329,6 @@ inline String& Interface::append(String& str, const CoxWord& g) const
 inline void Interface::print(FILE* file, const CoxWord& g) const
   {interface::print(file,g,*d_out);}
 
-};
+}
 
 #endif

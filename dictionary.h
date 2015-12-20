@@ -1,6 +1,6 @@
 /*
   This is dictionary.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,39 +9,29 @@
 #define DICTIONARY_H
 
 #include "globals.h"
-
-namespace dictionary {
-  using namespace globals;
-};
-
-/******** type declarations *************************************************/
-
-namespace dictionary {
-  template <class T> class Dictionary;
-  template <class T> struct DictCell;
-};
-
 #include "memory.h"
 #include "io.h"
 
 namespace dictionary {
+  using namespace coxeter;
   using namespace memory;
   using namespace io;
-};
+
+/******** type declarations *************************************************/
+
+  template <class T> class Dictionary;
+  template <class T> struct DictCell;
 
 /******** function declarations *********************************************/
 
-namespace dictionary {
-  template <class T> 
-    void printExtensions(FILE* file, DictCell<T>* cell, String& name, 
+  template <class T>
+    void printExtensions(FILE* file, DictCell<T>* cell, String& name,
 			 bool& first, const char* sep = ",");
-};
 
 /* class definitions */
 
-namespace dictionary {
-
-template <class T> struct DictCell {
+template <class T>
+struct DictCell {
   T *ptr;
   DictCell *left;
   DictCell *right;
@@ -60,8 +50,8 @@ template <class T> struct DictCell {
   T* value() const {return ptr;}
 };
 
-template <class T> class Dictionary {
-
+template <class T>
+class Dictionary {
  protected:
   DictCell<T>* d_root;
  public:
@@ -77,7 +67,7 @@ template <class T> class Dictionary {
   DictCell<T>* root() {return d_root;}
 };
 
-};
+}
 
 #include "dictionary.hpp"
 

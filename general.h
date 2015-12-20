@@ -12,13 +12,10 @@
 #include "coxgroup.h"
 
 namespace general {
-  using namespace globals;
   using namespace coxeter;
-};
 
 /******** type declarations **************************************************/
 
-namespace general {
   class GeneralCoxGroup;
   class BigRankCoxGroup;
   class GeneralBRCoxGroup;
@@ -26,11 +23,8 @@ namespace general {
   class GeneralMRCoxGroup;
   class SmallRankCoxGroup;
   class GeneralSRCoxGroup;
-};
 
 /********* type definitions **************************************************/
-
-namespace general {
 
 class GeneralCoxGroup : public CoxGroup {
  public:
@@ -105,14 +99,10 @@ class SmallRankCoxGroup : public MedRankCoxGroup {
   ~GeneralSRCoxGroup();
 };
 
-};
-
 /******** inline definitions *************************************************/
-
-namespace general {
 
 inline CoxSize GeneralCoxGroup::order() const {return undef_coxsize;}
 
-};
+}
 
 #endif

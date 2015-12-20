@@ -1,6 +1,6 @@
 /*
   This is bits.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,21 +8,22 @@
 #ifndef BITS_H  /* guarantee single inclusion */
 #define BITS_H
 
-#include "globals.h"
-
 #include <limits.h>
 #include <new>
 
+#include "globals.h"
 #include "list.h"
+#include "io.h"
+#include "constants.h"
 
 namespace bits {
-  using namespace globals;
+  using namespace coxeter;
   using namespace list;
-};
+  using namespace io;
+  using namespace constants;
 
 /******** type declarations *************************************************/
 
-namespace bits {
   class BitMap;
   class Partition;
   class PartitionIterator;
@@ -32,17 +33,9 @@ namespace bits {
   typedef Ulong LFlags;
   typedef Ulong SetElt;
   typedef List<SetElt> Set;
-};
 
 /******** function declarations *********************************************/
 
-#include "io.h"
-
-namespace bits {
-  using namespace io;
-};
-
-namespace bits {
   String& append(String& l, const BitMap& map);
   unsigned bitCount(const LFlags& f);
   bool isRefinement(const Partition& pi1, const Partition& pi2);
@@ -54,17 +47,10 @@ namespace bits {
 					 Permutation& a);
   template <class T, class F> void sortI_f(const List<T>& r, F& f,
 					   Permutation& a);
-};
 
 /******** type definitions **************************************************/
 
-#include "constants.h"
-
-namespace bits {
-  using namespace constants;
-};
-
-class bits::Permutation:public Set {
+class Permutation:public Set {
  public:
 /* constructors and destructors */
   Permutation();
@@ -77,7 +63,7 @@ class bits::Permutation:public Set {
   Permutation& rightCompose(const Permutation& a);
 };
 
-class bits::BitMap {
+class BitMap {
  private:
   List<LFlags> d_map;
   Ulong d_size;
@@ -120,9 +106,9 @@ class bits::BitMap {
   ReverseIterator rend() const;                                  /* inlined */
 };
 
-class bits::BitMap::Iterator { /* is really a constant iterator */
+class BitMap::Iterator { /* is really a constant iterator */
  private:
-  static const LFlags posBits = BITS(LFlags) - 1;  /* BITS(LFlags) should be a 
+  static const LFlags posBits = BITS(LFlags) - 1;  /* BITS(LFlags) should be a
 						      power of two */
   static const LFlags baseBits = ~posBits;
   const BitMap* d_b;
@@ -142,7 +128,7 @@ class bits::BitMap::Iterator { /* is really a constant iterator */
   friend Iterator BitMap::end() const;
 };
 
-class bits::BitMap::ReverseIterator {
+class BitMap::ReverseIterator {
  private:
   Iterator d_i;
  public:
@@ -156,7 +142,7 @@ class bits::BitMap::ReverseIterator {
   bool operator!= (const ReverseIterator& i) const;              /* inlined */
 };
 
-class bits::Partition {
+class Partition {
  private:
   List<Ulong> d_list;
   Ulong d_classCount;
@@ -190,7 +176,7 @@ class bits::Partition {
   void printClassSizes(FILE* file) const;
 };
 
-class bits::PartitionIterator {
+class PartitionIterator {
   const Partition& d_pi;
   Permutation d_a;
   Set d_class;
@@ -206,7 +192,7 @@ class bits::PartitionIterator {
   const Set& operator()() const;                        /* inlined */
 };
 
-class bits::SubSet {
+class SubSet {
  private:
   BitMap d_bitmap;
   List<Ulong> d_list;
@@ -236,15 +222,13 @@ class bits::SubSet {
 
 /**** Inline implementations **********************************************/
 
-namespace bits {
-
   inline BitMap& BitMap::operator= (const BitMap& map) {return assign(map);}
   inline void BitMap::clearBit(const Ulong& n)
     {d_map[n/BITS(LFlags)] &= ~(lmask[n%BITS(LFlags)]);}
   inline LFlags BitMap::chunk(const Ulong& m) const {return d_map[m];}
   inline bool BitMap::getBit(const Ulong& n) const
     {return d_map[n/BITS(LFlags)] & lmask[n%BITS(LFlags)];}
-  inline LFlags BitMap::lastchunk() const 
+  inline LFlags BitMap::lastchunk() const
     {return leqmask[(size()-1)%BITS(LFlags)];}
   inline void BitMap::reset() {d_map.setZero();}
   inline void BitMap::setBit(const Ulong& n)
@@ -257,7 +241,7 @@ namespace bits {
   inline BitMap::ReverseIterator BitMap::rend() const
     {return ReverseIterator(begin());}
 
-  inline Ulong BitMap::Iterator::bitPos() const 
+  inline Ulong BitMap::Iterator::bitPos() const
     {return d_bitAddress&posBits;}
   inline Ulong BitMap::Iterator::operator* () const
     {return d_bitAddress;}
@@ -282,47 +266,41 @@ namespace bits {
   inline Ulong& Partition::operator[] (const Ulong &j)
     {return d_list[j];}
   inline Ulong Partition::classCount() const {return d_classCount;}
-  inline void Partition::setClassCount(const Ulong& count) 
+  inline void Partition::setClassCount(const Ulong& count)
     {d_classCount = count;}
   inline void Partition::setSize(const Ulong& n) {d_list.setSize(n);}
   inline Ulong Partition::size() const {return d_list.size();}
 
   inline PartitionIterator::operator bool() const
     {return d_valid;}
-  inline const Set& PartitionIterator::operator()() const 
+  inline const Set& PartitionIterator::operator()() const
     {return d_class;}
-  
+
   inline Ulong& SubSet::operator[] (const Ulong& j) {return d_list[j];}
   inline const Ulong& SubSet::operator[] (const Ulong& j) const
     {return d_list[j];}
-  inline SubSet& SubSet::assign(const SubSet& q) 
+  inline SubSet& SubSet::assign(const SubSet& q)
     {new(this) SubSet(q); return *this;}
   inline const BitMap& SubSet::bitMap() const {return d_bitmap;}
   inline BitMap& SubSet::bitMap() {return d_bitmap;}
-  inline Ulong SubSet::find(const SetElt& x) const 
+  inline Ulong SubSet::find(const SetElt& x) const
     {return list::find(d_list,x);}
-  inline bool SubSet::isMember(const Ulong& n) const 
+  inline bool SubSet::isMember(const Ulong& n) const
     {return d_bitmap.getBit(n);}
   inline void SubSet::setBitMapSize(const Ulong& n) {d_bitmap.setSize(n);}
   inline void SubSet::setListSize(const Ulong& n) {d_list.setSize(n);}
   inline Ulong SubSet::size() const {return d_list.size();}
   inline void SubSet::sortList() {return d_list.sort();}
-};
 
 /******** template definitions ***********************************************/
 
-namespace bits {
-
-template <class T, class F> Partition::Partition(const List<T>& r, F& f)
-  :d_list(0)
-
-/*
+/**
   This constructor defines the partition of [0,r.size()[ defined by f; f
   is supposed to be a function taking arguments of type T. It is also
   assumed that operator<= is defined for the value type of f (so that
   the function insert may be applied.)
 */
-
+template <class T, class F> Partition::Partition(const List<T>& r, F& f) : d_list(0)
 {
   List<typename F::valueType> c(0);
 
@@ -338,18 +316,16 @@ template <class T, class F> Partition::Partition(const List<T>& r, F& f)
   }
 }
 
-template <class I, class F> Partition::Partition(const I& first, const I& last,
-						 F& f):d_list(0)
-
-/*
+/**
   A rather general partition constructor. It is assumed that I is an Input
   Iterator (in an informal sense). It is assumed that f is a functor taking
   one argument of type the value type of I, and that operator<= is defined
-  for the value type of f. A partition is constructed on the range [0,N[, 
+  for the value type of f. A partition is constructed on the range [0,N[,
   where N is the number of iterations from first to last; the class numbers
   are attributed in the order of the values of f on the range.
 */
-
+template <class I, class F>
+Partition::Partition(const I& first, const I& last, F& f) : d_list(0)
 {
   List<typename F::valueType> c(0);
 
@@ -372,10 +348,7 @@ template <class I, class F> Partition::Partition(const I& first, const I& last,
 
 }
 
-template <class T>
-void rightRangePermute(List<T>& r, const Permutation& a)
-
-/*
+/**
   Applies the permutation a to the range of the list, on the right (this
   amounts to applying the inverse permutation in the usual sense). In
   other words, we have new[j] = old[a[j]].
@@ -383,7 +356,8 @@ void rightRangePermute(List<T>& r, const Permutation& a)
   We cannot write this directly however, or we would overwrite. So we
   do something similar as with ordinary range permutations.
 */
-
+template <class T>
+void rightRangePermute(List<T>& r, const Permutation& a)
 {
   BitMap b(r.size());
 
@@ -412,17 +386,16 @@ void rightRangePermute(List<T>& r, const Permutation& a)
   return;
 }
 
-template <class T> void sortI(const List<T>& r, Permutation& a)
-
-/*
+/**
   General sort function for lists. It is assumed that operator <= is defined
   for T; we will use operator> instead of !operator<=.
 
   Doesn't actually modify r; it only writes down in a the permutation
   s.t. new[j] = old[a[j]].
 */
-
-{  
+template <class T>
+void sortI(const List<T>& r, Permutation& a)
+{
   a.identity(r.size());
 
   /* set the starting value of h */
@@ -447,10 +420,7 @@ template <class T> void sortI(const List<T>& r, Permutation& a)
   return;
 }
 
-template <class T, class C> void sortI(const List<T>& r, C& inOrder,
-				      Permutation& a)
-
-/*
+/**
   General sort function taking a comparison functor as a parameter.
   It is assumed that inOrder takes two arguments of type T, and returns
   a boolean value, so that the corresponding relation is a total preorder
@@ -459,8 +429,9 @@ template <class T, class C> void sortI(const List<T>& r, C& inOrder,
   Doesn't actually modify r; it only writes down in a the permutation
   s.t. new[j] = old[a[j]].
 */
-
-{  
+template <class T, class C>
+void sortI(const List<T>& r, C& inOrder, Permutation& a)
+{
   a.identity(r.size());
 
   /* set the starting value of h */
@@ -485,18 +456,16 @@ template <class T, class C> void sortI(const List<T>& r, C& inOrder,
   return;
 }
 
-template <class T, class F> void sortI_f(const List<T>& r, F& f, 
-					 Permutation& a)
-
-/*
+/**
   General sort function where the comparison is made using a functor f.
   It is assumed that operator> is defined for the valuetype of f.
 
   Doesn't actually modify r; it only writes down in a the permutation
   s.t. new[j] = old[a[j]].
 */
-
-{  
+template <class T, class F>
+void sortI_f(const List<T>& r, F& f, Permutation& a)
+{
   a.identity(r.size());
 
   /* set the starting value of h */
@@ -521,6 +490,6 @@ template <class T, class F> void sortI_f(const List<T>& r, F& f,
   return;
 }
 
-};
+}
 
 #endif

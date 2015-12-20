@@ -23,13 +23,10 @@
 #include "coxgroup.h"
 
 namespace fcoxgroup {
-  using namespace globals;
   using namespace coxeter;
-};
 
 /******** type declarations *************************************************/
 
-namespace fcoxgroup {
   class FiniteCoxGroup;
   class FiniteBigRankCoxGroup;
   class GeneralFBRCoxGroup;
@@ -40,18 +37,13 @@ namespace fcoxgroup {
   class SmallCoxGroup;
   class GeneralSCoxGroup;
   typedef CoxNbr DenseArray;
-};
 
 /******** function declarations *********************************************/
 
-namespace fcoxgroup {
   bool isFiniteType(CoxGroup *W);
   Rank maxSmallRank(const Type& x);
-};
 
 /******** type definitions **************************************************/
-
-namespace fcoxgroup {
 
 class FiniteCoxGroup : public CoxGroup {
 
@@ -235,11 +227,7 @@ class SmallCoxGroup : public FiniteSmallRankCoxGroup {
   ~GeneralSCoxGroup();
 };
 
-};
-
 /******** Inline implementations ******************************************/
-
-namespace fcoxgroup {
 
 inline const CoxArr& FiniteCoxGroup::assign(CoxArr& a, const CoxArr& b) const
   {memmove(a,b,rank()*sizeof(ParNbr)); return a;}
@@ -256,6 +244,6 @@ inline const CoxArr& FiniteCoxGroup::setZero(CoxArr& a) const
 inline const FiltrationTerm* FiniteCoxGroup::transducer(const Rank& l) const
   {return d_transducer->transducer(l);}
 
-};
+}
 
 #endif

@@ -14,23 +14,18 @@
 #ifndef COXTYPES_H  /* guard against multiple inclusions */
 #define COXTYPES_H
 
-#include "globals.h"
 #include <limits.h>
 
+#include "globals.h"
 #include "io.h"
+#include "list.h"
 
 namespace coxtypes {
-  using namespace globals;
+  using namespace coxeter;
   using namespace io;
-};
+  using namespace list;
 
 /* type declarations and bounds */
-
-namespace coxeter {
-  class CoxGroup; // forward declaration
-};
-
-namespace coxtypes {
 
   typedef unsigned short Rank;
   typedef Ulong CoxSize;         /* should hold at least 32 bits */
@@ -69,33 +64,16 @@ namespace coxtypes {
   const Length undef_length = LENGTH_MAX+1;
   const StarOp STAR_MAX = ULONG_MAX-1;              /* top value is reserved */
   const StarOp undef_starop = STAR_MAX+1;
-};
 
 /* functions provided by coxtypes.h */
 
-#include "io.h"
-
-namespace coxtypes {
-  using namespace io;
-};
-
-namespace coxtypes {
   bool operator== (const CoxWord& g, const CoxWord& h);
   bool operator< (const CoxWord& g, const CoxWord& h);
   bool operator> (const CoxWord& g, const CoxWord& h);           /* inlined */
   String& append(String& str, const CoxNbr& x);
   void print(FILE *outputfile, CoxArr a, Rank l);
-};
 
 /******** Implementation ****************************************************/
-
-#include "list.h"
-
-namespace coxtypes {
-  using namespace list;
-};
-
-namespace coxtypes {
 
 class CoxWord {
  private:
@@ -123,11 +101,7 @@ class CoxWord {
 		      const Length& r);
 };
 
-};
-
 /******** Inline definitions ***********************************************/
-
-namespace coxtypes {
 
   inline bool operator> (const CoxWord& g, const CoxWord& h) {return h < g;}
 
@@ -141,6 +115,6 @@ namespace coxtypes {
     {d_list.assign(h.d_list); return *this;}
   inline CoxLetter& CoxWord::operator[] (const Length& j) {return d_list[j];}
   inline void CoxWord::setLength(Length n) {d_list.setSize(n+1);}
-};
+}
 
 #endif

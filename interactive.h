@@ -9,37 +9,29 @@
 #define INTERACTIVE_H
 
 #include "globals.h"
-
-namespace interactive {
-  using namespace globals;
-};
-
-/******** type declarations *************************************************/
-
-namespace interactive {
-  class OutputFile;
-};
-
 #include "bits.h"
 #include "coxtypes.h"
+#include "coxgroup.h"
 #include "graph.h"
 #include "interface.h"
 #include "transducer.h"
 #include "type.h"
 
 namespace interactive {
+
+/******** type declarations *************************************************/
+
+  class OutputFile;
+
   using namespace bits;
   using namespace coxeter;
   using namespace coxtypes;
   using namespace graph;
   using namespace interface;
   using namespace transducer;
-  using namespace type;
-};
 
 /******** function declarations **********************************************/
 
-namespace interactive {
   CoxGroup* allocCoxGroup();
   CoxGroup* allocCoxGroup(const Type& x);
   void changeOrdering(CoxGroup *W, Permutation& order);
@@ -63,11 +55,8 @@ namespace interactive {
   void printRepresentation(FILE *file, const CoxGroup* W);
   CoxEntry readCoxEntry(const Rank& i, const Rank& j, FILE *inputfile);
   bool yesNo();
-};
 
 /* type definitions */
-
-namespace interactive {
 
 class OutputFile {
  private:

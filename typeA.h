@@ -1,6 +1,6 @@
 /*
   This is typeA.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -19,14 +19,11 @@
 #include "globals.h"
 #include "fcoxgroup.h"
 
-namespace typeA {
-  using namespace globals;
+namespace coxeter {
   using namespace fcoxgroup;
-};
 
 /******** type declarations *************************************************/
 
-namespace typeA {
   class TypeAInterface;
   class TypeACoxGroup;
   class TypeABigRankCoxGroup;
@@ -37,18 +34,13 @@ namespace typeA {
   class GeneralTypeASRCoxGroup;
   class TypeASmallCoxGroup;
   class GeneralTypeASCoxGroup;
-};
 
 /******** function declarations *********************************************/
 
-namespace typeA {
   void coxWordToPermutation(CoxWord& a, const CoxWord& g);
   void permutationToCoxWord(CoxWord& g, const CoxWord& a);
-};
 
 /******** type definitions **************************************************/
-
-namespace typeA {
 
 class TypeACoxGroup:public FiniteCoxGroup {
   TypeAInterface* d_typeAInterface;
@@ -193,24 +185,20 @@ class TypeAInterface:public Interface {
   virtual void print(FILE* file, const CoxWord& g) const;
 };
 
-};
-
 /******** inline definitions ************************************************/
 
-namespace typeA {
-
-inline bool TypeAInterface::hasPermutationInput() const 
+inline bool TypeAInterface::hasPermutationInput() const
   {return d_hasPermutationInput;}
-inline bool TypeAInterface::hasPermutationOutput() const 
+inline bool TypeAInterface::hasPermutationOutput() const
   {return d_hasPermutationOutput;}
 inline void TypeAInterface::setPermutationInput(bool b)
   {d_hasPermutationInput = b;}
 inline void TypeAInterface::setPermutationOutput(bool b)
   {d_hasPermutationOutput = b;}
 
-inline bool TypeACoxGroup::hasPermutationInput() const 
+inline bool TypeACoxGroup::hasPermutationInput() const
   {return d_typeAInterface->hasPermutationInput();}
-inline bool TypeACoxGroup::hasPermutationOutput() const 
+inline bool TypeACoxGroup::hasPermutationOutput() const
   {return d_typeAInterface->hasPermutationOutput();}
 inline void TypeACoxGroup::setPermutationInput(bool b)
   {typeAInterface().setPermutationInput(b);}
@@ -221,6 +209,6 @@ inline const TypeAInterface& TypeACoxGroup::typeAInterface() const
 inline TypeAInterface& TypeACoxGroup::typeAInterface()
   {return *d_typeAInterface;}
 
-};
+}
 
 #endif

@@ -56,13 +56,6 @@
 #define COXGROUP_H
 
 #include "globals.h"
-
-namespace coxeter {
-  using namespace globals;
-};
-
-/******** type definitions **************************************************/
-
 #include "coxtypes.h"
 #include "files.h"
 #include "graph.h"
@@ -76,6 +69,9 @@ namespace coxeter {
 #include "uneqkl.h"
 
 namespace coxeter {
+
+/******** type definitions **************************************************/
+
   using namespace coxtypes;
   using namespace files;
   using namespace graph;
@@ -85,7 +81,7 @@ namespace coxeter {
   using namespace minroots;
   using namespace transducer;
 
-class CoxGroup { // has been declared in coxtypes.h
+class CoxGroup {
 
  protected:
 

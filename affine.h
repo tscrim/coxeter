@@ -12,13 +12,9 @@
 #include "coxgroup.h"
 
 namespace affine {
-  using namespace globals;
   using namespace coxeter;
-};
 
 /******** type declarations *************************************************/
-
-namespace affine {
   class AffineCoxGroup;
   class AffineBigRankCoxGroup;
   class GeneralABRCoxGroup;
@@ -26,11 +22,8 @@ namespace affine {
   class GeneralAMRCoxGroup;
   class AffineSmallRankCoxGroup;
   class GeneralASRCoxGroup;
-};
 
 /******** type definitions **************************************************/
-
-namespace affine {
 
 class AffineCoxGroup : public CoxGroup {
  public:
@@ -105,14 +98,10 @@ class GeneralASRCoxGroup:public AffineSmallRankCoxGroup {
   ~GeneralASRCoxGroup();
 };
 
-};
-
 /******** Inline implementations ******************************************/
-
-namespace affine {
 
 inline CoxSize AffineCoxGroup::order() const {return infinite_coxsize;}
 
-};
+}
 
 #endif

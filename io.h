@@ -1,6 +1,6 @@
 /*
   This is io.h
-  
+
   Coxeter version 3.0  Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,14 +9,16 @@
 #define IO_H
 
 #include "globals.h"
+#include "list.h"
+#include "memory.h"
 
 namespace io {
-  using namespace globals;
-};
+  using namespace coxeter;
+  using namespace list;
+  using namespace memory;
 
 /******** type definitions **************************************************/
 
-namespace io {
   class String;
 
   /* style tags for i/o */
@@ -27,18 +29,14 @@ namespace io {
   struct Pretty {};
   struct Terse {};
   struct TeX {};
-};
 
 /******** constants **********************************************************/
 
-namespace io {
   const Ulong LINESIZE = 79;
   const Ulong HALFLINESIZE = 39;
-};
 
 /******** function declarations **********************************************/
 
-namespace io {
   int alphabeticDigits(Ulong c, Ulong b);
   String& append(String& l, const char c);
   String& append(String& l, const char *s);
@@ -51,7 +49,7 @@ namespace io {
   int digits(Ulong c, Ulong b);
   String& erase(String& l, const Ulong& n);
   void foldLine(FILE* file, const String& str, const Ulong& ls,
-		const Ulong& h, const char* hyphens);    
+		const Ulong& h, const char* hyphens);
   char* getInput(FILE *inputfile, String& buf, Ulong len = 0);
   String& pad(String& l, const Ulong& n);
   void print(FILE* file, const char * str);                      /* inlined */
@@ -63,22 +61,11 @@ namespace io {
   String& setString(String& l, const String& s, const Ulong &first,
 		       const Ulong& r);
   Ulong skipSpaces(const String& l, Ulong p);
-};
 
 /******** type definitions **************************************************/
 
-#include "list.h"
-#include "memory.h"
-
-namespace io {
-  using namespace list;
-  using namespace memory;
-};
-
-namespace io {
-
 class String:public List<char>
-  {
+{
   private:
   public:
 /* constructors and destructors */
@@ -97,20 +84,16 @@ class String:public List<char>
     static const String& undefined();
   };
 
-};
-
 /******** Inline definitions ***********************************************/
 
-namespace io {
-
 inline void print(FILE *file, const char* str) {fprintf(file,"%s",str);}
-inline void print(FILE *file, const String& str) 
+inline void print(FILE *file, const String& str)
   {fprintf(file,"%s",str.ptr());}
 
 inline void String::setLength(const Ulong& n) {setSize(n+1);}
 inline bool String::isDefined() const {return size();}
 inline Ulong String::length() const {return size()-1;}
 
-};
+}
 
 #endif

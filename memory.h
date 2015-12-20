@@ -1,6 +1,6 @@
 /*
   This is memory.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -11,7 +11,7 @@
 #include "globals.h"
 
 namespace memory {
-  using namespace globals;
+  using namespace coxeter;
 };
 
 /******** type declarations *************************************************/
@@ -77,9 +77,9 @@ class memory::Arena {
 
 /******** Inline implementations *****************************************/
 
-inline void* operator new(size_t size, memory::Arena& a) 
+inline void* operator new(size_t size, memory::Arena& a)
   {return a.alloc(size);}
-inline void* operator new[](size_t size, memory::Arena& a) 
+inline void* operator new[](size_t size, memory::Arena& a)
   {return a.alloc(size);}
 
 #endif

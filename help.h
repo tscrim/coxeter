@@ -1,6 +1,6 @@
 /*
   This is help.h
-  
+
   Coxeter version 3.0  Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -11,10 +11,8 @@
 #include "globals.h"
 
 namespace help {
-  using namespace globals;
-};
+  using namespace coxeter;
 
-namespace help {
 /* modes */
   void main_help();
   void interface_help();

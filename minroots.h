@@ -1,6 +1,6 @@
 /*
   This is minroots.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -12,7 +12,7 @@
 #include "globals.h"
 
 namespace minroots {
-  using namespace globals;
+  using namespace coxeter;
 };
 
 /******** type declarations *************************************************/

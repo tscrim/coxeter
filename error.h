@@ -11,10 +11,8 @@
 #include "globals.h"
 
 namespace error {
-  using namespace globals;
-};
+  using namespace coxeter;
 
-namespace error {
   enum ErrorCodes {
     ABORT=1,
     BAD_COXENTRY,
@@ -78,6 +76,6 @@ namespace error {
   extern int ERRNO;
 
   void Error(int number, ... );
-};
+}
 
 #endif

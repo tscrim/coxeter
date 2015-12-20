@@ -1,6 +1,6 @@
 /*
   This is automata.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,25 +9,19 @@
 #define AUTOMATA_H
 
 #include "globals.h"
+#include "bits.h"
 
 namespace automata {
-  using namespace globals;
-};
+  using namespace coxeter;
 
 /******** type declarations **************************************************/
 
-namespace automata {
   class Automaton;
   class ExplicitAutomaton;
   typedef unsigned Letter;
   typedef unsigned State;
-};
 
 /******** type definitions ***************************************************/
-
-#include "bits.h"
-
-namespace automata {
 
 class Automaton {
  public:
@@ -66,27 +60,24 @@ class ExplicitAutomaton:public Automaton {
   Ulong size() const;                                           /* inlined */
 };
 
-};
-
 /******** inline implementations ******************************************/
-
-namespace automata {
 
   inline void ExplicitAutomaton::setAccept(State x) {d_accept.setBit(x);}
   inline void ExplicitAutomaton::setFailure(State x) {d_failure = x;}
   inline void ExplicitAutomaton::setInitial(State x) {d_initial = x;}
-  inline void ExplicitAutomaton::setTable(State x, Letter a, State xa) 
+  inline void ExplicitAutomaton::setTable(State x, Letter a, State xa)
     {d_table[x][a] = xa;}
 
-  inline State ExplicitAutomaton::act(State x, Letter a) const 
+  inline State ExplicitAutomaton::act(State x, Letter a) const
     {return d_table[x][a];}
   inline State ExplicitAutomaton::initialState() const {return d_initial;}
-  inline bool ExplicitAutomaton::isAccept(State x) const 
+  inline bool ExplicitAutomaton::isAccept(State x) const
     {return d_accept.getBit(x);}
-  inline bool ExplicitAutomaton::isFailure(State x) const 
+  inline bool ExplicitAutomaton::isFailure(State x) const
     {return x == d_failure;}
   inline Ulong ExplicitAutomaton::rank() const {return d_rank;}
   inline Ulong ExplicitAutomaton::size() const {return d_size;}
-};
+
+}
 
 #endif

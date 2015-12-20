@@ -1,6 +1,6 @@
 /*
   This is type.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,7 +8,6 @@
 #include "type.h"
 
 namespace {
-  using namespace type;
 
   const char* affinetypes ="abcdefg";
   const char *finitetypes = "ABCDEFGHI";
@@ -22,7 +21,7 @@ namespace {
 
  ****************************************************************************/
 
-namespace type {
+namespace coxeter {
 
 Type::Type():d_name("")
 
@@ -48,8 +47,6 @@ Type::~Type()
 
 {}
 
-};
-
 /*****************************************************************************
 
         Chapter II -- Type recognition.
@@ -65,14 +62,12 @@ Type::~Type()
 
  *****************************************************************************/
 
-namespace type {
-
 bool isAffineType(const Type& x)
 
 /*
-  Recognizes the type of an affine group. This function defines the class 
-  of groups that will be treated as affine groups in this program; the i/o 
-  setup is flexible enough that there is no reason that an affine group 
+  Recognizes the type of an affine group. This function defines the class
+  of groups that will be treated as affine groups in this program; the i/o
+  setup is flexible enough that there is no reason that an affine group
   should be entered otherwise.
 */
 
@@ -135,5 +130,4 @@ bool isTypeD(const Type& type)
 }
 
 };
-
 

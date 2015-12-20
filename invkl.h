@@ -1,6 +1,6 @@
 /*
   This is invkl.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -9,27 +9,27 @@
 #define INVKL_H
 
 #include "globals.h"
-
-namespace invkl {
-  using namespace globals;
-};
-
-/******** type declarations *************************************************/
-
 #include "coxtypes.h"
 #include "klsupport.h"
 #include "hecke.h"
 #include "list.h"
 #include "polynomials.h"
+#include "bits.h"
+#include "memory.h"
+#include "search.h"
 
 namespace invkl {
+  using namespace coxeter;
   using namespace coxtypes;
   using namespace klsupport;
   using namespace list;
   using namespace polynomials;
-};
+  using namespace bits;
+  using namespace memory;
 
-namespace invkl {
+
+/******** type declarations *************************************************/
+
   class KLContext;
   class KLPol;
   struct KLStatus;
@@ -39,28 +39,12 @@ namespace invkl {
   typedef List<const KLPol*> KLRow;
   typedef List<MuData> MuRow;
   typedef List<hecke::HeckeMonomial<KLPol> > HeckeElt;
-};
 
 /******** function declarations *********************************************/
 
-namespace invkl {
-
   const KLPol& one();
 
-};
-
 /******** type definitions **************************************************/
-
-#include "bits.h"
-#include "memory.h"
-#include "search.h"
-
-namespace invkl {
-  using namespace bits;
-  using namespace memory;
-};
-
-namespace invkl {
 
 class KLPol:public Polynomial<KLCoeff> {
 public:
@@ -145,7 +129,7 @@ class KLContext {
   void clearFullMu();                                            /* inlined */
   void fillKL();
   void fillMu();
-  const KLPol& klPol(const CoxNbr& x, const CoxNbr& y, 
+  const KLPol& klPol(const CoxNbr& x, const CoxNbr& y,
 		     const Generator& s = undef_generator);
   KLCoeff mu(const CoxNbr& x, const CoxNbr& y,
 	     const Generator& s = undef_generator);
@@ -157,23 +141,19 @@ class KLContext {
   void setSize(const Ulong& n);
 };
 
-};
-
 /******** inline definitions ************************************************/
-
-namespace invkl {
 
 inline bool MuData::operator> (const MuData& m) const {return x > m.x;}
 
 inline const ExtrRow& KLContext::extrList(const CoxNbr& y) const
   {return klsupport().extrList(y);}
-inline CoxNbr KLContext::inverse(const CoxNbr& x) const 
+inline CoxNbr KLContext::inverse(const CoxNbr& x) const
   {return d_klsupport->inverse(x);}
-inline const BitMap& KLContext::involution() const 
+inline const BitMap& KLContext::involution() const
   {return d_klsupport->involution();}
 inline bool KLContext::isExtrAllocated(const CoxNbr& x) const
   {return d_klsupport->isExtrAllocated(x);}
-inline bool KLContext::isFullKL() const 
+inline bool KLContext::isFullKL() const
   {return d_status->flags&KLStatus::kl_done;}
 inline bool KLContext::isFullMu() const
   {return d_status->flags&KLStatus::mu_done;}
@@ -184,18 +164,18 @@ inline bool KLContext::isMuAllocated(const CoxNbr& x) const
 inline const KLRow& KLContext::klList(const CoxNbr& y) const
   {return *d_klList[y];}
 inline const KLSupport& KLContext::klsupport() const {return *d_klsupport;}
-inline Generator KLContext::last(const CoxNbr& y) const 
+inline Generator KLContext::last(const CoxNbr& y) const
   {return d_klsupport->last(y);}
 inline const MuRow& KLContext::muList(const CoxNbr& y) const
   {return *d_muList[y];}
 inline Rank KLContext::rank() const {return d_klsupport->rank();}
-inline const SchubertContext& KLContext::schubert() const 
+inline const SchubertContext& KLContext::schubert() const
   {return d_klsupport->schubert();}
 inline Ulong KLContext::size() const {return d_klList.size();}
-inline const search::BinaryTree<KLPol>& KLContext::tree() const 
+inline const search::BinaryTree<KLPol>& KLContext::tree() const
   {return d_klTree;}
 
-inline void KLContext::applyIPermutation(const CoxNbr& y, 
+inline void KLContext::applyIPermutation(const CoxNbr& y,
 					 const Permutation& a)
   {return rightRangePermute(*d_klList[y],a);}
 inline void KLContext::clearFullKL() {d_status->flags &= ~KLStatus::kl_done;}
@@ -203,6 +183,6 @@ inline void KLContext::clearFullMu() {d_status->flags &= ~KLStatus::mu_done;}
 inline void KLContext::setFullKL() {d_status->flags |= KLStatus::kl_done;}
 inline void KLContext::setFullMu() {d_status->flags |= KLStatus::mu_done;}
 
-};
+}
 
 #endif

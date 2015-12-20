@@ -1,6 +1,6 @@
 /*
   This is schubert.h
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -10,15 +10,25 @@
 
 #include "globals.h"
 #include "coxtypes.h"
+#include "bits.h"
+#include "interface.h"
+#include "graph.h"
+#include "io.h"
+#include "list.h"
+#include "stack.h"
 
 namespace schubert {
-  using namespace globals;
+  using namespace coxeter;
   using namespace coxtypes;
-};
+  using namespace bits;
+  using namespace interface;
+  using namespace graph;
+  using namespace io;
+  using namespace list;
+  using namespace stack;
 
 /******** type declarations *************************************************/
 
-namespace schubert {
   class ClosureIterator;
   class SchubertContext;
   class StandardSchubertContext;
@@ -27,19 +37,9 @@ namespace schubert {
 
   typedef List<CoxNbr> CoatomList;
   typedef List<BettiNbr> Homology;
-};
 
 /******** function declarations *********************************************/
 
-#include "bits.h"
-#include "interface.h"
-
-namespace schubert {
-  using namespace bits;
-  using namespace interface;
-};
-
-namespace schubert {
   void betti(Homology& h, const CoxNbr& y, const SchubertContext& p);
   void extractInvolutions(const SchubertContext& p, BitMap& b);
   void extractMaximals(const SchubertContext& p, List<CoxNbr>& c);
@@ -54,32 +54,17 @@ namespace schubert {
 		   const Interface& I);
   void printList(FILE* file, const List<CoxNbr>& v, const SchubertContext& p,
 		 const Interface& I);
-  void printPartition(FILE* file, const Partition& pi, 
+  void printPartition(FILE* file, const Partition& pi,
 		      const SchubertContext& p, const Interface& I);
-  void printPartition(FILE* file, const Partition& pi, const BitMap& b, 
+  void printPartition(FILE* file, const Partition& pi, const BitMap& b,
 		      const SchubertContext& p, const Interface& I);
   void readBitMap(List<CoxNbr>& c, const BitMap& b);
-  bool shortLexOrder(const SchubertContext& p, const CoxNbr& x, 
+  bool shortLexOrder(const SchubertContext& p, const CoxNbr& x,
 		     const CoxNbr& y, const Permutation& order);
   void setBitMap(BitMap& b, const List<CoxNbr>& c);
   Ulong sum(const Homology& h);
-};
 
 /******** type definitions *************************************************/
-
-#include "graph.h"
-#include "io.h"
-#include "list.h"
-#include "stack.h"
-
-namespace schubert {
-  using namespace graph;
-  using namespace io;
-  using namespace list;
-  using namespace stack;
-};
-
-namespace schubert {
 
 struct NFCompare {
   const SchubertContext& p;
@@ -87,7 +72,7 @@ struct NFCompare {
   NFCompare(const SchubertContext& q, const Permutation& generator_ordering)
     :p(q),order(generator_ordering) {};
   ~NFCompare() {};
-  bool operator()(const CoxNbr& x, const CoxNbr& y) 
+  bool operator()(const CoxNbr& x, const CoxNbr& y)
   {return shortLexOrder(p,x,y,order);}
 };
 
@@ -109,11 +94,11 @@ class SchubertContext {
   virtual Generator firstDescent(const CoxNbr& x) const = 0;
   virtual Generator firstLDescent(const CoxNbr& x) const = 0;
   virtual Generator firstRDescent(const CoxNbr& x) const = 0;
-  virtual Generator firstDescent(const CoxNbr& x, const Permutation& order) 
+  virtual Generator firstDescent(const CoxNbr& x, const Permutation& order)
     const = 0;
-  virtual Generator firstLDescent(const CoxNbr& x, const Permutation& order) 
+  virtual Generator firstLDescent(const CoxNbr& x, const Permutation& order)
     const = 0;
-  virtual Generator firstRDescent(const CoxNbr& x, const Permutation& order) 
+  virtual Generator firstRDescent(const CoxNbr& x, const Permutation& order)
     const = 0;
   virtual const CoatomList& hasse(const CoxNbr& x) const = 0;
   virtual bool inOrder(CoxNbr x, CoxNbr y) const = 0;
@@ -125,7 +110,7 @@ class SchubertContext {
   virtual CoxNbr maximize(const CoxNbr& x, const LFlags& f) const = 0;
   virtual Length maxlength() const = 0;
   virtual CoxNbr minimize(const CoxNbr& x, const LFlags& f) const = 0;
-  virtual CoxWord& normalForm(CoxWord& g, const CoxNbr& x, 
+  virtual CoxWord& normalForm(CoxWord& g, const CoxNbr& x,
 			      const Permutation& order) const = 0;
   virtual Ulong nStarOps() const = 0;
   virtual const BitMap& parity(const CoxNbr& x) const = 0;
@@ -146,10 +131,10 @@ class SchubertContext {
   virtual void setSize(const Ulong& n) = 0;
 /* input-output */
   virtual String& append(String&, const CoxNbr& x) const = 0;
-  virtual String& append(String&, const CoxNbr& x, const Interface& I) 
+  virtual String& append(String&, const CoxNbr& x, const Interface& I)
     const = 0;
   virtual void print(FILE* file, const CoxNbr& x) const = 0;
-  virtual void print(FILE* file, const CoxNbr& x, const Interface& I) 
+  virtual void print(FILE* file, const CoxNbr& x, const Interface& I)
     const = 0;
 };
 
@@ -195,7 +180,7 @@ class StandardSchubertContext:public SchubertContext {
   void operator delete(void* ptr)
     {return arena().free(ptr,sizeof(StandardSchubertContext));}
 /* friend declaration */
-  friend ContextExtension::ContextExtension(StandardSchubertContext&, 
+  friend ContextExtension::ContextExtension(StandardSchubertContext&,
 					    const Ulong& c);
   friend ContextExtension::~ContextExtension();
 /* constructors and destructors */
@@ -212,11 +197,11 @@ class StandardSchubertContext:public SchubertContext {
   Generator firstDescent(const CoxNbr& x) const;                 /* inlined */
   Generator firstLDescent(const CoxNbr& x) const;                /* inlined */
   Generator firstRDescent(const CoxNbr& x) const;                /* inlined */
-  Generator firstDescent(const CoxNbr& x, const Permutation& order) 
+  Generator firstDescent(const CoxNbr& x, const Permutation& order)
     const;                                                       /* inlined */
-  Generator firstLDescent(const CoxNbr& x, const Permutation& order) 
+  Generator firstLDescent(const CoxNbr& x, const Permutation& order)
     const;                                                       /* inlined */
-  Generator firstRDescent(const CoxNbr& x, const Permutation& order) 
+  Generator firstRDescent(const CoxNbr& x, const Permutation& order)
     const;                                                       /* inlined */
   const CoatomList& hasse(const CoxNbr& x) const;                /* inlined */
   bool inOrder(CoxNbr x, CoxNbr y) const;
@@ -229,7 +214,7 @@ class StandardSchubertContext:public SchubertContext {
   CoxNbr maximize(const CoxNbr& x, const LFlags& f) const;
   Length maxlength() const;                                      /* inlined */
   CoxNbr minimize(const CoxNbr& x, const LFlags& f) const;
-  CoxWord& normalForm(CoxWord& g, const CoxNbr& x, const Permutation& order) 
+  CoxWord& normalForm(CoxWord& g, const CoxNbr& x, const Permutation& order)
     const;
   Ulong nStarOps() const;                                      /* inlined */
   const BitMap& parity(const CoxNbr& x) const;                   /* inlined */
@@ -278,22 +263,19 @@ class ClosureIterator {
   const CoxNbr& current() const;                                 /* inlined */
 };
 
-};
-
 /******** inline definitions **********************************************/
 
-namespace schubert {
   inline LFlags StandardSchubertContext::ascent(const CoxNbr& x) const
     {return ~d_descent[x]&leqmask[2*d_rank-1];}
   inline LFlags StandardSchubertContext::descent(const CoxNbr& x) const
     {return d_descent[x];}
-  inline const BitMap& StandardSchubertContext::downset(const Generator& s) 
+  inline const BitMap& StandardSchubertContext::downset(const Generator& s)
     const {return d_downset[s];}
   inline Generator StandardSchubertContext::firstDescent(const CoxNbr& x) const
     {return firstBit(descent(x));}
-  inline Generator StandardSchubertContext::firstLDescent(const CoxNbr& x) 
+  inline Generator StandardSchubertContext::firstLDescent(const CoxNbr& x)
     const {return firstBit(ldescent(x));}
-  inline Generator StandardSchubertContext::firstRDescent(const CoxNbr& x) 
+  inline Generator StandardSchubertContext::firstRDescent(const CoxNbr& x)
     const {return firstBit(rdescent(x));}
   inline Generator StandardSchubertContext::firstDescent(const CoxNbr& x,
     const Permutation& order) const {return firstRDescent(x,order);}
@@ -301,10 +283,10 @@ namespace schubert {
     const Permutation& order) const {return minDescent(ldescent(x),order);}
   inline Generator StandardSchubertContext::firstRDescent(const CoxNbr& x,
     const Permutation& order) const {return minDescent(rdescent(x),order);}
-  inline const CoatomList& StandardSchubertContext::hasse(const CoxNbr& x) 
+  inline const CoatomList& StandardSchubertContext::hasse(const CoxNbr& x)
     const {return d_hasse[x];}
-  inline bool StandardSchubertContext::isDescent(const CoxNbr& x, 
-						 const Generator& s) 
+  inline bool StandardSchubertContext::isDescent(const CoxNbr& x,
+						 const Generator& s)
     const {return d_descent[x]&lmask[s];}
   inline LFlags StandardSchubertContext::lascent(const CoxNbr& x) const
     {return ~ldescent(x)&leqmask[d_rank-1];}
@@ -312,37 +294,38 @@ namespace schubert {
     {return d_descent[x] >> d_rank;}
   inline Length StandardSchubertContext::length(const CoxNbr& x) const
     {return d_length[x];}
-  inline CoxNbr StandardSchubertContext::lshift(const CoxNbr& x, 
-					    const Generator& s) 
+  inline CoxNbr StandardSchubertContext::lshift(const CoxNbr& x,
+					    const Generator& s)
     const {return d_shift[x][d_rank+s];}
-  inline Length StandardSchubertContext::maxlength() const 
+  inline Length StandardSchubertContext::maxlength() const
     {return d_maxlength;}
   inline Ulong StandardSchubertContext::nStarOps() const
     {return d_graph.starOps().size();}
-  inline const BitMap& StandardSchubertContext::parity(const CoxNbr& x) const 
+  inline const BitMap& StandardSchubertContext::parity(const CoxNbr& x) const
     {return d_parity[d_length[x]%2];}
   inline Rank StandardSchubertContext::rank() const {return d_rank;}
   inline LFlags StandardSchubertContext::rascent(const CoxNbr& x) const
     {return ~rdescent(x)&leqmask[d_rank-1];}
   inline LFlags StandardSchubertContext::rdescent(const CoxNbr& x) const
     {return d_descent[x] & leqmask[d_rank-1];}
-  inline CoxNbr StandardSchubertContext::rshift(const CoxNbr& x, 
-					    const Generator& s) 
+  inline CoxNbr StandardSchubertContext::rshift(const CoxNbr& x,
+					    const Generator& s)
     const {return d_shift[x][s];}
   inline LFlags StandardSchubertContext::S() const {return leqmask[d_rank-1];}
-  inline CoxNbr StandardSchubertContext::shift(const CoxNbr& x, 
-					   const Generator& s) 
+  inline CoxNbr StandardSchubertContext::shift(const CoxNbr& x,
+					   const Generator& s)
     const {return d_shift[x][s];}
   inline CoxNbr StandardSchubertContext::size() const {return d_size;}
   inline CoxNbr StandardSchubertContext::star(CoxNbr x,
 					      const Ulong& r) const
     {return d_star[x][r];}
-  inline const Type& StandardSchubertContext::type() const 
+  inline const Type& StandardSchubertContext::type() const
     {return d_graph.type();}
 
   inline const SubSet& ClosureIterator::operator()() const {return d_subSet;}
   inline ClosureIterator::operator bool() const {return d_valid;}
   inline const CoxNbr& ClosureIterator::current() const {return d_current;}
-};
+
+}
 
 #endif
