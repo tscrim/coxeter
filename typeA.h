@@ -3,15 +3,11 @@
 
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
-*/
-
-/****************************************************************************
 
   This module declares some special features for groups of type A. Currently
   this is just at the level of i/o, being able to input and output elements
   as permutations.
-
- ****************************************************************************/
+*/
 
 #ifndef TYPEA_H  /* guard against multiple inclusions */
 #define TYPEA_H
@@ -22,7 +18,7 @@
 namespace coxeter {
   using namespace fcoxgroup;
 
-/******** type declarations *************************************************/
+//******** type declarations *************************************************
 
   class TypeAInterface;
   class TypeACoxGroup;
@@ -35,12 +31,12 @@ namespace coxeter {
   class TypeASmallCoxGroup;
   class GeneralTypeASCoxGroup;
 
-/******** function declarations *********************************************/
+//******** function declarations *********************************************
 
   void coxWordToPermutation(CoxWord& a, const CoxWord& g);
   void permutationToCoxWord(CoxWord& g, const CoxWord& a);
 
-/******** type definitions **************************************************/
+//******** type definitions **************************************************
 
 class TypeACoxGroup:public FiniteCoxGroup {
   TypeAInterface* d_typeAInterface;
@@ -185,7 +181,7 @@ class TypeAInterface:public Interface {
   virtual void print(FILE* file, const CoxWord& g) const;
 };
 
-/******** inline definitions ************************************************/
+//******** inline definitions ************************************************
 
 inline bool TypeAInterface::hasPermutationInput() const
   {return d_hasPermutationInput;}

@@ -9,18 +9,18 @@
 #define MEMORY_H
 
 #include "globals.h"
+#include "constants.h"
 
 namespace memory {
   using namespace coxeter;
-};
+  using namespace constants;
 
 /******** type declarations *************************************************/
 
-namespace memory {
   union Align;
   class Arena;
   class FixArena;
-};
+}
 
 /******** function declarations *********************************************/
 
@@ -30,26 +30,19 @@ void* operator new[] (size_t size, memory::Arena& a);
 namespace memory {
   Arena& arena();
   void pause();
-};
 
 /******** Type definitions **************************************************/
 
-#include "constants.h"
-
-namespace memory {
-  using namespace constants;
-};
-
-union memory::Align {
+union Align {
   Ulong d_ulong;
   void *d_voidptr;
 };
 
-class memory::FixArena {
+class FixArena {
  public:
 };
 
-class memory::Arena {
+class Arena {
   struct MemBlock {
     MemBlock *next;
   };
@@ -74,6 +67,8 @@ class memory::Arena {
   Ulong byteSize(Ulong n, Ulong m) const;
   void print(FILE* file) const;
 };
+
+}
 
 /******** Inline implementations *****************************************/
 

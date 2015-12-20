@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-/**************************************************************************
-
+/*
  This file presents the main type in this program, viz. the CoxGroup
  class. This is the base class for the hierarchy of coxeter group
  classes, ranging from the most general ones considered in this program
@@ -50,7 +49,7 @@
          SmallRankCoxGroup(a)
            GeneralSRCoxGroup(c)
 
- **************************************************************************/
+ */
 
 #ifndef COXGROUP_H  /* guarantee single inclusion */
 #define COXGROUP_H
@@ -70,7 +69,7 @@
 
 namespace coxeter {
 
-/******** type definitions **************************************************/
+//******** type definitions **************************************************
 
   using namespace coxtypes;
   using namespace files;
@@ -104,7 +103,7 @@ class CoxGroup {
   void operator delete(void* ptr)
     {return arena().free(ptr,sizeof(CoxGroup));}
 
-/******** Chapter 0 : CoxGroup objects *************************************/
+//******** Chapter 0 : CoxGroup objects *************************************
 
   CoxGroup(const Type& x, const Rank& l);
   virtual ~CoxGroup();
@@ -139,7 +138,7 @@ class CoxGroup {
   virtual CoxSize order() const = 0;
   virtual bool isFullContext() const;                            /* inlined */
 
-/******** Chapter I : Elementary operations ********************************/
+//******* Chapter I : Elementary operations ********************************
 
   /* word operations */
 
@@ -159,7 +158,7 @@ class CoxGroup {
   virtual LFlags rdescent(const CoxWord& g) const;               /* inlined */
   bool isDescent(const CoxWord& g, const Generator& s) const;
 
-/******** Chapter II : Schubert context **************************************/
+//******** Chapter II : Schubert context **************************************
 
   virtual CoxNbr contextNumber(const CoxWord& g) const;           /* inlined */
   CoxNbr contextSize() const;                                     /* inlined */
@@ -180,7 +179,7 @@ class CoxGroup {
 
   virtual const List<CoxNbr>& extrList(const CoxNbr& x) const;    /* inlined */
 
-/******** Chapter III : Bruhat ordering **************************************/
+//******** Chapter III : Bruhat ordering **************************************
 
   virtual void coatoms(List<CoxWord>& c, const CoxWord& g) const;
   virtual const CoatomList& coatoms(const CoxNbr& x) const ;      /* inlined */
@@ -191,7 +190,7 @@ class CoxGroup {
   virtual bool inOrder(const CoxNbr& x, const CoxNbr& y) const;   /* inlined */
   virtual bool isDihedral(const CoxWord& g) const;
 
-/******** Chapter IV : Kazhdan-Lusztig functions *****************************/
+//******** Chapter IV : Kazhdan-Lusztig functions *****************************
 
   virtual void cBasis(kl::HeckeElt& h, const CoxNbr& y);
   virtual void fillKL();
@@ -213,7 +212,7 @@ class CoxGroup {
   virtual void uneqcBasis(uneqkl::HeckeElt& h, const CoxNbr& y);
   virtual void uneqklRow(uneqkl::HeckeElt& h, const CoxNbr& y);
 
-/******** Chapter V : I/O ***************************************************/
+//******** Chapter V : I/O ***************************************************
 
   /* elementary i/o functions */
 
@@ -253,7 +252,7 @@ class CoxGroup {
   template <class H> void printHeckeElt(FILE* file, const H& h); /* inlined */
 };
 
-/******** Inline implementations ******************************************/
+//******** Inline implementations ******************************************
 
 /* Chapter 0 */
 
@@ -391,11 +390,11 @@ template <class H>
 inline void CoxGroup::printHeckeElt(FILE* file, const H& h)
   {files::printHeckeElt(file,h,schubert(),outputTraits());}
 
-/******** template definitions ***********************************************/
+//******** template definitions ***********************************************
 
 template<class C> void CoxGroup::setOutputTraits(C)
  {new(d_outputTraits) OutputTraits(graph(),interface(),C());}
 
-};
+}
 
 #endif

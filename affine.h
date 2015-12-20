@@ -14,7 +14,7 @@
 namespace affine {
   using namespace coxeter;
 
-/******** type declarations *************************************************/
+//******** type declarations *************************************************
   class AffineCoxGroup;
   class AffineBigRankCoxGroup;
   class GeneralABRCoxGroup;
@@ -23,7 +23,7 @@ namespace affine {
   class AffineSmallRankCoxGroup;
   class GeneralASRCoxGroup;
 
-/******** type definitions **************************************************/
+//******** type definitions **************************************************
 
 class AffineCoxGroup : public CoxGroup {
  public:
@@ -98,10 +98,12 @@ class GeneralASRCoxGroup:public AffineSmallRankCoxGroup {
   ~GeneralASRCoxGroup();
 };
 
-/******** Inline implementations ******************************************/
+//******* Inline implementations ******************************************
 
+/**
+  Return the order of this Coxeter group, which is infinite.
+*/
 inline CoxSize AffineCoxGroup::order() const {return infinite_coxsize;}
-
 }
 
 #endif

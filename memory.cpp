@@ -1,6 +1,6 @@
 /*
   This is memory.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -12,7 +12,7 @@
 
 namespace memory {
   using namespace error;
-}; 
+};
 
 namespace {
   using namespace memory;
@@ -49,14 +49,13 @@ namespace {
 
 namespace memory {
 
-Arena& arena()
-
-{
+/**
+  Return the memory arena.
+*/
+Arena& arena() {
   static Arena a(ARENA_BITS);
   return a;
 }
-
-};
 
 /****************************************************************************
 
@@ -64,11 +63,7 @@ Arena& arena()
 
  ****************************************************************************/
 
-namespace memory {
-
-Arena::Arena(Ulong bsBits)
-
-{
+Arena::Arena(Ulong bsBits) {
   memset(d_list,0,BITS(Ulong)*sizeof(void *));
   memset(d_used,0,BITS(Ulong)*sizeof(Ulong));
   memset(d_allocated,0,BITS(Ulong)*sizeof(Ulong));
@@ -76,17 +71,12 @@ Arena::Arena(Ulong bsBits)
   d_count = 0;
 }
 
-Arena::~Arena()
-
-/*
+/**
   Nothing to do here! All memory is allocated in fixed-size arrays.
 */
+Arena::~Arena() {}
 
-{}
-
-void Arena::newBlock(unsigned b)
-
-/*
+/**
   Provides a new block of size 2^{b}. It looks first of a block of
   size > 2^b is available; if yes, it splits the required block up
   from that one. If not, it requests from the system a block of size
@@ -102,8 +92,7 @@ void Arena::newBlock(unsigned b)
   NOTE : as this function will be heavily used, it should be rewritten
   using a bitmap of available blocks.
 */
-
-{
+void Arena::newBlock(unsigned b) {
   for (unsigned j = b+1; j < BITS(Ulong); ++j) {
     if (d_list[j]) /* split this block up */
       {
@@ -162,17 +151,15 @@ void Arena::newBlock(unsigned b)
   return;
 }
 
-void* Arena::alloc(size_t n)
-
-/*
-  Returns a pointer to a block of 2^m.ABYTES bytes, where m is the 
+/**
+  Returns a pointer to a block of 2^m.ABYTES bytes, where m is the
   smallest integer such that 2^m.ABYTES >= n.
 
   It is assumed that ABYTES is a power of 2.
 
   The memory is zero-initialized.
 */
-
+void* Arena::alloc(size_t n)
 {
   if (n == 0)
     return 0;
@@ -199,13 +186,11 @@ void* Arena::alloc(size_t n)
   return static_cast<void *> (block);
 }
 
-Ulong Arena::allocSize(Ulong n, Ulong m) const
-
-/*
+/**
   Returns the size of the actual memory allocation provided on a request
   of n nodes of size m, in units of m
 */
-
+Ulong Arena::allocSize(Ulong n, Ulong m) const
 {
   if (n == 0)
     return 0;
@@ -214,13 +199,11 @@ Ulong Arena::allocSize(Ulong n, Ulong m) const
   return ((1 << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES)/m;
 }
 
-Ulong Arena::byteSize(Ulong n, Ulong m) const
-
-/*
+/**
   Returns the actual number of bytes of the memory allocation (as opposed
   to allocSize, which rounds the allocation to the largest multiple of m.)
 */
-
+Ulong Arena::byteSize(Ulong n, Ulong m) const
 {
   if (n == 0)
     return 0;
@@ -229,11 +212,9 @@ Ulong Arena::byteSize(Ulong n, Ulong m) const
   return (1 << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES;
 }
 
-void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
-
-/*
+/**
   Resizes ptr to size new_size. This involves getting the larger block,
-  copying the contents of ptr to it, and freeing ptr; we never try to 
+  copying the contents of ptr to it, and freeing ptr; we never try to
   fuse smaller adjacent blocks together.
 
   Returns 0 and sets the error MEMORY_WARNING in case of overflow, if
@@ -241,7 +222,7 @@ void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
 
   NOTE : equivalent to alloc if old_size = 0.
 */
-
+void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
 {
   void *new_ptr = alloc(new_size);
   if (ERRNO) /* overflow */
@@ -254,14 +235,12 @@ void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
   return new_ptr;
 }
 
-void Arena::free(void *ptr, size_t n)
-
-/*
+/**
   Returns the memory block allocated to ptr to the free list. In order to
   know to which list the pointer should be appended (it will in fact be
   prepended), we need to pass the size to which ptr was allocated.
 */
-
+void Arena::free(void *ptr, size_t n)
 {
   if (ptr == 0)
     return;
@@ -281,11 +260,10 @@ void Arena::free(void *ptr, size_t n)
   return;
 }
 
-void Arena::print(FILE *file) const
-/*
+/**
   Prints information about the memory arena.
 */
-
+void Arena::print(FILE *file) const
 {
   fprintf(file,"%-10s%10s/%-10s\n","size : 2^","used","allocated");
 
@@ -301,15 +279,6 @@ void Arena::print(FILE *file) const
 	  used_count,static_cast<Ulong>(d_count),ABYTES);
 }
 
-};
+void pause() { ; }
 
-
-namespace memory {
-
-void pause()
-
-{
-  ;
 }
-
-};
