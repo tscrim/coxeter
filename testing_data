@@ -1,0 +1,104 @@
+coxeter : type
+type : e
+rank : 7
+
+coxeter : pol
+first : 7 2 6 4 2 7 3 1 4 5
+second :  
+the two elements are not in Bruhat order
+
+coxeter : pol
+first : 
+second : 7 2 6 4 2 7 3 1 4 5
+q+1
+
+coxeter : pol       
+first : 
+second : 7 2 6 4 2 7 3 1 4 5 6 3 2 4 5 3 2 4 1 3 1 2 7 2 5 6 5 4 2 3
+36q^8+167q^7+329q^6+373q^5+275q^4+138q^3+47q^2+10q+1
+
+coxeter : pol
+first : 
+second : 7 2 6 4 2 7 3 1 4 5 6 3 2 4 5 3 2 4 1 3 1 2 7 2 5 6 5 4 2 3 5 4 2 3 6
+q^12+9q^11+73q^10+286q^9+660q^8+991q^7+1034q^6+785q^5+442q^4+185q^3+56q^2+11q+1
+
+coxeter : pol
+first : 
+second : 7 2 6 4 2 7 3 1 4 5 6 3 2 4 5 3 2 4 1 3 1 2 7 2 5 6 5 4 2 3 5 4 2 3 6 5 4 1 3 7 2 4
+13q^15+348q^14+3035q^13+12685q^12+30982q^11+49955q^10+57615q^9+50063q^8+33935q^7+18303q^6+7907q^5+2714q^4+719q^3+138q^2+17q+1
+
+coxeter : pol
+first : 7 2 6 4 2 7 3 1 4 5
+second : 7 2 6 4 2 7 3 1 4 5 6 3 2 4 5 3 2 4 1 3 1 2 7 2 5 6 5 4 2 3
+12q^6+68q^5+131q^4+108q^3+45q^2+10q+1
+
+coxeter : pol
+first : 7 2 6 4 2 7 3 1 4 5
+second : 7 2 6 4 2 7 3 1 4 5 6 3 2 4 5 3 2 4 1 3 1 2 7 2 5 6 5 4 2 3 5 4 2 3 6
+q^8+30q^7+190q^6+367q^5+329q^4+169q^3+55q^2+11q+1
+
+coxeter : type
+type : A
+rank : 3
+
+coxeter : interval
+first : 
+second : 1 2 3 1 2 1
+Name an output file (hit return for stdout):
+
+
+1
+2
+3
+12
+13
+21
+23
+32
+121
+123
+132
+213
+232
+321
+1213
+1232
+1321
+2132
+2321
+12132
+12321
+21321
+121321
+
+coxeter : type
+type : B
+rank : 3
+
+coxeter : interval
+first : 1 2
+second : 1 2 3 2 3
+Name an output file (hit return for stdout):
+
+12
+132
+
+coxeter : interval
+first : 1 2 3 2 3
+second : 
+the two elements are not in order
+
+coxeter : interval
+first : 
+second : 1 2 3 2 3
+Name an output file (hit return for stdout):
+
+
+1
+2
+3
+12
+13
+32
+132
+

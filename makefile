@@ -162,8 +162,9 @@ special.o: special.cpp special.h globals.h commands.h coxgroup.h \
   type.h transducer.h schubert.h stack.h stack.hpp hecke.hpp \
   polynomials.h vector.h vector.hpp polynomials.hpp invkl.h klsupport.h \
   search.h search.hpp kl.h uneqkl.h wgraph.h files.hpp cells.h \
-  dictionary.h dictionary.hpp directories.h interactive.h
+  dictionary.h dictionary.hpp directories.h interactive.h tests.h
 stack.o: stack.cpp
+tests.o: tests.cpp
 transducer.o: transducer.cpp transducer.h globals.h coxtypes.h io.h \
   list.h memory.h constants.h list.hpp error.h graph.h bits.h type.h
 type.o: type.cpp type.h globals.h io.h list.h memory.h constants.h \

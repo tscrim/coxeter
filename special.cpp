@@ -9,6 +9,7 @@
 
 #include "directories.h"
 #include "interactive.h"
+#include "tests.h"
 
 /******** local definitions **************************************************/
 
@@ -31,9 +32,7 @@ namespace {
  ************************************************************************/
 
 
-void special::addSpecialCommands(commands::CommandTree* tree)
-
-/*
+/**
   This function should be edited if you want to add new commands to the
   system, instead of just editing the "special" command. Adding a command
   is easy : you should choose a name for it (an arbitrary string; if it
@@ -45,20 +44,21 @@ void special::addSpecialCommands(commands::CommandTree* tree)
 
   The commands are added to the main command tree of the program (the
   tree argument is used for convienience, since this function is called
-  when mainCommandTree() is not yet functional); it would also be possible 
-  to add special command trees, but we have decided to leave this to users 
+  when mainCommandTree() is not yet functional); it would also be possible
+  to add special command trees, but we have decided to leave this to users
   willing to delve into commands.c.
-
 */
-
+void special::addSpecialCommands(commands::CommandTree* tree)
 {
   using namespace commands;
 
-  /* prototype line for adding a special command */
-  /* the last argument is optional; it defaults to default_help, declared
-     in commands.h */
-
-  tree->add("special",special_tag,&special_f,&special_h);
+  /** prototype line for adding a special command
+   * the last argument is optional; it defaults to default_help, declared
+   *   in commands.h
+   */
+  tree->add("special", special_tag, &special_f, &special_h);
+  tree->add("test all", "test all command", &coxeter::testAll, &special_h);
+  tree->add("test performance", "test performance command", &coxeter::testPerformace, &special_h);
 
   /* add user-defined commands here ... */
 
@@ -67,23 +67,19 @@ void special::addSpecialCommands(commands::CommandTree* tree)
 
 namespace {
 
-void special_f()
-
-/*
+/**
   Comment out the default code below and replace by your own code.
 */
-
-{  
+void special_f()
+{
   fprintf(stderr,"not implemented\n");
   return;
 }
 
-void special_h()
-
-/*
+/**
   Comment out the default code below and replace by your own code.
 */
-
+void special_h()
 {
   io::printFile(stderr,"special.defhelp",directories::MESSAGE_DIR);
   return;
