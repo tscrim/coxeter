@@ -19,7 +19,7 @@ namespace minroots {
 
 namespace minroots {
   typedef unsigned MinNbr;
-  typedef char DotProduct;
+  typedef signed char DotProduct;
   class MinTable;
 };
 
