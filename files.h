@@ -101,10 +101,6 @@ template <class H>
 		     const Interface& I, OutputTraits& traits,
 		     const Length& l = undef_length);
 template <class H>
-  void printHeckeElt(FILE* file, const H& h, const SchubertContext& p,
-		     const Interface& I, OutputTraits& traits,
-		     const Length& l = undef_length);
-template <class H>
   void printHeckeElt(FILE* file, const H& h, const Permutation& a,
 		     const SchubertContext& p, const Interface& I,
 		     HeckeTraits& hTraits,
