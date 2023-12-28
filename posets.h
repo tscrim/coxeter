@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef POSETS_H /* guard against multiple inclusions */
+#ifndef POSETS_H
 #define POSETS_H
 
 #include "globals.h"

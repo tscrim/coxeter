@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef AFFINE_H /* guarantee single inclusion */
+#ifndef AFFINE_H
 #define AFFINE_H
 
 #include "globals.h"

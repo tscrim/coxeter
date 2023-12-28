@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef KL_H /* guard against multiple inclusions */
+#ifndef KL_H
 #define KL_H
 
 #include <limits.h>

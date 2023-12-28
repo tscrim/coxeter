@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef SCHUBERT_H /* guard against multiple inclusions */
+#ifndef SCHUBERT_H
 #define SCHUBERT_H
 
 #include "globals.h"

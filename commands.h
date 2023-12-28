@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef COMMANDS_H /* guard against multiple inclusions */
+#ifndef COMMANDS_H
 #define COMMANDS_H
 
 #include "globals.h"

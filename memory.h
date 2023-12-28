@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef MEMORY_H /* guard against multiple inclusions */
+#ifndef MEMORY_H
 #define MEMORY_H
 
 #include "globals.h"

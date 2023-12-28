@@ -9,7 +9,7 @@
   as permutations.
 */
 
-#ifndef TYPEA_H /* guard against multiple inclusions */
+#ifndef TYPEA_H
 #define TYPEA_H
 
 #include "globals.h"

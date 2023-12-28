@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef DOTVAL_H /* guard against multiple inclusions */
+#ifndef DOTVAL_H
 #define DOTVAL_H
 
 namespace dotval {

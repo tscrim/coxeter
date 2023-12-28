@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef CELLS_H /* guard against multiple inclusions */
+#ifndef CELLS_H
 #define CELLS_H
 
 #include "globals.h"

@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef ERROR_H /* guard against multiple inclusions */
+#ifndef ERROR_H
 #define ERROR_H
 
 #include "globals.h"

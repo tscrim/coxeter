@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef HECKE_H /* guard against multiple inclusions */
+#ifndef HECKE_H
 #define HECKE_H
 
 #include "globals.h"

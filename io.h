@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef IO_H /* guarantee single inclusion */
+#ifndef IO_H
 #define IO_H
 
 #include "globals.h"

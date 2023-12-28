@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef AUTOMATA_H /* guard against multiple inclusions */
+#ifndef AUTOMATA_H
 #define AUTOMATA_H
 
 #include "globals.h"

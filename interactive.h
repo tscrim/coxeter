@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef INTERACTIVE_H /* guard against multiple inclusions */
+#ifndef INTERACTIVE_H
 #define INTERACTIVE_H
 
 #include "globals.h"

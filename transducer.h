@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef TRANSDUCER_H /* guarantee single inclusion */
+#ifndef TRANSDUCER_H
 #define TRANSDUCER_H
 
 #include "globals.h"

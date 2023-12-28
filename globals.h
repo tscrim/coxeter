@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef GLOBALS_H /* guard against multiple inclusions */
+#ifndef GLOBALS_H
 #define GLOBALS_H
 
 // TODO: Check to make sure we need these

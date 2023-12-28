@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef LIST_H /* guarantee single inclusion */
+#ifndef LIST_H
 #define LIST_H
 
 #include <limits.h>

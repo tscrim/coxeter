@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef WGRAPH_H /* guard against multiple inclusions */
+#ifndef WGRAPH_H
 #define WGRAPH_H
 
 #include "globals.h"

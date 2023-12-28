@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef KLSUPPORT_H /* guard against multiple inclusions */
+#ifndef KLSUPPORT_H
 #define KLSUPPORT_H
 
 #include "globals.h"

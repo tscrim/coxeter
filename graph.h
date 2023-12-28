@@ -7,7 +7,7 @@
 
 /* type definitions */
 
-#ifndef GRAPH_H /* guarantee single inclusion */
+#ifndef GRAPH_H
 #define GRAPH_H
 
 #include "globals.h"

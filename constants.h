@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef CONSTANTS_H /* guard against multiple inclusions */
+#ifndef CONSTANTS_H
 #define CONSTANTS_H
 
 #include <limits.h>

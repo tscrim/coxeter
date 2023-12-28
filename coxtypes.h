@@ -11,7 +11,7 @@
 
  ****************************************************************************/
 
-#ifndef COXTYPES_H /* guard against multiple inclusions */
+#ifndef COXTYPES_H
 #define COXTYPES_H
 
 #include <limits.h>

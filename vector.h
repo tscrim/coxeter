@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef VECTOR_H /* guarantee unique inclusion */
+#ifndef VECTOR_H
 #define VECTOR_H
 
 #include "globals.h"

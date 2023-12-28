@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef MINROOTS_H /* guarantee single inclusion */
+#ifndef MINROOTS_H
 #define MINROOTS_H
 
 #include <limits.h>

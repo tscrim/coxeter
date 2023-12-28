@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef BITS_H /* guarantee single inclusion */
+#ifndef BITS_H
 #define BITS_H
 
 #include <limits.h>

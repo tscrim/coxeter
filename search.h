@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef SEARCH_H /* guard against multiple inclusions */
+#ifndef SEARCH_H
 #define SEARCH_H
 
 #include "globals.h"

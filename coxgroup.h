@@ -51,7 +51,7 @@
 
  */
 
-#ifndef COXGROUP_H /* guarantee single inclusion */
+#ifndef COXGROUP_H
 #define COXGROUP_H
 
 #include "globals.h"

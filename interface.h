@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef INTERFACE_H /* guard against multiple inclusions */
+#ifndef INTERFACE_H
 #define INTERFACE_H
 
 #include "globals.h"

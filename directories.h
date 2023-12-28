@@ -6,7 +6,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef DIRECTORIES_H /* guard against multiple inclusions */
+#ifndef DIRECTORIES_H
 #define DIRECTORIES_H
 
 /*

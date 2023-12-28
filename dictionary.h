@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef DICTIONARY_H /* guard against multiple inclusions */
+#ifndef DICTIONARY_H
 #define DICTIONARY_H
 
 #include "globals.h"

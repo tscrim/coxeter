@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef STACK_H /* guard against multiple inclusions */
+#ifndef STACK_H
 #define STACK_H
 
 #include "globals.h"

@@ -6,7 +6,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef VERSION_H /* guard against multiple inclusions */
+#ifndef VERSION_H
 #define VERSION_H
 
 namespace version {

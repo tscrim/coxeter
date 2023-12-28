@@ -16,7 +16,7 @@
 
  ****************************************************************************/
 
-#ifndef FCOXGROUP_H /* guard against multiple inclusions */
+#ifndef FCOXGROUP_H
 #define FCOXGROUP_H
 
 #include "globals.h"

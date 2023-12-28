@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef UNEQKL_H /* guard against multiple inclusions */
+#ifndef UNEQKL_H
 #define UNEQKL_H
 
 #include "globals.h"

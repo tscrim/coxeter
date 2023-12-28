@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef ITERATOR_H /* guard against multiple inclusions */
+#ifndef ITERATOR_H
 #define ITERATOR_H
 
 #include "globals.h"

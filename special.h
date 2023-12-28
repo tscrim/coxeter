@@ -6,7 +6,7 @@
 
 */
 
-#ifndef SPECIAL_H /* guard against multiple inclusions */
+#ifndef SPECIAL_H
 #define SPECIAL_H
 
 #include "globals.h"

@@ -5,7 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef INVKL_H /* guard against multiple inclusions */
+#ifndef INVKL_H
 #define INVKL_H
 
 #include "globals.h"
