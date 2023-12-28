@@ -1,6 +1,6 @@
 /*
   This is minroots.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,54 +8,55 @@
 #include "minroots.h"
 
 namespace {
-  using namespace minroots;
+using namespace minroots;
 
-  const Ulong dihedral = MINNBR_MAX + 4;
-  const int first_dotval = locked;
-  const int first_negdotval = neg_cos;
-  const int dotval_size = 13;
-  const int dotval_negsize = 4;
-};
+const Ulong dihedral = MINNBR_MAX + 4;
+const int first_dotval = locked;
+const int first_negdotval = neg_cos;
+const int dotval_size = 13;
+const int dotval_negsize = 4;
+}; // namespace
 
 /* auxiliary classes */
 
 namespace {
 
-  class InitMinTable:public MinTable
-  {
-  public:
-    InitMinTable() {};
-    InitMinTable(CoxGraph& G);
-    MinNbr dihedralShift(MinNbr r, Generator s, Generator t, 
-			   Ulong c);
-    void initMinTable(CoxGraph& G);
-    void fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s);
-    void fillDihedralRoots(CoxGraph& G);
-    void fillDihedralRow(CoxGraph& G, MinNbr r, Generator s, Length d);
-    void fillMinTable(CoxGraph& G);
-    void fillReflectionRow(CoxGraph& G, MinNbr r, Generator s);
-    void newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s);
-    void newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s);
-    void newDihedralRoot(CoxGraph& G, MinNbr r, Generator s, Length d);
-    void newMinRoot(CoxGraph& G, MinNbr r, Generator s);
-    void setMinMemory(unsigned long n) {d_min.setSize(n); d_dot.setSize(n);}
-    inline MinNbr size() {return d_size;}
-  };
-
-  DotVal bondCosineSum(CoxEntry m, int a, int b);
-
-  DotVal *CS3;
-  DotVal *CS4;
-  DotVal *CS5;
-  DotVal *CS6;
-  DotVal *CSm;
+class InitMinTable : public MinTable {
+public:
+  InitMinTable(){};
+  InitMinTable(CoxGraph &G);
+  MinNbr dihedralShift(MinNbr r, Generator s, Generator t, Ulong c);
+  void initMinTable(CoxGraph &G);
+  void fillDepthOneRow(CoxGraph &G, MinNbr r, Generator s);
+  void fillDihedralRoots(CoxGraph &G);
+  void fillDihedralRow(CoxGraph &G, MinNbr r, Generator s, Length d);
+  void fillMinTable(CoxGraph &G);
+  void fillReflectionRow(CoxGraph &G, MinNbr r, Generator s);
+  void newDepthOneRoot(CoxGraph &G, MinNbr r, Generator s);
+  void newDepthTwoRoot(CoxGraph &G, MinNbr r, Generator s);
+  void newDihedralRoot(CoxGraph &G, MinNbr r, Generator s, Length d);
+  void newMinRoot(CoxGraph &G, MinNbr r, Generator s);
+  void setMinMemory(unsigned long n) {
+    d_min.setSize(n);
+    d_dot.setSize(n);
+  }
+  inline MinNbr size() { return d_size; }
 };
+
+DotVal bondCosineSum(CoxEntry m, int a, int b);
+
+DotVal *CS3;
+DotVal *CS4;
+DotVal *CS5;
+DotVal *CS6;
+DotVal *CSm;
+}; // namespace
 
 /***************************************************************************
 
   This module implements a construction of the minimal root machine of
-  Brink and Howlett. We refer to Brink and Howlett's paper "A finiteness 
-  property and an automatic structure for Coxeter groups", Math. Annalen 296 
+  Brink and Howlett. We refer to Brink and Howlett's paper "A finiteness
+  property and an automatic structure for Coxeter groups", Math. Annalen 296
   (1993), pp. 179-190, for a description of the concept of a minimal root
   (called elementary roots by them), and a proof of their finiteness.
   See alos Casselman, ... , for a description of how this finite state
@@ -87,9 +88,9 @@ namespace {
   interior component. The connected components of the complement of the
   interior component are in 1-1 correspondence with the exterior points
   in the bonds. So each of these components has a well-defined cyclotomy
-  attached to it. In this case, it turns out that there is a unique minimal 
-  root with support I and all coefficients < 2; it has coefficient 1 on all 
-  interior points, and coefficient c_m on all point of an exterior component 
+  attached to it. In this case, it turns out that there is a unique minimal
+  root with support I and all coefficients < 2; it has coefficient 1 on all
+  interior points, and coefficient c_m on all point of an exterior component
   of cyclotomy m, where c_m = 2 cos(pi/m). This "basic root" r_I precedes
   all minimal roots with support I.
 
@@ -127,7 +128,7 @@ namespace {
     - +- cos(pi/m) (denoted cos, neg_cos) : here cos should be interpreted
       as "a number in [sqrt(2)/2,1["
     - +- (sqrt(5)-1)/4 (denoted hinvgold, neg_hinvgold), only when m = 5;
-    - +- cos(2 pi/m), (denoted cos2, neg_cos2), only when m > 6, 
+    - +- cos(2 pi/m), (denoted cos2, neg_cos2), only when m > 6,
       where cos2 should be interpreted as "a number in ]1/2,cos["
     - +- cos(k pi/m) (denoted undef_posdot, undef_negdot), only when
       m > 6, and only when the root is dihedral, where undef_posdot
@@ -145,8 +146,8 @@ namespace {
       <s.v,e_t> = <v,e_t> + c(s,t)<v,e_s> if s != t
 
   We will always assume in the sequel that <v,e_t> is not already locked.
-  Then we need to do a formal evalution of the above. Now if t is in the 
-  support of the root, and if we agree to treat interior points in all cases 
+  Then we need to do a formal evalution of the above. Now if t is in the
+  support of the root, and if we agree to treat interior points in all cases
   as if they had cyclotomy five, then the results of Brink alluded to above
   show that in all cases the above computation can be done within the
   cyclotomy of s, i.e., we may compute :
@@ -192,11 +193,11 @@ namespace {
 
 namespace {
 
-class InitStaticConstants  /* for initialization only! */
-  {
-  public:
-    InitStaticConstants();
-  };
+class InitStaticConstants /* for initialization only! */
+{
+public:
+  InitStaticConstants();
+};
 
 InitStaticConstants::InitStaticConstants()
 
@@ -216,346 +217,346 @@ InitStaticConstants::InitStaticConstants()
 */
 
 {
-  CS3 = (DotVal *)memory::arena().alloc((dotval_negsize+1)*dotval_size*
-					  sizeof(DotVal));
-  CS4 = (DotVal *)memory::arena().alloc(dotval_negsize*dotval_size*
-					  sizeof(DotVal));
-  CS5 = (DotVal *)memory::arena().alloc(dotval_negsize*dotval_size*
-					  sizeof(DotVal));
-  CS6 = (DotVal *)memory::arena().alloc(dotval_negsize*dotval_size*
-					  sizeof(DotVal));
-  CSm = (DotVal *)memory::arena().alloc((dotval_negsize+1)*dotval_size*
-					  sizeof(DotVal));
+  CS3 = (DotVal *)memory::arena().alloc((dotval_negsize + 1) * dotval_size *
+                                        sizeof(DotVal));
+  CS4 = (DotVal *)memory::arena().alloc(dotval_negsize * dotval_size *
+                                        sizeof(DotVal));
+  CS5 = (DotVal *)memory::arena().alloc(dotval_negsize * dotval_size *
+                                        sizeof(DotVal));
+  CS6 = (DotVal *)memory::arena().alloc(dotval_negsize * dotval_size *
+                                        sizeof(DotVal));
+  CSm = (DotVal *)memory::arena().alloc((dotval_negsize + 1) * dotval_size *
+                                        sizeof(DotVal));
   CS3 += dotval_size;
   CSm += dotval_size;
 
-  CS3[-13] = locked;          /* locked - cos(*) */
-  CS3[-12] = undef_dotval;    /* undef_negdot - cos(*) : can't occur */
-  CS3[-11] = locked;          /* - cos - cos(*) */
-  CS3[-10] = undef_dotval;    /* - cos2 - cos(*) : can't occur */
-  CS3[-9] = undef_dotval;     /* - half - cos(*) : can't occur */
-  CS3[-8] = undef_dotval;     /* - hinvgold - cos(*) : can't occur */ 
-  CS3[-7] = undef_dotval;     /* zero - cos(*) : can't occur */
-  CS3[-6] = undef_dotval;     /* hinvgold - cos(*) : can't occur */
-  CS3[-5] = neg_hinvgold;     /* half - cos(*) : can't occur */
-  CS3[-4] = undef_dotval;     /* cos2 - cos(*) : can't occur */
-  CS3[-3] = undef_dotval;             /* cos - cos(*) : can't occur */
-  CS3[-2] = undef_dotval;     /* undef_posdot - cos(*) : can't occur */
-  CS3[-1] = undef_dotval;     /* one - cos(*) : can't occur */
+  CS3[-13] = locked;       /* locked - cos(*) */
+  CS3[-12] = undef_dotval; /* undef_negdot - cos(*) : can't occur */
+  CS3[-11] = locked;       /* - cos - cos(*) */
+  CS3[-10] = undef_dotval; /* - cos2 - cos(*) : can't occur */
+  CS3[-9] = undef_dotval;  /* - half - cos(*) : can't occur */
+  CS3[-8] = undef_dotval;  /* - hinvgold - cos(*) : can't occur */
+  CS3[-7] = undef_dotval;  /* zero - cos(*) : can't occur */
+  CS3[-6] = undef_dotval;  /* hinvgold - cos(*) : can't occur */
+  CS3[-5] = neg_hinvgold;  /* half - cos(*) : can't occur */
+  CS3[-4] = undef_dotval;  /* cos2 - cos(*) : can't occur */
+  CS3[-3] = undef_dotval;  /* cos - cos(*) : can't occur */
+  CS3[-2] = undef_dotval;  /* undef_posdot - cos(*) : can't occur */
+  CS3[-1] = undef_dotval;  /* one - cos(*) : can't occur */
 
-  CS3[0] = locked;            /* locked - cos */
-  CS3[1] = locked;            /* undef_negdot - cos */
-  CS3[2] = locked;            /* - cos - cos */
-  CS3[3] = locked;            /* - cos2 - cos */
-  CS3[4] = locked;            /* - half - cos */
-  CS3[5] = locked;            /* - hinvgold - cos */ 
-  CS3[6] = neg_cos;           /* zero - cos */
-  CS3[7] = neg_half;          /* hinvgold - cos in cyclotomy 5 */
-  CS3[8] = neg_hinvgold;      /* half - cos in cyclotomy 5 */
-  CS3[9] = undef_dotval;      /* cos2 - cos : can't occur */
-  CS3[10] = zero;             /* cos - cos */
-  CS3[11] = undef_dotval;     /* undef_posdot - cos : can't occur */
-  CS3[12] = undef_dotval;     /* one - cos : can't occur */
+  CS3[0] = locked;        /* locked - cos */
+  CS3[1] = locked;        /* undef_negdot - cos */
+  CS3[2] = locked;        /* - cos - cos */
+  CS3[3] = locked;        /* - cos2 - cos */
+  CS3[4] = locked;        /* - half - cos */
+  CS3[5] = locked;        /* - hinvgold - cos */
+  CS3[6] = neg_cos;       /* zero - cos */
+  CS3[7] = neg_half;      /* hinvgold - cos in cyclotomy 5 */
+  CS3[8] = neg_hinvgold;  /* half - cos in cyclotomy 5 */
+  CS3[9] = undef_dotval;  /* cos2 - cos : can't occur */
+  CS3[10] = zero;         /* cos - cos */
+  CS3[11] = undef_dotval; /* undef_posdot - cos : can't occur */
+  CS3[12] = undef_dotval; /* one - cos : can't occur */
 
-  CS3[13] = locked;           /* locked - cos2 */
-  CS3[14] = undef_dotval;     /* undef_negdot - cos2 : can't occur */
-  CS3[15] = locked;           /* - cos - cos2 */
-  CS3[16] = locked;           /* - cos2 - cos2 */
-  CS3[17] = locked;           /* - half - cos2 */
-  CS3[18] = undef_dotval;     /* - hinvgold - cos2 : can't occur */ 
-  CS3[19] = neg_cos2;         /* zero - cos2 */
-  CS3[20] = undef_dotval;     /* hinvgold - cos2 : can't occur */
-  CS3[21] = undef_dotval;     /* half - cos2 : can't occur */
-  CS3[22] = zero;             /* cos2 - cos2 */
-  CS3[23] = undef_dotval;     /* cos - cos2 : can't occur*/
-  CS3[24] = undef_dotval;     /* undef_posdot - cos2 : can't occur */
-  CS3[25] = undef_dotval;     /* one - cos2 : can't occur */
+  CS3[13] = locked;       /* locked - cos2 */
+  CS3[14] = undef_dotval; /* undef_negdot - cos2 : can't occur */
+  CS3[15] = locked;       /* - cos - cos2 */
+  CS3[16] = locked;       /* - cos2 - cos2 */
+  CS3[17] = locked;       /* - half - cos2 */
+  CS3[18] = undef_dotval; /* - hinvgold - cos2 : can't occur */
+  CS3[19] = neg_cos2;     /* zero - cos2 */
+  CS3[20] = undef_dotval; /* hinvgold - cos2 : can't occur */
+  CS3[21] = undef_dotval; /* half - cos2 : can't occur */
+  CS3[22] = zero;         /* cos2 - cos2 */
+  CS3[23] = undef_dotval; /* cos - cos2 : can't occur*/
+  CS3[24] = undef_dotval; /* undef_posdot - cos2 : can't occur */
+  CS3[25] = undef_dotval; /* one - cos2 : can't occur */
 
-  CS3[26] = locked;           /* locked - half */
-  CS3[27] = undef_dotval;     /* undef_negdot - half : can't occur */
-  CS3[28] = locked;           /* - cos - half */
-  CS3[29] = locked;           /* - cos2 - half */
-  CS3[30] = locked;           /* - half - half */
-  CS3[31] = neg_cos;          /* - hinvgold - half in cyclotomy 5 */ 
-  CS3[32] = neg_half;         /* zero - half */
-  CS3[33] = undef_dotval;     /* hinvgold - half : can't occur */
-  CS3[34] = zero;             /* half - half */
-  CS3[35] = undef_dotval;     /* cos2 - half : can't occur */
-  CS3[36] = hinvgold;         /* cos - half in cyclotomy 5 */
-  CS3[37] = undef_dotval;     /* undef_posdot - half : can't occur */
-  CS3[38] = half;             /* one - half */
+  CS3[26] = locked;       /* locked - half */
+  CS3[27] = undef_dotval; /* undef_negdot - half : can't occur */
+  CS3[28] = locked;       /* - cos - half */
+  CS3[29] = locked;       /* - cos2 - half */
+  CS3[30] = locked;       /* - half - half */
+  CS3[31] = neg_cos;      /* - hinvgold - half in cyclotomy 5 */
+  CS3[32] = neg_half;     /* zero - half */
+  CS3[33] = undef_dotval; /* hinvgold - half : can't occur */
+  CS3[34] = zero;         /* half - half */
+  CS3[35] = undef_dotval; /* cos2 - half : can't occur */
+  CS3[36] = hinvgold;     /* cos - half in cyclotomy 5 */
+  CS3[37] = undef_dotval; /* undef_posdot - half : can't occur */
+  CS3[38] = half;         /* one - half */
 
-  CS3[39] = locked;           /* locked - hinvgold */
-  CS3[40] = undef_dotval;     /* undef_negdot - hinvgold : can't occur */
-  CS3[41] = locked;           /* - cos - hinvgold */
-  CS3[42] = locked;           /* - cos2 - hinvgold : can't occur */
-  CS3[43] = neg_cos;          /* - half - hinvgold in cyclotomy 5 */
-  CS3[44] = undef_dotval;     /* - hinvgold - hinvgold : can't occur */ 
-  CS3[45] = neg_hinvgold;     /* zero - hinvgold */
-  CS3[46] = zero;             /* hinvgold - hinvgold */
-  CS3[47] = undef_dotval;     /* half - hinvgold : can't occur */
-  CS3[48] = undef_dotval;     /* cos2 - hinvgold : can't occur */
-  CS3[49] = half;             /* cos - hinvgold in cyclotomy 5 */
-  CS3[50] = undef_dotval;     /* undef_posdot - hinvgold : can't occur */
-  CS3[51] = undef_dotval;     /* one - hinvgold : can't occur */
+  CS3[39] = locked;       /* locked - hinvgold */
+  CS3[40] = undef_dotval; /* undef_negdot - hinvgold : can't occur */
+  CS3[41] = locked;       /* - cos - hinvgold */
+  CS3[42] = locked;       /* - cos2 - hinvgold : can't occur */
+  CS3[43] = neg_cos;      /* - half - hinvgold in cyclotomy 5 */
+  CS3[44] = undef_dotval; /* - hinvgold - hinvgold : can't occur */
+  CS3[45] = neg_hinvgold; /* zero - hinvgold */
+  CS3[46] = zero;         /* hinvgold - hinvgold */
+  CS3[47] = undef_dotval; /* half - hinvgold : can't occur */
+  CS3[48] = undef_dotval; /* cos2 - hinvgold : can't occur */
+  CS3[49] = half;         /* cos - hinvgold in cyclotomy 5 */
+  CS3[50] = undef_dotval; /* undef_posdot - hinvgold : can't occur */
+  CS3[51] = undef_dotval; /* one - hinvgold : can't occur */
 
   /* the matrix CS4 gives a + 2 cos.b, for b < 0, assuming cyclotomy 4,
      i.e., cos^2 = 1/2 */
 
-  CS4[0] = locked;          /* locked - sqrt(2).cos */
-  CS4[1] = undef_dotval;    /* undef_negdot - sqrt(2).cos : can't occur */
-  CS4[2] = locked;          /* - cos - sqrt(2).cos */
-  CS4[3] = locked;          /* - cos2 - sqrt(2).cos */
-  CS4[4] = locked;          /* - half - sqrt(2).cos */
-  CS4[5] = locked;          /* - hinvgold - sqrt(2).cos */
-  CS4[6] = locked;          /* zero - sqrt(2).cos */
-  CS4[7] = undef_dotval;    /* hinvgold - sqrt(2).cos : can't occur */
-  CS4[8] = neg_half;        /* half - sqrt(2).cos */
-  CS4[9] = undef_dotval;    /* cos2 - sqrt(2).cos : can't occur */
-  CS4[10] = undef_dotval;   /* cos - sqrt(2).cos : can't occur */
-  CS4[11] = undef_dotval;   /* undef_posdot - sqrt(2).cos : can't occur */
-  CS4[12] = zero;           /* one - sqrt(2).cos */
+  CS4[0] = locked;        /* locked - sqrt(2).cos */
+  CS4[1] = undef_dotval;  /* undef_negdot - sqrt(2).cos : can't occur */
+  CS4[2] = locked;        /* - cos - sqrt(2).cos */
+  CS4[3] = locked;        /* - cos2 - sqrt(2).cos */
+  CS4[4] = locked;        /* - half - sqrt(2).cos */
+  CS4[5] = locked;        /* - hinvgold - sqrt(2).cos */
+  CS4[6] = locked;        /* zero - sqrt(2).cos */
+  CS4[7] = undef_dotval;  /* hinvgold - sqrt(2).cos : can't occur */
+  CS4[8] = neg_half;      /* half - sqrt(2).cos */
+  CS4[9] = undef_dotval;  /* cos2 - sqrt(2).cos : can't occur */
+  CS4[10] = undef_dotval; /* cos - sqrt(2).cos : can't occur */
+  CS4[11] = undef_dotval; /* undef_posdot - sqrt(2).cos : can't occur */
+  CS4[12] = zero;         /* one - sqrt(2).cos */
 
-  CS4[13] = locked;         /* locked - sqrt(2).cos2 */
-  CS4[14] = undef_dotval;   /* undef_negdot - sqrt(2).cos2 : can't occur */
-  CS4[15] = locked;         /* - cos - sqrt(2).cos2 */
-  CS4[16] = locked;         /* - cos2 - sqrt(2).cos2 : can't occur */
-  CS4[17] = locked;         /* - half - sqrt(2).cos2 */
-  CS4[18] = locked;         /* - hinvgold - sqrt(2).cos2 : can't occur */ 
-  CS4[19] = locked;         /* zero - sqrt(2).cos2 */
-  CS4[20] = undef_dotval;   /* hinvgold - sqrt(2).cos2 : can't occur */
-  CS4[21] = undef_dotval;   /* half - sqrt(2).cos2 : can't occur */
-  CS4[22] = undef_dotval;   /* cos2 - sqrt(2).cos2 : can't occur */
-  CS4[23] = undef_dotval;   /* cos - sqrt(2).cos2 : can't occur */
-  CS4[24] = undef_dotval;   /* undef_posdot - sqrt(2).cos2 : can't occur */
-  CS4[25] = undef_dotval;   /* one - sqrt(2).cos2 : can't occur */
+  CS4[13] = locked;       /* locked - sqrt(2).cos2 */
+  CS4[14] = undef_dotval; /* undef_negdot - sqrt(2).cos2 : can't occur */
+  CS4[15] = locked;       /* - cos - sqrt(2).cos2 */
+  CS4[16] = locked;       /* - cos2 - sqrt(2).cos2 : can't occur */
+  CS4[17] = locked;       /* - half - sqrt(2).cos2 */
+  CS4[18] = locked;       /* - hinvgold - sqrt(2).cos2 : can't occur */
+  CS4[19] = locked;       /* zero - sqrt(2).cos2 */
+  CS4[20] = undef_dotval; /* hinvgold - sqrt(2).cos2 : can't occur */
+  CS4[21] = undef_dotval; /* half - sqrt(2).cos2 : can't occur */
+  CS4[22] = undef_dotval; /* cos2 - sqrt(2).cos2 : can't occur */
+  CS4[23] = undef_dotval; /* cos - sqrt(2).cos2 : can't occur */
+  CS4[24] = undef_dotval; /* undef_posdot - sqrt(2).cos2 : can't occur */
+  CS4[25] = undef_dotval; /* one - sqrt(2).cos2 : can't occur */
 
-  CS4[26] = locked;         /* locked - sqrt(2).half */
-  CS4[27] = undef_dotval;   /* undef_negdot - sqrt(2).half : can't occur */
-  CS4[28] = locked;         /* - cos - sqrt(2).half */
-  CS4[29] = locked;         /* - cos2 - sqrt(2).half */
-  CS4[30] = locked;         /* - half - sqrt(2).half */
-  CS4[31] = undef_dotval;   /* - hinvgold - sqrt(2).half : can't occur */ 
-  CS4[32] = neg_cos;        /* zero - sqrt(2).half */
-  CS4[33] = undef_dotval;   /* hinvgold - sqrt(2).half : can't occur */
-  CS4[34] = undef_dotval;   /* half - sqrt(2).half : can't occur */
-  CS4[35] = undef_dotval;   /* cos2 - sqrt(2).half : can't occur */
-  CS4[36] = zero;           /* cos - sqrt(2).half */
-  CS4[37] = undef_dotval;   /* undef_posdot - sqrt(2).half : can't occur */
-  CS4[38] = undef_dotval;   /* one - sqrt(2).half : can't occur */
+  CS4[26] = locked;       /* locked - sqrt(2).half */
+  CS4[27] = undef_dotval; /* undef_negdot - sqrt(2).half : can't occur */
+  CS4[28] = locked;       /* - cos - sqrt(2).half */
+  CS4[29] = locked;       /* - cos2 - sqrt(2).half */
+  CS4[30] = locked;       /* - half - sqrt(2).half */
+  CS4[31] = undef_dotval; /* - hinvgold - sqrt(2).half : can't occur */
+  CS4[32] = neg_cos;      /* zero - sqrt(2).half */
+  CS4[33] = undef_dotval; /* hinvgold - sqrt(2).half : can't occur */
+  CS4[34] = undef_dotval; /* half - sqrt(2).half : can't occur */
+  CS4[35] = undef_dotval; /* cos2 - sqrt(2).half : can't occur */
+  CS4[36] = zero;         /* cos - sqrt(2).half */
+  CS4[37] = undef_dotval; /* undef_posdot - sqrt(2).half : can't occur */
+  CS4[38] = undef_dotval; /* one - sqrt(2).half : can't occur */
 
-  CS4[39] = locked;         /* locked - sqrt(2).hinvgold */
-  CS4[40] = undef_dotval;   /* undef_negdot - sqrt(2).hinvgold : can't occur */
-  CS4[41] = locked;         /* - cos - sqrt(2).hinvgold */
-  CS4[42] = locked;         /* - cos2 - sqrt(2).hinvgold : can't occur */
-  CS4[43] = neg_cos;        /* - half - sqrt(2).hinvgold in cyclotomy 5 */
-  CS4[44] = undef_dotval;   /* - hinvgold - sqrt(2).hinvgold : can't occur */ 
-  CS4[45] = neg_hinvgold;   /* zero - sqrt(2).hinvgold */
-  CS4[46] = zero;           /* hinvgold - sqrt(2).hinvgold */
-  CS4[47] = undef_dotval;   /* half - sqrt(2).hinvgold : can't occur */
-  CS4[48] = undef_dotval;   /* cos2 - sqrt(2).hinvgold : can't occur */
-  CS4[49] = half;           /* cos - sqrt(2).hinvgold in cyclotomy 5 */
-  CS4[50] = undef_dotval;   /* undef_posdot - sqrt(2).hinvgold : can't occur */
-  CS4[51] = undef_dotval;   /* one - sqrt(2).hinvgold : can't occur */
+  CS4[39] = locked;       /* locked - sqrt(2).hinvgold */
+  CS4[40] = undef_dotval; /* undef_negdot - sqrt(2).hinvgold : can't occur */
+  CS4[41] = locked;       /* - cos - sqrt(2).hinvgold */
+  CS4[42] = locked;       /* - cos2 - sqrt(2).hinvgold : can't occur */
+  CS4[43] = neg_cos;      /* - half - sqrt(2).hinvgold in cyclotomy 5 */
+  CS4[44] = undef_dotval; /* - hinvgold - sqrt(2).hinvgold : can't occur */
+  CS4[45] = neg_hinvgold; /* zero - sqrt(2).hinvgold */
+  CS4[46] = zero;         /* hinvgold - sqrt(2).hinvgold */
+  CS4[47] = undef_dotval; /* half - sqrt(2).hinvgold : can't occur */
+  CS4[48] = undef_dotval; /* cos2 - sqrt(2).hinvgold : can't occur */
+  CS4[49] = half;         /* cos - sqrt(2).hinvgold in cyclotomy 5 */
+  CS4[50] = undef_dotval; /* undef_posdot - sqrt(2).hinvgold : can't occur */
+  CS4[51] = undef_dotval; /* one - sqrt(2).hinvgold : can't occur */
 
   /* the matrix CS5 gives a + 2 cos.b, for b < 0, assuming cyclotomy 5,
      i.e., cos =  hinvgold + half, 2 cos.cos = cos + half, 2 cos.hinvgold
      = half */
 
-  CS5[0] = locked;            /* locked - 2 cos.cos */
-  CS5[1] = undef_dotval;      /* undef_negdot - 2 cos.cos : can't occur */
-  CS5[2] = locked;            /* - cos - 2 cos.cos */
-  CS5[3] = locked;            /* - cos2 - 2 cos.cos */
-  CS5[4] = locked;            /* - half - 2 cos.cos */
-  CS5[5] = locked;            /* - hinvgold - 2 cos.cos */ 
-  CS5[6] = locked;            /* zero - 2 cos.cos */
-  CS5[7] = locked;            /* hinvgold - 2 cos.cos in cyclotomy 5 */
-  CS5[8] = neg_cos;           /* half - 2 cos.cos in cyclotomy 5 */
-  CS5[9] = undef_dotval;      /* cos2 - 2 cos.cos : can't occur */
-  CS5[10] = neg_half;         /* cos - 2 cos.cos in cyclotomy 5 */
-  CS5[11] = undef_dotval;     /* undef_posdot - 2 cos.cos : can't occur */
-  CS5[12] = neg_hinvgold;     /* one - 2 cos.cos in cyclotomy 5 */
+  CS5[0] = locked;        /* locked - 2 cos.cos */
+  CS5[1] = undef_dotval;  /* undef_negdot - 2 cos.cos : can't occur */
+  CS5[2] = locked;        /* - cos - 2 cos.cos */
+  CS5[3] = locked;        /* - cos2 - 2 cos.cos */
+  CS5[4] = locked;        /* - half - 2 cos.cos */
+  CS5[5] = locked;        /* - hinvgold - 2 cos.cos */
+  CS5[6] = locked;        /* zero - 2 cos.cos */
+  CS5[7] = locked;        /* hinvgold - 2 cos.cos in cyclotomy 5 */
+  CS5[8] = neg_cos;       /* half - 2 cos.cos in cyclotomy 5 */
+  CS5[9] = undef_dotval;  /* cos2 - 2 cos.cos : can't occur */
+  CS5[10] = neg_half;     /* cos - 2 cos.cos in cyclotomy 5 */
+  CS5[11] = undef_dotval; /* undef_posdot - 2 cos.cos : can't occur */
+  CS5[12] = neg_hinvgold; /* one - 2 cos.cos in cyclotomy 5 */
 
-  CS5[13] = locked;           /* locked - 2 cos.cos2 */
-  CS5[14] = undef_dotval;     /* undef_negdot - 2 cos.cos2 : can't occur */
-  CS5[15] = locked;           /* - cos - 2 cos.cos2 */
-  CS5[16] = locked;           /* - cos2 - 2 cos.cos2 */
-  CS5[17] = locked;           /* - half - 2 cos.cos2 */
-  CS5[18] = locked;           /* - hinvgold - 2 cos.cos2 : can't occur */ 
-  CS5[19] = locked;           /* zero - 2 cos.cos2 */
-  CS5[20] = undef_dotval;     /* hinvgold - 2 cos.cos2 : can't occur */
-  CS5[21] = undef_dotval;     /* half - 2 cos.cos2 : can't occur */
-  CS5[22] = undef_dotval;     /* cos2 - 2 cos.cos2 */
-  CS5[23] = undef_dotval;     /* cos - 2 cos.cos2 : can't occur*/
-  CS5[24] = undef_dotval;     /* undef_posdot - 2 cos.cos2 : can't occur */
-  CS5[25] = undef_dotval;     /* one - 2 cos.cos2 : can't occur */
+  CS5[13] = locked;       /* locked - 2 cos.cos2 */
+  CS5[14] = undef_dotval; /* undef_negdot - 2 cos.cos2 : can't occur */
+  CS5[15] = locked;       /* - cos - 2 cos.cos2 */
+  CS5[16] = locked;       /* - cos2 - 2 cos.cos2 */
+  CS5[17] = locked;       /* - half - 2 cos.cos2 */
+  CS5[18] = locked;       /* - hinvgold - 2 cos.cos2 : can't occur */
+  CS5[19] = locked;       /* zero - 2 cos.cos2 */
+  CS5[20] = undef_dotval; /* hinvgold - 2 cos.cos2 : can't occur */
+  CS5[21] = undef_dotval; /* half - 2 cos.cos2 : can't occur */
+  CS5[22] = undef_dotval; /* cos2 - 2 cos.cos2 */
+  CS5[23] = undef_dotval; /* cos - 2 cos.cos2 : can't occur*/
+  CS5[24] = undef_dotval; /* undef_posdot - 2 cos.cos2 : can't occur */
+  CS5[25] = undef_dotval; /* one - 2 cos.cos2 : can't occur */
 
-  CS5[26] = locked;           /* locked - cos */
-  CS5[27] = undef_dotval;     /* undef_negdot - cos : can't occur */
-  CS5[28] = locked;           /* - cos - cos */
-  CS5[29] = locked;           /* - cos2 - cos */
-  CS5[30] = locked;           /* - half - cos */
-  CS5[31] = locked;           /* - hinvgold - cos = - sqrt(5)/2 < -1 */ 
-  CS5[32] = neg_cos;          /* zero - cos */
-  CS5[33] = neg_half;         /* hinvgold - cos */
-  CS5[34] = neg_hinvgold;     /* half - cos */
-  CS5[35] = undef_dotval;     /* cos2 - cos : can't occur */
-  CS5[36] = zero;             /* cos - cos */
-  CS5[37] = undef_dotval;     /* undef_posdot - cos : can't occur */
-  CS5[38] = undef_dotval;     /* one - cos : can't occur */
+  CS5[26] = locked;       /* locked - cos */
+  CS5[27] = undef_dotval; /* undef_negdot - cos : can't occur */
+  CS5[28] = locked;       /* - cos - cos */
+  CS5[29] = locked;       /* - cos2 - cos */
+  CS5[30] = locked;       /* - half - cos */
+  CS5[31] = locked;       /* - hinvgold - cos = - sqrt(5)/2 < -1 */
+  CS5[32] = neg_cos;      /* zero - cos */
+  CS5[33] = neg_half;     /* hinvgold - cos */
+  CS5[34] = neg_hinvgold; /* half - cos */
+  CS5[35] = undef_dotval; /* cos2 - cos : can't occur */
+  CS5[36] = zero;         /* cos - cos */
+  CS5[37] = undef_dotval; /* undef_posdot - cos : can't occur */
+  CS5[38] = undef_dotval; /* one - cos : can't occur */
 
-  CS5[39] = locked;           /* locked - half */
-  CS5[40] = undef_dotval;     /* undef_negdot - half : can't occur */
-  CS5[41] = locked;           /* - cos - half */
-  CS5[42] = locked;           /* - cos2 - half : can't occur */
-  CS5[43] = locked;           /* - half - half */
-  CS5[44] = neg_cos;          /* - hinvgold - half */ 
-  CS5[45] = neg_half;         /* zero - half */
-  CS5[46] = undef_dotval;     /* hinvgold - half : can't occur*/
-  CS5[47] = zero;             /* half - half */
-  CS5[48] = undef_dotval;     /* cos2 - half : can't occur */
-  CS5[49] = hinvgold;         /* cos - half in cyclotomy 5 */
-  CS5[50] = undef_dotval;     /* undef_posdot - half : can't occur */
-  CS5[51] = half;             /* one - half */
+  CS5[39] = locked;       /* locked - half */
+  CS5[40] = undef_dotval; /* undef_negdot - half : can't occur */
+  CS5[41] = locked;       /* - cos - half */
+  CS5[42] = locked;       /* - cos2 - half : can't occur */
+  CS5[43] = locked;       /* - half - half */
+  CS5[44] = neg_cos;      /* - hinvgold - half */
+  CS5[45] = neg_half;     /* zero - half */
+  CS5[46] = undef_dotval; /* hinvgold - half : can't occur*/
+  CS5[47] = zero;         /* half - half */
+  CS5[48] = undef_dotval; /* cos2 - half : can't occur */
+  CS5[49] = hinvgold;     /* cos - half in cyclotomy 5 */
+  CS5[50] = undef_dotval; /* undef_posdot - half : can't occur */
+  CS5[51] = half;         /* one - half */
 
   /* the matrix CS6 gives a + sqrt(3).b, for b < 0, assuming cyclotomy 6,
      i.e., cos^2 = 3/2 */
 
-  CS6[0] = locked;          /* locked - sqrt(3).cos */
-  CS6[1] = undef_dotval;    /* undef_negdot - sqrt(3).cos : can't occur */
-  CS6[2] = locked;          /* - cos - sqrt(3).cos */
-  CS6[3] = locked;          /* - cos2 - sqrt(3).cos */
-  CS6[4] = locked;          /* - half - sqrt(3).cos */
-  CS6[5] = locked;          /* - hinvgold - sqrt(3).cos */ 
-  CS6[6] = locked;          /* zero - sqrt(3).cos */
-  CS6[7] = undef_dotval;    /* hinvgold - sqrt(3).cos : can't occur */
-  CS6[8] = locked;          /* half - sqrt(3).cos in cyclotomy 6 */
-  CS6[9] = undef_dotval;    /* cos2 - sqrt(3).cos : can't occur */
-  CS6[10] = undef_dotval;   /* cos - sqrt(3).cos : can't occur */
-  CS6[11] = undef_dotval;   /* undef_posdot - sqrt(3).cos : can't occur */
-  CS6[12] = neg_half;       /* one - sqrt(3).cos in cyclotomy 6*/
+  CS6[0] = locked;        /* locked - sqrt(3).cos */
+  CS6[1] = undef_dotval;  /* undef_negdot - sqrt(3).cos : can't occur */
+  CS6[2] = locked;        /* - cos - sqrt(3).cos */
+  CS6[3] = locked;        /* - cos2 - sqrt(3).cos */
+  CS6[4] = locked;        /* - half - sqrt(3).cos */
+  CS6[5] = locked;        /* - hinvgold - sqrt(3).cos */
+  CS6[6] = locked;        /* zero - sqrt(3).cos */
+  CS6[7] = undef_dotval;  /* hinvgold - sqrt(3).cos : can't occur */
+  CS6[8] = locked;        /* half - sqrt(3).cos in cyclotomy 6 */
+  CS6[9] = undef_dotval;  /* cos2 - sqrt(3).cos : can't occur */
+  CS6[10] = undef_dotval; /* cos - sqrt(3).cos : can't occur */
+  CS6[11] = undef_dotval; /* undef_posdot - sqrt(3).cos : can't occur */
+  CS6[12] = neg_half;     /* one - sqrt(3).cos in cyclotomy 6*/
 
-  CS6[13] = locked;         /* locked - sqrt(3).cos2 */
-  CS6[14] = undef_dotval;   /* undef_negdot - sqrt(3).cos2 : can't occur */
-  CS6[15] = locked;         /* - cos - sqrt(3).cos2 */
-  CS6[16] = locked;         /* - cos2 - sqrt(3).cos2 */
-  CS6[17] = locked;         /* - half - sqrt(3).cos2 */
-  CS6[18] = locked;         /* - hinvgold - sqrt(3).cos2 */ 
-  CS6[19] = locked;         /* zero - sqrt(3).cos2 */
-  CS6[20] = undef_dotval;   /* hinvgold - sqrt(3).cos2 : can't occur */
-  CS6[21] = undef_dotval;   /* half - sqrt(3).cos2 : can't occur */
-  CS6[22] = undef_dotval;   /* cos2 - sqrt(3).cos2 : can't occur */
-  CS6[23] = undef_dotval;   /* cos - sqrt(3).cos2 : can't occur*/
-  CS6[24] = undef_dotval;   /* undef_posdot - sqrt(3).cos2 : can't occur */
-  CS6[25] = undef_dotval;   /* one - sqrt(3).cos2 : can't occur */
+  CS6[13] = locked;       /* locked - sqrt(3).cos2 */
+  CS6[14] = undef_dotval; /* undef_negdot - sqrt(3).cos2 : can't occur */
+  CS6[15] = locked;       /* - cos - sqrt(3).cos2 */
+  CS6[16] = locked;       /* - cos2 - sqrt(3).cos2 */
+  CS6[17] = locked;       /* - half - sqrt(3).cos2 */
+  CS6[18] = locked;       /* - hinvgold - sqrt(3).cos2 */
+  CS6[19] = locked;       /* zero - sqrt(3).cos2 */
+  CS6[20] = undef_dotval; /* hinvgold - sqrt(3).cos2 : can't occur */
+  CS6[21] = undef_dotval; /* half - sqrt(3).cos2 : can't occur */
+  CS6[22] = undef_dotval; /* cos2 - sqrt(3).cos2 : can't occur */
+  CS6[23] = undef_dotval; /* cos - sqrt(3).cos2 : can't occur*/
+  CS6[24] = undef_dotval; /* undef_posdot - sqrt(3).cos2 : can't occur */
+  CS6[25] = undef_dotval; /* one - sqrt(3).cos2 : can't occur */
 
-  CS6[26] = locked;         /* locked - sqrt(3).half */
-  CS6[27] = undef_dotval;   /* undef_negdot - sqrt(3).half : can't occur */
-  CS6[28] = locked;         /* - cos - sqrt(3).half */
-  CS6[29] = locked;         /* - cos2 - sqrt(3).half */
-  CS6[30] = locked;         /* - half - sqrt(3).half */
-  CS6[31] = locked;         /* - hinvgold - sqrt(3).half */ 
-  CS6[32] = neg_cos;        /* zero - sqrt(3).half */
-  CS6[33] = undef_dotval;   /* hinvgold - sqrt(3).half : can't occur */
-  CS6[34] = undef_dotval;   /* half - sqrt(3).half : can't occur */
-  CS6[35] = undef_dotval;   /* cos2 - sqrt(3).half : can't occur */
-  CS6[36] = zero;           /* cos - sqrt(3).half in cyclotomy 6 */
-  CS6[37] = undef_dotval;   /* undef_posdot - sqrt(3).half : can't occur */
-  CS6[38] = undef_dotval;   /* one - sqrt(3).half : can't occur */
+  CS6[26] = locked;       /* locked - sqrt(3).half */
+  CS6[27] = undef_dotval; /* undef_negdot - sqrt(3).half : can't occur */
+  CS6[28] = locked;       /* - cos - sqrt(3).half */
+  CS6[29] = locked;       /* - cos2 - sqrt(3).half */
+  CS6[30] = locked;       /* - half - sqrt(3).half */
+  CS6[31] = locked;       /* - hinvgold - sqrt(3).half */
+  CS6[32] = neg_cos;      /* zero - sqrt(3).half */
+  CS6[33] = undef_dotval; /* hinvgold - sqrt(3).half : can't occur */
+  CS6[34] = undef_dotval; /* half - sqrt(3).half : can't occur */
+  CS6[35] = undef_dotval; /* cos2 - sqrt(3).half : can't occur */
+  CS6[36] = zero;         /* cos - sqrt(3).half in cyclotomy 6 */
+  CS6[37] = undef_dotval; /* undef_posdot - sqrt(3).half : can't occur */
+  CS6[38] = undef_dotval; /* one - sqrt(3).half : can't occur */
 
-  CS6[39] = locked;         /* locked - sqrt(3).hinvgold */
-  CS6[40] = undef_dotval;   /* undef_negdot - sqrt(3).hinvgold : can't occur */
-  CS6[41] = locked;         /* - cos - sqrt(3).hinvgold */
-  CS6[42] = locked;         /* - cos2 - sqrt(3).hinvgold */
-  CS6[43] = locked;         /* - half - sqrt(3).hinvgold */
-  CS6[44] = undef_dotval;   /* - hinvgold - sqrt(3).hinvgold : can't occur */ 
-  CS6[45] = undef_dotval;   /* zero - sqrt(3).hinvgold : can't occur */
-  CS6[46] = undef_dotval;   /* hinvgold - sqrt(3).hinvgold : can't occur*/
-  CS6[47] = undef_dotval;   /* half - sqrt(3).hinvgold : can't occur */
-  CS6[48] = undef_dotval;   /* cos2 - sqrt(3).hinvgold : can't occur */
-  CS6[49] = undef_dotval;   /* cos - sqrt(3).hinvgold : can't occur */
-  CS6[50] = undef_dotval;   /* undef_posdot - sqrt(3).hinvgold : can't occur */
-  CS6[51] = undef_dotval;   /* one - sqrt(3).hinvgold : can't occur */
+  CS6[39] = locked;       /* locked - sqrt(3).hinvgold */
+  CS6[40] = undef_dotval; /* undef_negdot - sqrt(3).hinvgold : can't occur */
+  CS6[41] = locked;       /* - cos - sqrt(3).hinvgold */
+  CS6[42] = locked;       /* - cos2 - sqrt(3).hinvgold */
+  CS6[43] = locked;       /* - half - sqrt(3).hinvgold */
+  CS6[44] = undef_dotval; /* - hinvgold - sqrt(3).hinvgold : can't occur */
+  CS6[45] = undef_dotval; /* zero - sqrt(3).hinvgold : can't occur */
+  CS6[46] = undef_dotval; /* hinvgold - sqrt(3).hinvgold : can't occur*/
+  CS6[47] = undef_dotval; /* half - sqrt(3).hinvgold : can't occur */
+  CS6[48] = undef_dotval; /* cos2 - sqrt(3).hinvgold : can't occur */
+  CS6[49] = undef_dotval; /* cos - sqrt(3).hinvgold : can't occur */
+  CS6[50] = undef_dotval; /* undef_posdot - sqrt(3).hinvgold : can't occur */
+  CS6[51] = undef_dotval; /* one - sqrt(3).hinvgold : can't occur */
 
-  /* the matrix CSm gives a + 2 2 cos.b, for b < 0, assuming cyclotomy m > 6 
+  /* the matrix CSm gives a + 2 2 cos.b, for b < 0, assuming cyclotomy m > 6
      we have the identities c_m.cos(pi/m) = cos(pi/m) + 1, c_m.cos(2pi/m) =
      cos(3pi/m) + cos(pi/m) and since cos(3pi/7) + cos(pi/7) = 1 + cos(2pi/7)
      > 2, c_m.cos(2pi/m) > 2 for all m > 6 */
 
-  CSm[-13] = locked;          /* locked - c_m.cos(*) */
-  CSm[-12] = locked;          /* undef_negdot - c_m.cos(*) */
-  CSm[-11] = locked;          /* - cos - c_m.cos(*) */
-  CSm[-10] = locked;          /* - cos2 - c_m.cos(*) */
-  CSm[-9] = undef_dotval;     /* - half - c_m.cos(*) : can't occur */
-  CSm[-8] = undef_dotval;     /* - hinvgold - c_m.cos(*) : can't occur */ 
-  CSm[-7] = undef_dotval;     /* zero - c_m.cos(*) : can't occur */
-  CSm[-6] = undef_dotval;     /* hinvgold - c_m.cos(*) : can't occur */
-  CSm[-5] = undef_dotval;     /* half - c_m.cos(*) : can't occur */
-  CSm[-4] = undef_negdot;     /* cos2 - c_m.cos(*) */
-  CSm[-3] = undef_dotval;     /* cos - c_m.cos(*) : can't occur*/
-  CSm[-2] = undef_negdot;     /* undef_posdot - c_m.cos(*) */
-  CSm[-1] = undef_dotval;     /* one - c_m.cos(*) : can't occur */
+  CSm[-13] = locked;      /* locked - c_m.cos(*) */
+  CSm[-12] = locked;      /* undef_negdot - c_m.cos(*) */
+  CSm[-11] = locked;      /* - cos - c_m.cos(*) */
+  CSm[-10] = locked;      /* - cos2 - c_m.cos(*) */
+  CSm[-9] = undef_dotval; /* - half - c_m.cos(*) : can't occur */
+  CSm[-8] = undef_dotval; /* - hinvgold - c_m.cos(*) : can't occur */
+  CSm[-7] = undef_dotval; /* zero - c_m.cos(*) : can't occur */
+  CSm[-6] = undef_dotval; /* hinvgold - c_m.cos(*) : can't occur */
+  CSm[-5] = undef_dotval; /* half - c_m.cos(*) : can't occur */
+  CSm[-4] = undef_negdot; /* cos2 - c_m.cos(*) */
+  CSm[-3] = undef_dotval; /* cos - c_m.cos(*) : can't occur*/
+  CSm[-2] = undef_negdot; /* undef_posdot - c_m.cos(*) */
+  CSm[-1] = undef_dotval; /* one - c_m.cos(*) : can't occur */
 
-  CSm[0] = locked;            /* locked - c_m.cos */
-  CSm[1] = undef_dotval;      /* undef_negdot - c_m.cos : can't occur */
-  CSm[2] = locked;            /* - cos - c_m.cos */
-  CSm[3] = locked;            /* - cos2 - c_m.cos */
-  CSm[4] = locked;            /* - half - c_m.cos */
-  CSm[5] = locked;            /* - hinvgold - c_m.cos */ 
-  CSm[6] = locked;            /* zero - c_m.cos */
-  CSm[7] = undef_dotval;      /* hinvgold - c_m.cos : can't occur */
-  CSm[8] = locked;            /* half - c_m.cos */
-  CSm[9] = locked;            /* cos2 - c_m.cos = -1 */
-  CSm[10] = undef_dotval;     /* cos - c_m.cos : can't occur*/
-  CSm[11] = undef_dotval;     /* undef_posdot - c_m.cos : can't occur */
-  CSm[12] = neg_cos2;         /* one - c_m.cos */
+  CSm[0] = locked;        /* locked - c_m.cos */
+  CSm[1] = undef_dotval;  /* undef_negdot - c_m.cos : can't occur */
+  CSm[2] = locked;        /* - cos - c_m.cos */
+  CSm[3] = locked;        /* - cos2 - c_m.cos */
+  CSm[4] = locked;        /* - half - c_m.cos */
+  CSm[5] = locked;        /* - hinvgold - c_m.cos */
+  CSm[6] = locked;        /* zero - c_m.cos */
+  CSm[7] = undef_dotval;  /* hinvgold - c_m.cos : can't occur */
+  CSm[8] = locked;        /* half - c_m.cos */
+  CSm[9] = locked;        /* cos2 - c_m.cos = -1 */
+  CSm[10] = undef_dotval; /* cos - c_m.cos : can't occur*/
+  CSm[11] = undef_dotval; /* undef_posdot - c_m.cos : can't occur */
+  CSm[12] = neg_cos2;     /* one - c_m.cos */
 
-  CSm[13] = locked;           /* locked - c_m.cos2 */
-  CSm[14] = undef_dotval;     /* undef_negdot - c_m.cos2 : can't occur */
-  CSm[15] = locked;           /* - cos - c_m.cos2 */
-  CSm[16] = locked;           /* - cos2 - c_m.cos2 */
-  CSm[17] = locked;           /* - half - c_m.cos2 */
-  CSm[18] = locked;           /* - hinvgold - c_m.cos2 */ 
-  CSm[19] = locked;           /* zero - c_m.cos2 */
-  CSm[20] = undef_dotval;     /* hinvgold - c_m.cos2 : can't occur */
-  CSm[21] = undef_dotval;     /* half - c_m.cos2 : can't occur */
-  CSm[22] = locked;           /* cos2 - c_m.cos2 : can't occur */
-  CSm[23] = undef_negdot;     /* cos - c_m.cos2 = -cos3 */
-  CSm[24] = undef_dotval;     /* undef_posdot - c_m.cos2 : can't occur */
-  CSm[25] = undef_dotval;     /* one - c_m.cos2 : can't occur */
+  CSm[13] = locked;       /* locked - c_m.cos2 */
+  CSm[14] = undef_dotval; /* undef_negdot - c_m.cos2 : can't occur */
+  CSm[15] = locked;       /* - cos - c_m.cos2 */
+  CSm[16] = locked;       /* - cos2 - c_m.cos2 */
+  CSm[17] = locked;       /* - half - c_m.cos2 */
+  CSm[18] = locked;       /* - hinvgold - c_m.cos2 */
+  CSm[19] = locked;       /* zero - c_m.cos2 */
+  CSm[20] = undef_dotval; /* hinvgold - c_m.cos2 : can't occur */
+  CSm[21] = undef_dotval; /* half - c_m.cos2 : can't occur */
+  CSm[22] = locked;       /* cos2 - c_m.cos2 : can't occur */
+  CSm[23] = undef_negdot; /* cos - c_m.cos2 = -cos3 */
+  CSm[24] = undef_dotval; /* undef_posdot - c_m.cos2 : can't occur */
+  CSm[25] = undef_dotval; /* one - c_m.cos2 : can't occur */
 
-  CSm[26] = locked;           /* locked - c_m.half */
-  CSm[27] = undef_dotval;     /* undef_negdot - c_m.half : can't occur */
-  CSm[28] = locked;           /* - cos - c_m.half */
-  CSm[29] = locked;           /* - cos2 - c_m.half */
-  CSm[30] = locked;           /* - half - c_m.half */
-  CSm[31] = locked;           /* - hinvgold - c_m.half */
-  CSm[32] = neg_cos;          /* zero - c_m.half */
-  CSm[33] = undef_dotval;     /* hinvgold - c_m.half : can't occur */
-  CSm[34] = undef_dotval;     /* half - c_m.half : can't occur */
-  CSm[35] = undef_dotval;     /* cos2 - c_m.half : can't occur */
-  CSm[36] = zero;             /* cos - c_m.half */
-  CSm[37] = undef_dotval;     /* undef_posdot - c_m.half : can't occur */
-  CSm[38] = half;             /* one - c_m.half : can't occur */
+  CSm[26] = locked;       /* locked - c_m.half */
+  CSm[27] = undef_dotval; /* undef_negdot - c_m.half : can't occur */
+  CSm[28] = locked;       /* - cos - c_m.half */
+  CSm[29] = locked;       /* - cos2 - c_m.half */
+  CSm[30] = locked;       /* - half - c_m.half */
+  CSm[31] = locked;       /* - hinvgold - c_m.half */
+  CSm[32] = neg_cos;      /* zero - c_m.half */
+  CSm[33] = undef_dotval; /* hinvgold - c_m.half : can't occur */
+  CSm[34] = undef_dotval; /* half - c_m.half : can't occur */
+  CSm[35] = undef_dotval; /* cos2 - c_m.half : can't occur */
+  CSm[36] = zero;         /* cos - c_m.half */
+  CSm[37] = undef_dotval; /* undef_posdot - c_m.half : can't occur */
+  CSm[38] = half;         /* one - c_m.half : can't occur */
 
-  CSm[39] = locked;           /* locked - c_m.hinvgold */
-  CSm[40] = undef_dotval;     /* undef_negdot - c_m.hinvgold : can't occur */
-  CSm[41] = locked;           /* - cos - c_m.hinvgold */
-  CSm[42] = locked;           /* - cos2 - c_m.hinvgold */
-  CSm[43] = locked;           /* - half - c_m.hinvgold */
-  CSm[44] = undef_dotval;     /* - hinvgold - c_m.hinvgold : can't occur */ 
-  CSm[45] = undef_dotval;     /* zero - c_m.hinvgold : can't occur */
-  CSm[46] = undef_dotval;     /* hinvgold - c_m.hinvgold : can't occur */
-  CSm[47] = undef_dotval;     /* half - c_m.hinvgold : can't occur */
-  CSm[48] = undef_dotval;     /* cos2 - c_m.hinvgold : can't occur */
-  CSm[49] = undef_dotval;     /* cos - c_m.hinvgold : can't occur */
-  CSm[50] = undef_dotval;     /* undef_posdot - c_m.hinvgold : can't occur */
-  CSm[51] = undef_dotval;     /* one - c_m.hinvgold : can't occur */
+  CSm[39] = locked;       /* locked - c_m.hinvgold */
+  CSm[40] = undef_dotval; /* undef_negdot - c_m.hinvgold : can't occur */
+  CSm[41] = locked;       /* - cos - c_m.hinvgold */
+  CSm[42] = locked;       /* - cos2 - c_m.hinvgold */
+  CSm[43] = locked;       /* - half - c_m.hinvgold */
+  CSm[44] = undef_dotval; /* - hinvgold - c_m.hinvgold : can't occur */
+  CSm[45] = undef_dotval; /* zero - c_m.hinvgold : can't occur */
+  CSm[46] = undef_dotval; /* hinvgold - c_m.hinvgold : can't occur */
+  CSm[47] = undef_dotval; /* half - c_m.hinvgold : can't occur */
+  CSm[48] = undef_dotval; /* cos2 - c_m.hinvgold : can't occur */
+  CSm[49] = undef_dotval; /* cos - c_m.hinvgold : can't occur */
+  CSm[50] = undef_dotval; /* undef_posdot - c_m.hinvgold : can't occur */
+  CSm[51] = undef_dotval; /* one - c_m.hinvgold : can't occur */
 
   return;
 }
 
-};
+}; // namespace
 
 /****************************************************************************
 
@@ -565,7 +566,7 @@ InitStaticConstants::InitStaticConstants()
   construction of MinTable.
 
   NOTE : this looks a rather clumsy, and could probably be improved.
-  The problem is that the constructing functions need access to the 
+  The problem is that the constructing functions need access to the
   representation, but we don't want them to be member functions. An
   alternative would be to make them private members.
 
@@ -573,9 +574,9 @@ InitStaticConstants::InitStaticConstants()
 
 namespace {
 
-InitMinTable::InitMinTable(CoxGraph& G)
+InitMinTable::InitMinTable(CoxGraph &G)
 
-{ 
+{
   static InitStaticConstants a;
 
   d_rank = G.rank();
@@ -584,44 +585,43 @@ InitMinTable::InitMinTable(CoxGraph& G)
   return;
 }
 
-void InitMinTable::initMinTable(CoxGraph& G)
+void InitMinTable::initMinTable(CoxGraph &G)
 
 {
   d_min.setSize(rank());
   d_dot.setSize(rank());
 
-  d_min[0] = new(arena()) MinNbr[rank()*rank()];
-  d_dot[0] = new(arena()) DotProduct[rank()*rank()];
+  d_min[0] = new (arena()) MinNbr[rank() * rank()];
+  d_dot[0] = new (arena()) DotProduct[rank() * rank()];
 
-  for (Generator s = 1; s < rank(); s++)
-    {
-      d_dot[s] = d_dot[s-1] + rank();
-      d_min[s] = d_min[s-1] + rank();
-    }
+  for (Generator s = 1; s < rank(); s++) {
+    d_dot[s] = d_dot[s - 1] + rank();
+    d_min[s] = d_min[s - 1] + rank();
+  }
 
   for (MinNbr r = 0; r < rank(); r++) {
     for (Generator s = 0; s < rank(); s++)
-      switch (G.M(r,s)) {
+      switch (G.M(r, s)) {
       case 0:
-	d_dot[r][s] = locked;
-	d_min[r][s] = not_minimal;
-	break;
+        d_dot[r][s] = locked;
+        d_min[r][s] = not_minimal;
+        break;
       case 1:
-	d_dot[r][s] = dotval::one;
-	d_min[r][s] = not_positive;
-	break;
+        d_dot[r][s] = dotval::one;
+        d_min[r][s] = not_positive;
+        break;
       case 2:
-	d_dot[r][s] = zero;
-	d_min[r][s] = r;
-	break;
+        d_dot[r][s] = zero;
+        d_min[r][s] = r;
+        break;
       case 3:
-	d_dot[r][s] = neg_half;
-	d_min[r][s] = dihedral;
-	break;
+        d_dot[r][s] = neg_half;
+        d_min[r][s] = dihedral;
+        break;
       default:
-	d_dot[r][s] = neg_cos;
-	d_min[r][s] = dihedral;
-	break;
+        d_dot[r][s] = neg_cos;
+        d_min[r][s] = dihedral;
+        break;
       };
   }
 
@@ -630,8 +630,7 @@ void InitMinTable::initMinTable(CoxGraph& G)
   return;
 }
 
-MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t, 
-				    Ulong c)
+MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t, Ulong c)
 
 /*
   This function shifts r by stst... (c terms).
@@ -644,9 +643,9 @@ MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t,
   u = s;
 
   for (j = 0; j < c; j++) {
-    if (min(r,u) >= undef_minnbr)
-      return min(r,u);
-    r = min(r,u);
+    if (min(r, u) >= undef_minnbr)
+      return min(r, u);
+    r = min(r, u);
     if (u == s)
       u = t;
     else
@@ -656,24 +655,23 @@ MinNbr InitMinTable::dihedralShift(MinNbr r, Generator s, Generator t,
   return r;
 }
 
-
-void InitMinTable::fillDihedralRoots(CoxGraph& G)
+void InitMinTable::fillDihedralRoots(CoxGraph &G)
 
 /*
   Assuming M has been initialized by InitMinTable, fills in the
   rows corresponding to the dihedral roots.
 */
 
-{  
+{
   MinNbr r = 0;
 
   /* fill in roots of depth 1 */
 
   for (; r < rank(); ++r) {
     for (Generator s = 0; s < rank(); ++s)
-      if (min(r,s) == dihedral) {
-	newDepthOneRoot(G,r,s);
-	d_size++;
+      if (min(r, s) == dihedral) {
+        newDepthOneRoot(G, r, s);
+        d_size++;
       }
   }
 
@@ -683,9 +681,9 @@ void InitMinTable::fillDihedralRoots(CoxGraph& G)
 
   for (; r < c; ++r) {
     for (Generator s = 0; s < rank(); ++s)
-      if (min(r,s) == dihedral) {
-	newDepthTwoRoot(G,r,s);
-	d_size++;
+      if (min(r, s) == dihedral) {
+        newDepthTwoRoot(G, r, s);
+        d_size++;
       }
   }
 
@@ -695,39 +693,37 @@ void InitMinTable::fillDihedralRoots(CoxGraph& G)
     c = d_size;
     for (; r < c; ++r) {
       for (Generator s = 0; s < rank(); ++s)
-	if (min(r,s) == dihedral) {
-	  newDihedralRoot(G,r,s,d);
-	  d_size++;
-	}
+        if (min(r, s) == dihedral) {
+          newDihedralRoot(G, r, s, d);
+          d_size++;
+        }
     }
   }
 
   return;
 }
 
-
-void InitMinTable::fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s)
+void InitMinTable::fillDepthOneRow(CoxGraph &G, MinNbr r, Generator s)
 
 {
-  Generator u = min(r,s);
-  MinNbr* ps = d_min[s];
+  Generator u = min(r, s);
+  MinNbr *ps = d_min[s];
 
   for (Generator t = 0; t < rank(); t++) {
     if (t == s)
       continue;
     if (t == u) { /* t is the other element in the support */
-      CoxEntry m = G.M(s,t);
+      CoxEntry m = G.M(s, t);
       if (m == 3) { /* descent */
-	d_min[r][t] = s;
-	ps[t] = r;
-      }
-      else if (m == 4)  /* commutation */
-	d_min[r][t] = r;
+        d_min[r][t] = s;
+        ps[t] = r;
+      } else if (m == 4) /* commutation */
+        d_min[r][t] = r;
       else
-	d_min[r][t] = dihedral;
+        d_min[r][t] = dihedral;
       continue;
     }
-    switch (dot(r,t)) {
+    switch (dot(r, t)) {
     case zero:
       d_min[r][t] = r;
       break;
@@ -747,44 +743,42 @@ void InitMinTable::fillDepthOneRow(CoxGraph& G, MinNbr r, Generator s)
   return;
 }
 
-
-void InitMinTable::fillDihedralRow(CoxGraph& G, MinNbr r, Generator s,
-				  Length d)
+void InitMinTable::fillDihedralRow(CoxGraph &G, MinNbr r, Generator s, Length d)
 
 {
-  MinNbr p = min(r,s);
+  MinNbr p = min(r, s);
 
   for (Generator t = 0; t < rank(); t++) {
     if (t == s)
       continue;
-    if (min(p,t) < p) { /* t is the other element in the support */
-      if (dot(r,t) < 0)
-	d_min[r][t] = dihedral;
-      else if (dot(r,t) == 0)
-	d_min[r][t] = r;
+    if (min(p, t) < p) { /* t is the other element in the support */
+      if (dot(r, t) < 0)
+        d_min[r][t] = dihedral;
+      else if (dot(r, t) == 0)
+        d_min[r][t] = r;
       else { /* descent */
-	CoxEntry m = G.M(s,t);
-	MinNbr y;
-	switch (m % 4) {
-	case 0:
-	case 2:
-	  d_min[r][t] = r;
-	  break;
-	case 1:
-	  y = dihedralShift(t,s,t,d-1);
-	  d_min[r][t] = y;
-	  d_min[y][t] = r;
-	  break;
-	case 3:
-	  y = dihedralShift(s,t,s,d-1);
-	  d_min[r][t] = y;
-	  d_min[y][t] = r;
-	  break;
-	}
+        CoxEntry m = G.M(s, t);
+        MinNbr y;
+        switch (m % 4) {
+        case 0:
+        case 2:
+          d_min[r][t] = r;
+          break;
+        case 1:
+          y = dihedralShift(t, s, t, d - 1);
+          d_min[r][t] = y;
+          d_min[y][t] = r;
+          break;
+        case 3:
+          y = dihedralShift(s, t, s, d - 1);
+          d_min[r][t] = y;
+          d_min[y][t] = r;
+          break;
+        }
       }
       continue;
     }
-    switch (dot(r,t)) {
+    switch (dot(r, t)) {
     case zero:
       d_min[r][t] = r;
       break;
@@ -800,16 +794,15 @@ void InitMinTable::fillDihedralRow(CoxGraph& G, MinNbr r, Generator s,
       break;
     }
   }
-  
+
   return;
 }
 
-
-void InitMinTable::fillReflectionRow(CoxGraph& G, MinNbr r, Generator s)
+void InitMinTable::fillReflectionRow(CoxGraph &G, MinNbr r, Generator s)
 
 /*
-  This function fills in d_min[r], where r has just been created through s, 
-  and d_dot[r] is filled in. It is assumed that d_min[r][s] is already filled 
+  This function fills in d_min[r], where r has just been created through s,
+  and d_dot[r] is filled in. It is assumed that d_min[r][s] is already filled
   in.
 */
 
@@ -817,24 +810,23 @@ void InitMinTable::fillReflectionRow(CoxGraph& G, MinNbr r, Generator s)
   for (Generator t = 0; t < rank(); t++) {
     if (t == s)
       continue;
-    switch (dot(r,t)) {
+    switch (dot(r, t)) {
     case dotval::cos:
     case cos2:
-    case half:  /* descent */
+    case half: /* descent */
     case hinvgold:
-      if (G.star(bits::lmask[t],s)) { /* M(t,s) > 2 */
-	CoxEntry m = G.M(s,t);
-	MinNbr y = dihedralShift(r,s,t,2*m-1);
-	d_min[r][t] = y;
-	d_min[y][t] = r;
-      }
-      else { /* commuting descent */
-	MinNbr y;
-	y = min(r,s);
-	y = min(y,t);
-	y = min(y,s);
-	d_min[r][t] = y;
-	d_min[y][t] = r;
+      if (G.star(bits::lmask[t], s)) { /* M(t,s) > 2 */
+        CoxEntry m = G.M(s, t);
+        MinNbr y = dihedralShift(r, s, t, 2 * m - 1);
+        d_min[r][t] = y;
+        d_min[y][t] = r;
+      } else { /* commuting descent */
+        MinNbr y;
+        y = min(r, s);
+        y = min(y, t);
+        y = min(y, s);
+        d_min[r][t] = y;
+        d_min[y][t] = r;
       }
       break;
     case zero:
@@ -857,18 +849,17 @@ void InitMinTable::fillReflectionRow(CoxGraph& G, MinNbr r, Generator s)
   return;
 }
 
+void InitMinTable::fillMinTable(CoxGraph &G)
 
-void InitMinTable::fillMinTable(CoxGraph& G)
-
-{  
+{
   fillDihedralRoots(G);
 
   for (Ulong r = rank(); r < d_size; r++) {
     for (Generator s = 0; s < rank(); ++s)
-      if (min(r,s) == undef_minnbr) {
-	newMinRoot(G,r,s);
-	d_size++;
-	// printf("%d\r",d_size); // count roots
+      if (min(r, s) == undef_minnbr) {
+        newMinRoot(G, r, s);
+        d_size++;
+        // printf("%d\r",d_size); // count roots
       }
   }
 
@@ -877,128 +868,118 @@ void InitMinTable::fillMinTable(CoxGraph& G)
   return;
 }
 
-
-void InitMinTable::newDepthOneRoot(CoxGraph& G, MinNbr r, Generator s)
+void InitMinTable::newDepthOneRoot(CoxGraph &G, MinNbr r, Generator s)
 
 {
-  setMinMemory(d_size+1);
+  setMinMemory(d_size + 1);
 
-  d_min[d_size]= new(arena()) MinNbr[rank()];
-  d_dot[d_size]= new(arena()) DotProduct[rank()];
+  d_min[d_size] = new (arena()) MinNbr[rank()];
+  d_dot[d_size] = new (arena()) DotProduct[rank()];
 
   d_min[d_size][s] = r;
   d_min[r][s] = d_size;
 
-  memcpy(d_dot[d_size],d_dot[r],rank()*sizeof(DotProduct));
+  memcpy(d_dot[d_size], d_dot[r], rank() * sizeof(DotProduct));
   d_dot[d_size][s] = -d_dot[d_size][s];
 
-  for (LFlags f = G.star(s); f; f &= f-1) {
+  for (LFlags f = G.star(s); f; f &= f - 1) {
     Generator t = bits::firstBit(f);
-    if (dot(r,t) == locked)
+    if (dot(r, t) == locked)
       continue;
-    d_dot[d_size][t] = 
-      bondCosineSum(G.M(s,t),dot(r,t),dot(r,s));
+    d_dot[d_size][t] = bondCosineSum(G.M(s, t), dot(r, t), dot(r, s));
   }
 
-  fillDepthOneRow(G,d_size,s);
+  fillDepthOneRow(G, d_size, s);
 
   return;
 }
 
-
-void InitMinTable::newDepthTwoRoot(CoxGraph& G, MinNbr r, Generator s)
+void InitMinTable::newDepthTwoRoot(CoxGraph &G, MinNbr r, Generator s)
 
 {
-  setMinMemory(d_size+1);
+  setMinMemory(d_size + 1);
 
-  d_min[d_size]= new(arena()) MinNbr[rank()];
-  d_dot[d_size]= new(arena()) DotProduct[rank()];
+  d_min[d_size] = new (arena()) MinNbr[rank()];
+  d_dot[d_size] = new (arena()) DotProduct[rank()];
 
   d_min[d_size][s] = r;
   d_min[r][s] = d_size;
 
-  memcpy(d_dot[d_size],d_dot[r],rank()*sizeof(DotProduct));
+  memcpy(d_dot[d_size], d_dot[r], rank() * sizeof(DotProduct));
   d_dot[d_size][s] = -d_dot[d_size][s];
 
-  for (LFlags f = G.star(s); f; f &= f-1) {
+  for (LFlags f = G.star(s); f; f &= f - 1) {
     Generator t = bits::firstBit(f);
-    if (dot(r,t) == locked)
+    if (dot(r, t) == locked)
       continue;
-    d_dot[d_size][t] = 
-      bondCosineSum(G.M(s,t),dot(r,t),dot(r,s));
+    d_dot[d_size][t] = bondCosineSum(G.M(s, t), dot(r, t), dot(r, s));
   }
 
-  fillDihedralRow(G,d_size,s,2);
+  fillDihedralRow(G, d_size, s, 2);
 
   return;
 }
 
-
-void InitMinTable::newDihedralRoot(CoxGraph& G, MinNbr r, Generator s, 
-				  Length d)
+void InitMinTable::newDihedralRoot(CoxGraph &G, MinNbr r, Generator s, Length d)
 
 {
-  setMinMemory(d_size+1);
+  setMinMemory(d_size + 1);
 
-  d_min[d_size]= new(arena()) MinNbr[rank()];
-  d_dot[d_size]= new(arena()) DotProduct[rank()];
+  d_min[d_size] = new (arena()) MinNbr[rank()];
+  d_dot[d_size] = new (arena()) DotProduct[rank()];
 
   d_min[d_size][s] = r;
   d_min[r][s] = d_size;
 
-  memcpy(d_dot[d_size],d_dot[r],rank()*sizeof(DotProduct));
+  memcpy(d_dot[d_size], d_dot[r], rank() * sizeof(DotProduct));
   d_dot[d_size][s] = -d_dot[d_size][s];
 
-  for (LFlags f = G.star(s); f; f &= f-1) {
+  for (LFlags f = G.star(s); f; f &= f - 1) {
     Generator t = bits::firstBit(f);
-    if (dot(r,t) == locked)
+    if (dot(r, t) == locked)
       continue;
-    CoxEntry m = G.M(s,t);
-    d_dot[d_size][t] = 
-      bondCosineSum(m,dot(r,t),dot(r,s));
-    
+    CoxEntry m = G.M(s, t);
+    d_dot[d_size][t] = bondCosineSum(m, dot(r, t), dot(r, s));
+
     /* correction if maximal depth is reached */
-    
-    if (dot(d_size,t) == undef_negdot)  /* t is the other element */
-      if (d == (m-1)/2)
-	d_dot[d_size][t] = -d_dot[d_size][t];
+
+    if (dot(d_size, t) == undef_negdot) /* t is the other element */
+      if (d == (m - 1) / 2)
+        d_dot[d_size][t] = -d_dot[d_size][t];
   }
 
-  fillDihedralRow(G,d_size,s,d);
+  fillDihedralRow(G, d_size, s, d);
 
   return;
 }
 
-
-void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
+void InitMinTable::newMinRoot(CoxGraph &G, MinNbr r, Generator s)
 
 {
-  setMinMemory(d_size+1);
+  setMinMemory(d_size + 1);
 
-  d_min[d_size]= new(arena()) MinNbr[rank()];
-  d_dot[d_size]= new(arena()) DotProduct[rank()];
+  d_min[d_size] = new (arena()) MinNbr[rank()];
+  d_dot[d_size] = new (arena()) DotProduct[rank()];
 
   d_min[d_size][s] = r;
   d_min[r][s] = d_size;
 
-  memcpy(d_dot[d_size],d_dot[r],rank()*sizeof(DotProduct));
+  memcpy(d_dot[d_size], d_dot[r], rank() * sizeof(DotProduct));
   d_dot[d_size][s] = -d_dot[d_size][s];
 
-  for (LFlags f = G.star(s); f; f &= f-1) {
+  for (LFlags f = G.star(s); f; f &= f - 1) {
     Generator t = bits::firstBit(f);
-    if (dot(r,t) == locked)
+    if (dot(r, t) == locked)
       continue;
-    d_dot[d_size][t] = 
-      bondCosineSum(G.M(s,t),dot(r,t),dot(r,s));
+    d_dot[d_size][t] = bondCosineSum(G.M(s, t), dot(r, t), dot(r, s));
   }
 
-  fillReflectionRow(G,d_size,s);
-  
+  fillReflectionRow(G, d_size, s);
+
   return;
 }
 
-};
-
+}; // namespace
 
 /****************************************************************************
 
@@ -1017,7 +998,7 @@ void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
   - ldescent(g) : left descent set;
   - rdescent(g) : right descent set;
 
-  the fundamental string operations which are the raison d'etre of minroot 
+  the fundamental string operations which are the raison d'etre of minroot
   tables :
 
   - insert(g,s) : inserts the generator s into the normal form g;
@@ -1036,10 +1017,10 @@ void InitMinTable::newMinRoot(CoxGraph& G, MinNbr r, Generator s)
 
 namespace minroots {
 
-MinTable::MinTable(CoxGraph& G)
+MinTable::MinTable(CoxGraph &G)
 
 {
-  new(this) InitMinTable(G);
+  new (this) InitMinTable(G);
   return;
 }
 
@@ -1059,22 +1040,22 @@ MinTable::~MinTable()
   /* undo general allocations */
 
   for (Ulong j = d_rank; j < d_min.size(); ++j) {
-    arena().free(d_min[j],d_rank*sizeof(MinNbr));
+    arena().free(d_min[j], d_rank * sizeof(MinNbr));
   }
 
   for (Ulong j = d_rank; j < d_dot.size(); ++j) {
-    arena().free(d_dot[j],d_rank*sizeof(DotProduct));
+    arena().free(d_dot[j], d_rank * sizeof(DotProduct));
   }
 
   /* undo first allocation */
 
-  arena().free(d_min[0],d_rank*d_rank*sizeof(MinNbr));
-  arena().free(d_dot[0],d_rank*d_rank*sizeof(DotProduct));
+  arena().free(d_min[0], d_rank * d_rank * sizeof(MinNbr));
+  arena().free(d_dot[0], d_rank * d_rank * sizeof(DotProduct));
 
   return;
 }
 
-LFlags MinTable::descent(const CoxWord& g) const
+LFlags MinTable::descent(const CoxWord &g) const
 
 /*
   Returns the two-sided descent set of g, in the usual format : the right
@@ -1088,7 +1069,7 @@ LFlags MinTable::descent(const CoxWord& g) const
   LFlags f = 0;
 
   for (Generator s = 0; s < d_rank; ++s) {
-    if (isDescent(g,s))
+    if (isDescent(g, s))
       f |= lmask[s];
   }
 
@@ -1096,20 +1077,20 @@ LFlags MinTable::descent(const CoxWord& g) const
   inverse(h);
 
   for (Generator s = 0; s < d_rank; ++s) {
-    if (isDescent(h,s))
-      f |= lmask[d_rank+s];
+    if (isDescent(h, s))
+      f |= lmask[d_rank + s];
   }
 
   return f;
 }
 
-LFlags MinTable::ldescent(const CoxWord& g) const
+LFlags MinTable::ldescent(const CoxWord &g) const
 
 /*
   Returns the left descent set of g.
 */
 
-{  
+{
   static CoxWord h(0);
 
   h = g;
@@ -1117,14 +1098,14 @@ LFlags MinTable::ldescent(const CoxWord& g) const
   LFlags f = 0;
 
   for (Generator s = 0; s < d_rank; ++s) {
-    if (isDescent(h,s))
+    if (isDescent(h, s))
       f |= lmask[s];
   }
 
   return f;
 }
 
-LFlags MinTable::rdescent(const CoxWord& g) const
+LFlags MinTable::rdescent(const CoxWord &g) const
 
 /*
   Returns the right descent set of g.
@@ -1134,27 +1115,27 @@ LFlags MinTable::rdescent(const CoxWord& g) const
   LFlags f = 0;
 
   for (Generator s = 0; s < d_rank; ++s) {
-    if (isDescent(g,s))
+    if (isDescent(g, s))
       f |= lmask[s];
   }
 
   return f;
 }
 
-void MinTable::fill(CoxGraph& G)
+void MinTable::fill(CoxGraph &G)
 
 {
-  InitMinTable* T = (InitMinTable *)this;
+  InitMinTable *T = (InitMinTable *)this;
   T->fillMinTable(G);
 }
 
-int MinTable::insert(CoxWord& g, const Generator& s, 
-		     const Permutation& order) const
+int MinTable::insert(CoxWord &g, const Generator &s,
+                     const Permutation &order) const
 
 /*
   This function is like prod below, except that it is now assumed that
   g is a ShortLex Normal form (always w.r.t. the ordering defined by
-  order), and we wish the result to be again a normal form. It is known 
+  order), and we wish the result to be again a normal form. It is known
   that this will be achieved by an appropriate insertion or deletion.
 
   More precisely, if the word gs is non-reduced, there is only one
@@ -1174,34 +1155,33 @@ int MinTable::insert(CoxWord& g, const Generator& s,
   Length p = g.length();
   Ulong q = p;
 
-  for (Ulong j = p; j;)
-    {
-      --j;
-      r = min(r,g[j]-1);
+  for (Ulong j = p; j;) {
+    --j;
+    r = min(r, g[j] - 1);
 
-      if (r == not_positive) { /* reduction */
-	g.erase(j);
-	return -1;
-      }
-      
-      if ((r < rank()) && (order[r] < order[g[j]-1])) { 
-	/* better insertion point */
-	i = r;
-	q = j;
-      }
-
-      if (r == not_minimal) /* no further insertions */
-	break;
+    if (r == not_positive) { /* reduction */
+      g.erase(j);
+      return -1;
     }
+
+    if ((r < rank()) && (order[r] < order[g[j] - 1])) {
+      /* better insertion point */
+      i = r;
+      q = j;
+    }
+
+    if (r == not_minimal) /* no further insertions */
+      break;
+  }
 
   /* if we get here g.s is reduced */
 
-  g.insert(q,i+1);
+  g.insert(q, i + 1);
 
   return 1;
 }
 
-bool MinTable::inOrder(const CoxWord& d_g, const CoxWord& d_h) const
+bool MinTable::inOrder(const CoxWord &d_g, const CoxWord &d_h) const
 
 /*
   This function tells whether g <= h using the well-known elementary
@@ -1218,16 +1198,16 @@ bool MinTable::inOrder(const CoxWord& d_g, const CoxWord& d_h) const
   if (h.length() == 0)
     return g.length() == 0;
 
-   Generator s = h[h.length()-1]-1; // last term of h
-   if (isDescent(g,s))
-     prod(g,s);
-   h.erase(h.length()-1);
+  Generator s = h[h.length() - 1] - 1; // last term of h
+  if (isDescent(g, s))
+    prod(g, s);
+  h.erase(h.length() - 1);
 
-   return inOrder(g,h);
+  return inOrder(g, h);
 }
 
-bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g, 
-		       const CoxWord& d_h) const
+bool MinTable::inOrder(List<Length> &a, const CoxWord &d_g,
+                       const CoxWord &d_h) const
 
 /*
   Like the previous inOrder, but puts in a the places where the erasures take
@@ -1237,7 +1217,7 @@ bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g,
 */
 
 {
-  if (!inOrder(d_g,d_h))
+  if (!inOrder(d_g, d_h))
     return false;
 
   CoxWord g(d_g);
@@ -1245,12 +1225,12 @@ bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g,
   List<Length> b(0);
 
   while (h.length()) {
-    Generator s = h[h.length()-1]-1; // last term of h
-    if (isDescent(g,s))
-      prod(g,s);
+    Generator s = h[h.length() - 1] - 1; // last term of h
+    if (isDescent(g, s))
+      prod(g, s);
     else /* there is an erasure */
-      b.append(h.length()-1);
-    h.erase(h.length()-1);
+      b.append(h.length() - 1);
+    h.erase(h.length() - 1);
   }
 
   a.setSize(b.size());
@@ -1258,12 +1238,12 @@ bool MinTable::inOrder(List<Length>& a, const CoxWord& d_g,
   // copy b to a in opposite order
 
   for (Ulong j = 0; j < b.size(); ++j)
-    a[a.size()-1-j] = b[j];
+    a[a.size() - 1 - j] = b[j];
 
   return true;
 }
 
-const CoxWord& MinTable::inverse(CoxWord& g) const
+const CoxWord &MinTable::inverse(CoxWord &g) const
 
 /*
   Inverses g. As we have made the assummption that only reduced words
@@ -1277,17 +1257,16 @@ const CoxWord& MinTable::inverse(CoxWord& g) const
 {
   Length p = g.length();
 
-  for (Length j = 0; j < p/2; ++j) {
-    CoxLetter u = g[p-j-1];
-    g[p-j-1] = g[j];
+  for (Length j = 0; j < p / 2; ++j) {
+    CoxLetter u = g[p - j - 1];
+    g[p - j - 1] = g[j];
     g[j] = u;
   }
 
   return g;
 }
 
-
-bool MinTable::isDescent(const CoxWord& g, const Generator& s) const
+bool MinTable::isDescent(const CoxWord &g, const Generator &s) const
 
 /*
   Returns true if s is a descent generator of g, false otherwise.
@@ -1298,8 +1277,8 @@ bool MinTable::isDescent(const CoxWord& g, const Generator& s) const
 
   for (Ulong j = g.length(); j;) {
     --j;
-    Generator t = g[j]-1;
-    r = min(r,t);
+    Generator t = g[j] - 1;
+    r = min(r, t);
     if (r == not_positive) { /* found reduction */
       return true;
     }
@@ -1312,28 +1291,27 @@ bool MinTable::isDescent(const CoxWord& g, const Generator& s) const
   return false;
 }
 
-
-const CoxWord& MinTable::normalForm(CoxWord& g, const Permutation& order) const
+const CoxWord &MinTable::normalForm(CoxWord &g, const Permutation &order) const
 
 /*
-  Transforms g into its shortlex normal form (as defined by order) by a 
+  Transforms g into its shortlex normal form (as defined by order) by a
   sequence of insertions. As always, it is assumed that g is reduced.
 */
 
 {
   Ulong p = g.length();
 
-  g.setLength(p-1);
-  g.insert(0,0);
+  g.setLength(p - 1);
+  g.insert(0, 0);
   g.setLength(0);
 
   for (Ulong j = 0; j < p; ++j)
-    insert(g,g[j+1]-1,order);
+    insert(g, g[j + 1] - 1, order);
 
   return g;
 }
 
-const CoxWord& MinTable::power(CoxWord& g, const Ulong& m) const
+const CoxWord &MinTable::power(CoxWord &g, const Ulong &m) const
 
 /*
   Raises a to the m-th power. This can be done very quickly, by squarings
@@ -1352,21 +1330,20 @@ const CoxWord& MinTable::power(CoxWord& g, const Ulong& m) const
   CoxWord h = g;
   Ulong p;
 
-  for (p = m; ~p & hi_bit; p <<= 1)  /* shift m up to high powers */
+  for (p = m; ~p & hi_bit; p <<= 1) /* shift m up to high powers */
     ;
-    
-  for (Ulong j = m >> 1; j; j >>= 1) 
-    {
-      p <<= 1;
-      prod(g,g);  /* g = g*g */
-      if (p & hi_bit)
-	prod(g,h);  /* g = g*h */
-    }
+
+  for (Ulong j = m >> 1; j; j >>= 1) {
+    p <<= 1;
+    prod(g, g); /* g = g*g */
+    if (p & hi_bit)
+      prod(g, h); /* g = g*h */
+  }
 
   return g;
 }
 
-int MinTable::prod(CoxWord& g, const Generator& s) const
+int MinTable::prod(CoxWord &g, const Generator &s) const
 
 /*
   This is the fundamental function provided by the mintable structure. It
@@ -1394,29 +1371,27 @@ int MinTable::prod(CoxWord& g, const Generator& s) const
   MinNbr r = s;
   Length p = g.length();
 
-  for (Ulong j = p; j;)
-    {
-      --j;
-      Generator t = g[j]-1;
-      r = min(r,t);
-      if (r == not_positive) { /* found reduction */
-	g.erase(j);
-	return -1;
-      }
-      if (r == not_minimal) /* no reduction */
-	break;
+  for (Ulong j = p; j;) {
+    --j;
+    Generator t = g[j] - 1;
+    r = min(r, t);
+    if (r == not_positive) { /* found reduction */
+      g.erase(j);
+      return -1;
     }
+    if (r == not_minimal) /* no reduction */
+      break;
+  }
 
   /* if we get here g.s is reduced */
 
-  g.setLength(p+1);
-  g[p] = s+1;
-  g[p+1] = '\0';
+  g.setLength(p + 1);
+  g[p] = s + 1;
+  g[p + 1] = '\0';
   return 1;
 }
 
-
-int MinTable::prod(CoxWord& g, CoxLetter *const h, const Ulong& n) const
+int MinTable::prod(CoxWord &g, CoxLetter *const h, const Ulong &n) const
 
 /*
   Does the product consecutively by the letters in h. Returns the
@@ -1428,14 +1403,13 @@ int MinTable::prod(CoxWord& g, CoxLetter *const h, const Ulong& n) const
 
   for (Ulong j = 0; j < n; ++j) {
     Generator s = h[j] - 1;
-    p += prod(g,s);
+    p += prod(g, s);
   }
 
   return p;
 }
 
-
-int MinTable::prod(CoxWord& g, const CoxWord& h) const
+int MinTable::prod(CoxWord &g, const CoxWord &h) const
 
 /*
   Does the product consecutively by the letters in h. Returns the
@@ -1452,14 +1426,13 @@ int MinTable::prod(CoxWord& g, const CoxWord& h) const
 
   for (Ulong j = 0; j < buf.length(); ++j) {
     Generator s = buf[j] - 1;
-    p += prod(g,s);
+    p += prod(g, s);
   }
 
   return p;
 }
 
-
-const CoxWord& MinTable::reduced(CoxWord& g, CoxWord& h) const
+const CoxWord &MinTable::reduced(CoxWord &g, CoxWord &h) const
 
 /*
   Writes in g a reduced word corresponding to the arbitrary generator
@@ -1473,13 +1446,12 @@ const CoxWord& MinTable::reduced(CoxWord& g, CoxWord& h) const
   g[0] = 0;
 
   for (Ulong j = 0; j < h.length(); ++j)
-    prod(g,h[j]-1);
+    prod(g, h[j] - 1);
 
   return g;
-
 }
 
-};
+}; // namespace minroots
 
 /****************************************************************************
 
@@ -1492,7 +1464,6 @@ const CoxWord& MinTable::reduced(CoxWord& g, CoxWord& h) const
 
  ****************************************************************************/
 
-
 namespace {
 
 DotVal bondCosineSum(CoxEntry m, int a, int b)
@@ -1502,24 +1473,23 @@ DotVal bondCosineSum(CoxEntry m, int a, int b)
 
   switch (m) {
   case 3:
-    return CS3[k*dotval_size + j];
+    return CS3[k * dotval_size + j];
   case 4:
-    return CS4[k*dotval_size + j];
+    return CS4[k * dotval_size + j];
     break;
   case 5:
-    return CS5[k*dotval_size + j];
+    return CS5[k * dotval_size + j];
     break;
   case 6:
-    return CS6[k*dotval_size + j];
+    return CS6[k * dotval_size + j];
     break;
   default:
-    return CSm[k*dotval_size + j];
+    return CSm[k * dotval_size + j];
     break;
   }
 }
 
-};
-
+}; // namespace
 
 /****************************************************************************
 
@@ -1537,46 +1507,44 @@ DotVal bondCosineSum(CoxEntry m, int a, int b)
 
  ****************************************************************************/
 
-Length minroots::depth(MinTable& T, MinNbr r)
+Length minroots::depth(MinTable &T, MinNbr r)
 
 {
   Length d = 0;
-  MinNbr& rv = r;
+  MinNbr &rv = r;
 
-  while(1) {
+  while (1) {
     Generator s;
     for (s = 0; s < T.rank(); ++s)
-      if (T.min(r,s) < rv)
-	break;
+      if (T.min(r, s) < rv)
+        break;
     if (s == T.rank())
       break;
     ++d;
-    rv = T.min(r,s);
+    rv = T.min(r, s);
   }
 
   return d;
 }
 
-
-LFlags minroots::descent(MinTable& T, MinNbr r)
+LFlags minroots::descent(MinTable &T, MinNbr r)
 
 {
   LFlags A = 0;
 
   for (Ulong j = 0; j < T.rank(); ++j)
-    if (T.dot(r,j) > 0)
+    if (T.dot(r, j) > 0)
       A |= bits::lmask[j];
 
   return A;
 }
 
-
-CoxWord& minroots::reduced(MinTable& T, MinNbr r)
+CoxWord &minroots::reduced(MinTable &T, MinNbr r)
 
 /*
   Returns a reduced expression for the reflection corresponding to r.
 
-  The expression is returned in &buf, which is a safe place until the next 
+  The expression is returned in &buf, which is a safe place until the next
   call to reduced.
 */
 
@@ -1588,29 +1556,28 @@ CoxWord& minroots::reduced(MinTable& T, MinNbr r)
   while (1) {
     Generator s;
     for (s = 0; s < T.rank(); s++)
-      if (T.min(r,s) < r)
-	break;
+      if (T.min(r, s) < r)
+        break;
     if (s == T.rank())
       break;
     buf.setLength(d);
-    buf[d] = s+1;
-    r = T.min(r,s);
+    buf[d] = s + 1;
+    r = T.min(r, s);
     d++;
   }
 
-  buf.setLength(2*d+1);
-  buf[d] = r+1;
+  buf.setLength(2 * d + 1);
+  buf[d] = r + 1;
 
   for (Length j = 1; j <= d; j++)
-    buf[d+j] = buf[d-j];
+    buf[d + j] = buf[d - j];
 
-  buf[2*d+1] = '\0';
-    
+  buf[2 * d + 1] = '\0';
+
   return buf;
 }
 
-
-LFlags minroots::support(MinTable& T, MinNbr r)
+LFlags minroots::support(MinTable &T, MinNbr r)
 
 /*
   Returns the support fo the root of index r.
@@ -1619,20 +1586,19 @@ LFlags minroots::support(MinTable& T, MinNbr r)
 {
   LFlags f = 0;
 
-  while(1) {
+  while (1) {
     Generator s;
     for (s = 0; s < T.rank(); ++s)
-      if (T.min(r,s) < r)
-	break;
+      if (T.min(r, s) < r)
+        break;
     if (s == T.rank())
       break;
     f |= bits::lmask[s];
-    r = T.min(r,s);
+    r = T.min(r, s);
   }
 
   return f | bits::lmask[r];
 }
-
 
 /****************************************************************************
 
@@ -1646,60 +1612,58 @@ LFlags minroots::support(MinTable& T, MinNbr r)
 
  ****************************************************************************/
 
-String& minroots::append(String& str, const DotVal& a)
+String &minroots::append(String &str, const DotVal &a)
 
 {
-  switch (a)
-    {
-    case undef_dotval:
-      io::append(str,"undef_minnbr");
-      return str;
-    case undef_negdot:
-      io::append(str,"-c(*)/2");
-      return str;
-    case locked :
-      io::append(str,"*");
-      return str;
-    case neg_cos :
-      io::append(str,"-c/2");
-      return str;
-    case neg_cos2 :
-      io::append(str,"-c(2)/2");
-      return str;
-    case neg_half :
-      io::append(str,"-1/2");
-      return str;
-    case neg_hinvgold :
-      io::append(str,"-c(2,5)/2");
-      return str;
-    case zero :
-      io::append(str,"0");
-      return str;
-    case hinvgold :
-      io::append(str,"c(2,5)/2");
-      return str;
-    case half :
-      io::append(str,"1/2");
-      return str;
-    case cos2 :
-      io::append(str,"c(2)/2");
-      return str;
-    case dotval::cos :
-      io::append(str,"c/2");
-      return str;
-    case dotval::one :
-      io::append(str,"1");
-      return str;
-    case undef_posdot:
-      io::append(str,"c(*)/2");
-      return str;
-    default: // should not happen
-      return str;
-    };
+  switch (a) {
+  case undef_dotval:
+    io::append(str, "undef_minnbr");
+    return str;
+  case undef_negdot:
+    io::append(str, "-c(*)/2");
+    return str;
+  case locked:
+    io::append(str, "*");
+    return str;
+  case neg_cos:
+    io::append(str, "-c/2");
+    return str;
+  case neg_cos2:
+    io::append(str, "-c(2)/2");
+    return str;
+  case neg_half:
+    io::append(str, "-1/2");
+    return str;
+  case neg_hinvgold:
+    io::append(str, "-c(2,5)/2");
+    return str;
+  case zero:
+    io::append(str, "0");
+    return str;
+  case hinvgold:
+    io::append(str, "c(2,5)/2");
+    return str;
+  case half:
+    io::append(str, "1/2");
+    return str;
+  case cos2:
+    io::append(str, "c(2)/2");
+    return str;
+  case dotval::cos:
+    io::append(str, "c/2");
+    return str;
+  case dotval::one:
+    io::append(str, "1");
+    return str;
+  case undef_posdot:
+    io::append(str, "c(*)/2");
+    return str;
+  default: // should not happen
+    return str;
+  };
 }
 
-
-void minroots::print(FILE *file, MinTable& T)
+void minroots::print(FILE *file, MinTable &T)
 
 /*
   This function prints out the abstract minimal root table,
@@ -1711,32 +1675,30 @@ void minroots::print(FILE *file, MinTable& T)
 
 {
   MinNbr r;
-  MinNbr& rv = r;
+  MinNbr &rv = r;
 
-  int d = io::digits(T.size()-1,10);  /* largest possible value */
+  int d = io::digits(T.size() - 1, 10); /* largest possible value */
 
-  for (rv = 0; rv < T.size(); ++rv)
-    {
-      fprintf(file," %*u : ",d,rv);
-      for (Generator s = 0; s < T.rank(); s++)
-	switch (T.min(r,s))
-	  {
-	  case undef_minnbr:
-	  case dihedral:
-	    fprintf(file,"%*s",d+1,"*");
-	    break;
-	  case not_minimal:
-	    fprintf(file,"%*s",d+1,"+");
-	    break;
-	  case not_positive:
-	    fprintf(file,"%*s",d+1,"-");
-	    break;
-	  default:
-	    fprintf(file,"%*u",d+1,T.min(r,s));
-	    break;
-	  };
-      fprintf(file,"\n");
-    }
+  for (rv = 0; rv < T.size(); ++rv) {
+    fprintf(file, " %*u : ", d, rv);
+    for (Generator s = 0; s < T.rank(); s++)
+      switch (T.min(r, s)) {
+      case undef_minnbr:
+      case dihedral:
+        fprintf(file, "%*s", d + 1, "*");
+        break;
+      case not_minimal:
+        fprintf(file, "%*s", d + 1, "+");
+        break;
+      case not_positive:
+        fprintf(file, "%*s", d + 1, "-");
+        break;
+      default:
+        fprintf(file, "%*u", d + 1, T.min(r, s));
+        break;
+      };
+    fprintf(file, "\n");
+  }
 
   return;
 }

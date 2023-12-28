@@ -5,28 +5,25 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef CONSTANTS_H  /* guard against multiple inclusions */
-#define CONSTANTS_H
+#pragma once
 
 #include <limits.h>
 
 #include "globals.h"
 
 namespace constants {
-  using namespace coxeter;
+using namespace coxeter;
 
-#define BITS(x) (CHAR_BIT*sizeof(x))  /* size of x in bits */
+#define BITS(x) (CHAR_BIT * sizeof(x)) /* size of x in bits */
 
-  const Ulong CHARFLAGS = ~(Ulong)0 >> CHAR_BIT*(sizeof(Ulong)-1);
+const Ulong CHARFLAGS = ~(Ulong)0 >> CHAR_BIT *(sizeof(Ulong) - 1);
 
-  extern Ulong *lmask;
-  extern Ulong *leqmask;
-  extern unsigned *firstbit;
-  extern unsigned *lastbit;
+extern Ulong *lmask;
+extern Ulong *leqmask;
+extern unsigned *firstbit;
+extern unsigned *lastbit;
 
-  unsigned firstBit(Ulong f);
-  void initConstants();
-  unsigned lastBit(Ulong f);
-}
-
-#endif
+unsigned firstBit(Ulong f);
+void initConstants();
+unsigned lastBit(Ulong f);
+} // namespace constants

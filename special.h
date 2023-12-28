@@ -6,19 +6,16 @@
 
 */
 
-#ifndef SPECIAL_H  /* guard against multiple inclusions */
-#define SPECIAL_H
+#pragma once
 
 #include "globals.h"
 #include "commands.h"
 
 namespace special {
-  using namespace coxeter;
+using namespace coxeter;
 
 /******** function declarations *********************************************/
 
-  void addSpecialCommands(commands::CommandTree* tree);
+void addSpecialCommands(commands::CommandTree *tree);
 
-}
-
-#endif
+} // namespace special

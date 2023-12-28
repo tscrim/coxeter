@@ -1,6 +1,6 @@
 /*
   This is cells.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -10,9 +10,9 @@
 #include "stack.h"
 
 namespace cells {
-  using namespace klsupport;
-  using namespace stack;
-};
+using namespace klsupport;
+using namespace stack;
+}; // namespace cells
 
 /****************************************************************************
 
@@ -37,21 +37,21 @@ namespace cells {
   two-sided cell is a union of two-sided star orbits.
 
   So our first goal should be to try to get at the functions defining the
-  partitions in left, right and two-sided cells, computing as few 
+  partitions in left, right and two-sided cells, computing as few
   mu-coefficients as possible; then we will want to determine the full
   W-graph structure on the cells, classify them up to isomorphism, and
   have functions such as "get the (left, right, 2-sided) cell of an element."
 
-  More sophisticated data for cells (distinguished involutions, a-functions 
+  More sophisticated data for cells (distinguished involutions, a-functions
   ...) will have to wait a little bit more.
 
  ****************************************************************************/
 
 namespace {
-  using namespace cells;
+using namespace cells;
 
-  typedef List<CoxNbr> CoxList;
-};
+typedef List<CoxNbr> CoxList;
+}; // namespace
 
 /****************************************************************************
 
@@ -67,14 +67,14 @@ namespace {
       according to left (right) descent sets;
     - lStringEquiv(pi,p), rStringEquiv(pi,p) : partition of p according
       to weak Bruhat equivalences;
-    - lGeneralizedTau(pi,p), rGeneralizedTau(pi,p) : left (right) descent 
+    - lGeneralizedTau(pi,p), rGeneralizedTau(pi,p) : left (right) descent
       partition, stabilized under star operations;
 
  ****************************************************************************/
 
 namespace cells {
 
-void lCells(Partition& pi, kl::KLContext& kl)
+void lCells(Partition &pi, kl::KLContext &kl)
 
 /*
   This function puts in pi the partition of p into left cells --- in the case
@@ -97,32 +97,32 @@ void lCells(Partition& pi, kl::KLContext& kl)
   static OrientedGraph P(0);
   static Fifo<Ulong> orbit;
 
-  const SchubertContext& p = kl.schubert();
+  const SchubertContext &p = kl.schubert();
   q.setBitMapSize(p.size());
   a.setBitMapSize(p.size());
   a.reset();
   cell_count.setSize(0);
 
-  rGeneralizedTau(pi,p);
+  rGeneralizedTau(pi, p);
 
   for (CoxNbr x = 0; x < p.size(); ++x) {
 
     /* a holds the elements already processed */
-    
+
     if (a.isMember(x))
       continue;
 
     /* put the next generalized-tau class in q */
 
     q.reset();
-    pi.writeClass(q.bitMap(),pi(x));
+    pi.writeClass(q.bitMap(), pi(x));
     q.readBitMap();
 
     /* put cell-partition of q in qcells */
 
     X.reset();
-    lWGraph(X,q,kl);
-    X.graph().cells(qcells,&P);
+    lWGraph(X, q, kl);
+    X.graph().cells(qcells, &P);
 
     /* the fifo-list orbit is used to traverse the *-orbit of the first
        element of the current generalized-tau class */
@@ -133,11 +133,11 @@ void lCells(Partition& pi, kl::KLContext& kl)
     /* get class counts and mark off cells in q */
 
     for (PartitionIterator i(qcells); i; ++i) {
-      const Set& c = i();
+      const Set &c = i();
       qcell_count.append(c.size());
       cell_count.append(c.size());
       for (Ulong j = 0; j < c.size(); ++j)
-	a.add(q[c[j]]);
+        a.add(q[c[j]]);
     }
 
     /* propagate cells with star-operations; the idea is that star operations
@@ -151,27 +151,26 @@ void lCells(Partition& pi, kl::KLContext& kl)
 
       for (StarOp j = 0; j < p.nStarOps(); ++j) {
 
-	CoxNbr zj = p.star(z,j);
+        CoxNbr zj = p.star(z, j);
 
-	if (zj == undef_coxnbr)
-	  continue;
-	if (a.isMember(zj))
-	  continue;
+        if (zj == undef_coxnbr)
+          continue;
+        if (a.isMember(zj))
+          continue;
 
-	/* mark off orbit */
+        /* mark off orbit */
 
-	orbit.push(a.size());
+        orbit.push(a.size());
 
-	for (Ulong i = 0; i < q.size(); ++i) {
-	  CoxNbr y = a[c+i];
-	  CoxNbr yj = p.star(y,j);
-	  a.add(yj);
-	}
+        for (Ulong i = 0; i < q.size(); ++i) {
+          CoxNbr y = a[c + i];
+          CoxNbr yj = p.star(y, j);
+          a.add(yj);
+        }
 
-	for (Ulong i = 0; i < qcell_count.size(); ++i) {
-	  cell_count.append(qcell_count[i]);
-	}
-
+        for (Ulong i = 0; i < qcell_count.size(); ++i) {
+          cell_count.append(qcell_count[i]);
+        }
       }
     }
   }
@@ -182,7 +181,7 @@ void lCells(Partition& pi, kl::KLContext& kl)
 
   for (Ulong j = 0; j < cell_count.size(); ++j) {
     for (Ulong i = 0; i < cell_count[j]; ++i) {
-      pi[a[c+i]] = j;
+      pi[a[c + i]] = j;
     }
     c += cell_count[j];
   }
@@ -192,7 +191,7 @@ void lCells(Partition& pi, kl::KLContext& kl)
   return;
 }
 
-void rCells(Partition& pi, kl::KLContext& kl)
+void rCells(Partition &pi, kl::KLContext &kl)
 
 /*
   Same as lCells, but does the partition into right cells.
@@ -209,30 +208,30 @@ void rCells(Partition& pi, kl::KLContext& kl)
   static Fifo<Ulong> orbit;
   static Permutation v(0);
 
-  const SchubertContext& p = kl.schubert();
+  const SchubertContext &p = kl.schubert();
   q.setBitMapSize(p.size());
   a.setBitMapSize(p.size());
   a.reset();
   cell_count.setSize(0);
 
-  lGeneralizedTau(pi,p);
+  lGeneralizedTau(pi, p);
 
   for (CoxNbr x = 0; x < p.size(); ++x) {
-    
+
     if (a.isMember(x))
       continue;
 
     /* get the next generalized-tau class */
 
     q.reset();
-    pi.writeClass(q.bitMap(),pi(x));
+    pi.writeClass(q.bitMap(), pi(x));
     q.readBitMap();
 
     /* find cells in class */
 
     X.reset();
-    rWGraph(X,q,kl);
-    X.graph().cells(qcells,&P);
+    rWGraph(X, q, kl);
+    X.graph().cells(qcells, &P);
 
     /* the fifo-list orbit is used to traverse the *-orbit of the first
        element of the current generalized-tau class */
@@ -243,11 +242,11 @@ void rCells(Partition& pi, kl::KLContext& kl)
     /* get class counts and mark off cells in q */
 
     for (PartitionIterator i(qcells); i; ++i) {
-      const Set& c = i();
+      const Set &c = i();
       qcell_count.append(c.size());
       cell_count.append(c.size());
       for (Ulong j = 0; j < c.size(); ++j)
-	a.add(q[c[j]]);
+        a.add(q[c[j]]);
     }
 
     /* propagate cells with star-operations */
@@ -257,29 +256,28 @@ void rCells(Partition& pi, kl::KLContext& kl)
       Ulong c = orbit.pop();
       CoxNbr z = a[c];
 
-      for (StarOp j = p.nStarOps(); j < 2*p.nStarOps(); ++j) {
+      for (StarOp j = p.nStarOps(); j < 2 * p.nStarOps(); ++j) {
 
-	CoxNbr zj = p.star(z,j);
+        CoxNbr zj = p.star(z, j);
 
-	if (zj == undef_coxnbr)
-	  continue;
-	if (a.isMember(zj))
-	  continue;
+        if (zj == undef_coxnbr)
+          continue;
+        if (a.isMember(zj))
+          continue;
 
-	/* mark off orbit */
+        /* mark off orbit */
 
-	orbit.push(a.size());
+        orbit.push(a.size());
 
-	for (Ulong i = 0; i < q.size(); ++i) {
-	  CoxNbr y = a[c+i];
-	  CoxNbr yj = p.star(y,j);
-	  a.add(yj);
-	}
+        for (Ulong i = 0; i < q.size(); ++i) {
+          CoxNbr y = a[c + i];
+          CoxNbr yj = p.star(y, j);
+          a.add(yj);
+        }
 
-	for (Ulong i = 0; i < qcell_count.size(); ++i) {
-	  cell_count.append(qcell_count[i]);
-	}
-
+        for (Ulong i = 0; i < qcell_count.size(); ++i) {
+          cell_count.append(qcell_count[i]);
+        }
       }
     }
   }
@@ -290,7 +288,7 @@ void rCells(Partition& pi, kl::KLContext& kl)
 
   for (Ulong j = 0; j < cell_count.size(); ++j) {
     for (Ulong i = 0; i < cell_count[j]; ++i) {
-      pi[a[c+i]] = j;
+      pi[a[c + i]] = j;
     }
     c += cell_count[j];
   }
@@ -300,7 +298,7 @@ void rCells(Partition& pi, kl::KLContext& kl)
   return;
 }
 
-void lrCells(Partition& pi, kl::KLContext& kl)
+void lrCells(Partition &pi, kl::KLContext &kl)
 
 /*
   This function computes the two-sided cells in the context. There are
@@ -312,13 +310,13 @@ void lrCells(Partition& pi, kl::KLContext& kl)
   kl.fillMu();
 
   WGraph X(0);
-  lrWGraph(X,kl);
+  lrWGraph(X, kl);
   X.graph().cells(pi);
 
   return;
 }
 
-void lDescentPartition(Partition& pi, const SchubertContext& p)
+void lDescentPartition(Partition &pi, const SchubertContext &p)
 
 /*
   This function writes in pi the partition of p according to the left
@@ -332,17 +330,17 @@ void lDescentPartition(Partition& pi, const SchubertContext& p)
   d.setSize(0);
 
   for (CoxNbr x = 0; x < p.size(); ++x)
-    insert(d,p.ldescent(x));
+    insert(d, p.ldescent(x));
 
   for (CoxNbr x = 0; x < p.size(); ++x)
-    pi[x] = find(d,p.ldescent(x));
+    pi[x] = find(d, p.ldescent(x));
 
   pi.setClassCount(d.size());
 
   return;
 }
 
-void lStringEquiv(Partition& pi, const SchubertContext& p)
+void lStringEquiv(Partition &pi, const SchubertContext &p)
 
 /*
   This function writes in pi the partition of p according to the (left)
@@ -372,17 +370,17 @@ void lStringEquiv(Partition& pi, const SchubertContext& p)
     while (orbit.size()) {
       CoxNbr z = orbit.pop();
       for (Generator s = 0; s < p.rank(); ++s) {
-	CoxNbr sz = p.lshift(z,s);
-	if (b.getBit(sz))
-	  continue;
-	LFlags fz = p.ldescent(z);
-	LFlags fsz = p.ldescent(sz);
-	LFlags f = fz & fsz;
-	if ((f == fz) || (f == fsz)) /* inclusion */
-	  continue;
-	b.setBit(sz);
-	pi[sz] = count;
-	orbit.push(sz);
+        CoxNbr sz = p.lshift(z, s);
+        if (b.getBit(sz))
+          continue;
+        LFlags fz = p.ldescent(z);
+        LFlags fsz = p.ldescent(sz);
+        LFlags f = fz & fsz;
+        if ((f == fz) || (f == fsz)) /* inclusion */
+          continue;
+        b.setBit(sz);
+        pi[sz] = count;
+        orbit.push(sz);
       }
     }
     count++;
@@ -393,10 +391,10 @@ void lStringEquiv(Partition& pi, const SchubertContext& p)
   return;
 }
 
-void lStringEquiv(Partition& pi, const SubSet& q, const SchubertContext& p)
+void lStringEquiv(Partition &pi, const SubSet &q, const SchubertContext &p)
 
 /*
-  Does the partition of the subset q into left string classes. It is assumed 
+  Does the partition of the subset q into left string classes. It is assumed
   that q is stable under the equivalence relation.
 */
 
@@ -420,20 +418,20 @@ void lStringEquiv(Partition& pi, const SubSet& q, const SchubertContext& p)
     while (orbit.size()) {
       CoxNbr z = orbit.pop();
       for (Generator s = 0; s < p.rank(); ++s) {
-	CoxNbr sz = p.lshift(z,s);
-	if (b.getBit(sz))
-	  continue;
-	LFlags fz = p.ldescent(z);
-	LFlags fsz = p.ldescent(sz);
-	LFlags f = fz & fsz;
-	if ((f == fz) || (f == fsz)) /* inclusion */
-	  continue;
-	if (!q.isMember(sz)) { // q is not stable! this shouldn't happen
-	  ERRNO = ERROR_WARNING;
-	  return;
-	}
-	b.setBit(sz);
-	orbit.push(sz);
+        CoxNbr sz = p.lshift(z, s);
+        if (b.getBit(sz))
+          continue;
+        LFlags fz = p.ldescent(z);
+        LFlags fsz = p.ldescent(sz);
+        LFlags f = fz & fsz;
+        if ((f == fz) || (f == fsz)) /* inclusion */
+          continue;
+        if (!q.isMember(sz)) { // q is not stable! this shouldn't happen
+          ERRNO = ERROR_WARNING;
+          return;
+        }
+        b.setBit(sz);
+        orbit.push(sz);
       }
     }
     count++;
@@ -444,7 +442,7 @@ void lStringEquiv(Partition& pi, const SubSet& q, const SchubertContext& p)
   return;
 }
 
-void rDescentPartition(Partition& pi, const SchubertContext& p)
+void rDescentPartition(Partition &pi, const SchubertContext &p)
 
 /*
   This function writes in pi the partition of p according to the right
@@ -458,17 +456,17 @@ void rDescentPartition(Partition& pi, const SchubertContext& p)
   d.setSize(0);
 
   for (CoxNbr x = 0; x < p.size(); ++x)
-    insert(d,p.rdescent(x));
+    insert(d, p.rdescent(x));
 
   for (CoxNbr x = 0; x < p.size(); ++x)
-    pi[x] = find(d,p.rdescent(x));
+    pi[x] = find(d, p.rdescent(x));
 
   pi.setClassCount(d.size());
 
   return;
 }
 
-void rStringEquiv(Partition& pi, const SchubertContext& p)
+void rStringEquiv(Partition &pi, const SchubertContext &p)
 
 /*
   Same as lStringEquiv, but on the other side.
@@ -493,17 +491,17 @@ void rStringEquiv(Partition& pi, const SchubertContext& p)
     while (orbit.size()) {
       CoxNbr z = orbit.pop();
       for (Generator s = 0; s < p.rank(); ++s) {
-	CoxNbr zs = p.rshift(z,s);
-	if (b.getBit(zs))
-	  continue;
-	LFlags fz = p.rdescent(z);
-	LFlags fzs = p.rdescent(zs);
-	LFlags f = fz & fzs;
-	if ((f == fz) || (f == fzs)) /* inclusion */
-	  continue;
-	b.setBit(zs);
-	pi[zs] = count;
-	orbit.push(zs);
+        CoxNbr zs = p.rshift(z, s);
+        if (b.getBit(zs))
+          continue;
+        LFlags fz = p.rdescent(z);
+        LFlags fzs = p.rdescent(zs);
+        LFlags f = fz & fzs;
+        if ((f == fz) || (f == fzs)) /* inclusion */
+          continue;
+        b.setBit(zs);
+        pi[zs] = count;
+        orbit.push(zs);
       }
     }
     count++;
@@ -514,7 +512,7 @@ void rStringEquiv(Partition& pi, const SchubertContext& p)
   return;
 }
 
-void rStringEquiv(Partition& pi, const SubSet& q, const SchubertContext& p)
+void rStringEquiv(Partition &pi, const SubSet &q, const SchubertContext &p)
 
 /*
   Same as lStringEquiv, but on the other side.
@@ -540,20 +538,20 @@ void rStringEquiv(Partition& pi, const SubSet& q, const SchubertContext& p)
     while (orbit.size()) {
       CoxNbr z = orbit.pop();
       for (Generator s = 0; s < p.rank(); ++s) {
-	CoxNbr zs = p.rshift(z,s);
-	if (b.getBit(zs))
-	  continue;
-	LFlags fz = p.rdescent(z);
-	LFlags fzs = p.rdescent(zs);
-	LFlags f = fz & fzs;
-	if ((f == fz) || (f == fzs)) /* inclusion */
-	  continue;
-	if (!q.isMember(zs)) { // q is not stable! this shouldn't happen
-	  ERRNO = ERROR_WARNING;
-	  return;
-	}
-	b.setBit(zs);
-	orbit.push(zs);
+        CoxNbr zs = p.rshift(z, s);
+        if (b.getBit(zs))
+          continue;
+        LFlags fz = p.rdescent(z);
+        LFlags fzs = p.rdescent(zs);
+        LFlags f = fz & fzs;
+        if ((f == fz) || (f == fzs)) /* inclusion */
+          continue;
+        if (!q.isMember(zs)) { // q is not stable! this shouldn't happen
+          ERRNO = ERROR_WARNING;
+          return;
+        }
+        b.setBit(zs);
+        orbit.push(zs);
       }
     }
     count++;
@@ -564,7 +562,7 @@ void rStringEquiv(Partition& pi, const SubSet& q, const SchubertContext& p)
   return;
 }
 
-void lGeneralizedTau(Partition& pi, const SchubertContext& p)
+void lGeneralizedTau(Partition &pi, const SchubertContext &p)
 
 /*
   Like rGeneralizedTau, but on the left.
@@ -579,7 +577,7 @@ void lGeneralizedTau(Partition& pi, const SchubertContext& p)
   /* initialize pi with partition into right descent sets */
 
   Ulong prev;
-  lDescentPartition(pi,p);
+  lDescentPartition(pi, p);
   v.setSize(pi.size());
 
   do {
@@ -587,66 +585,65 @@ void lGeneralizedTau(Partition& pi, const SchubertContext& p)
 
     /* refine */
 
-    for (Ulong r = p.nStarOps(); r < 2*p.nStarOps(); ++r) {
+    for (Ulong r = p.nStarOps(); r < 2 * p.nStarOps(); ++r) {
 
-      pi.sortI(v);   /* sort partition */
+      pi.sortI(v); /* sort partition */
       Ulong count = pi.classCount();
       cc.setSize(count);
       cc.setZero();
 
       for (Ulong j = 0; j < pi.size(); ++j)
-	cc[pi[j]]++;
+        cc[pi[j]]++;
 
       Ulong i = 0;
 
       for (Ulong c = 0; c < pi.classCount(); ++c) {
 
-	CoxNbr x = v[i]; /* first element in class */
+        CoxNbr x = v[i]; /* first element in class */
 
-	if (p.star(x,r) == undef_coxnbr)
-	  goto next_class;
+        if (p.star(x, r) == undef_coxnbr)
+          goto next_class;
 
-	/* find possibilities for v[.]*r */
+        /* find possibilities for v[.]*r */
 
-	b.setSize(0);
+        b.setSize(0);
 
-	for (Ulong j = 0; j < cc[c]; ++j) {
-	  Ulong cr = pi[p.star(v[i+j],r)];
-	  insert(b,cr);
-	}
+        for (Ulong j = 0; j < cc[c]; ++j) {
+          Ulong cr = pi[p.star(v[i + j], r)];
+          insert(b, cr);
+        }
 
-	if (b.size() > 1) { /* there is a refinement */
-	  a.setSize(cc[c]);
-	  for (Ulong j = 0; j < a.size(); ++j)
-	    a[j] = find(b,pi[p.star(v[i+j],r)]);
-	  for (Ulong j = 0; j < cc[c]; ++j) {
-	    if (a[j] > 0)
-	      pi[v[i+j]] = count+a[j]-1;
-	  }
-	  count += b.size()-1;
-	}
+        if (b.size() > 1) { /* there is a refinement */
+          a.setSize(cc[c]);
+          for (Ulong j = 0; j < a.size(); ++j)
+            a[j] = find(b, pi[p.star(v[i + j], r)]);
+          for (Ulong j = 0; j < cc[c]; ++j) {
+            if (a[j] > 0)
+              pi[v[i + j]] = count + a[j] - 1;
+          }
+          count += b.size() - 1;
+        }
 
       next_class:
-	i += cc[c];
-	continue;
+        i += cc[c];
+        continue;
       }
 
       pi.setClassCount(count);
-
     }
-    
+
   } while (prev < pi.classCount());
 
   return;
 }
 
-void rGeneralizedTau(Partition& pi, const SchubertContext& p)
+void rGeneralizedTau(Partition &pi, const SchubertContext &p)
 
 /*
   This is the most delicate of the partition functions. It is the maximal
   refinement of the right descent partition under right star operations.
-  In other words, two elements x and y are in the same class for this 
-  partition, if for each right star-word a (i.e. a sequence of right 
+  In other words, two elements x and y are in the same class for this
+  partition, if for each right star-word a (i.e. a sequence of right
   star-operations), x*a and y*a have the same right descent set.
 
   The algorithm is very much like the minimization algorithm for a finite
@@ -665,7 +662,7 @@ void rGeneralizedTau(Partition& pi, const SchubertContext& p)
   /* initialize pi with partition into right descent sets */
 
   Ulong prev;
-  rDescentPartition(pi,p);
+  rDescentPartition(pi, p);
   v.setSize(pi.size());
 
   do {
@@ -675,58 +672,57 @@ void rGeneralizedTau(Partition& pi, const SchubertContext& p)
 
     for (Ulong r = 0; r < p.nStarOps(); ++r) {
 
-      pi.sortI(v);   /* sort partition */
+      pi.sortI(v); /* sort partition */
       Ulong count = pi.classCount();
       cc.setSize(count);
       cc.setZero();
 
       for (Ulong j = 0; j < pi.size(); ++j)
-	cc[pi[j]]++;
+        cc[pi[j]]++;
 
       Ulong i = 0;
 
       for (Ulong c = 0; c < pi.classCount(); ++c) {
 
-	CoxNbr x = v[i]; /* first element in class */
+        CoxNbr x = v[i]; /* first element in class */
 
-	if (p.star(x,r) == undef_coxnbr)
-	  goto next_class;
+        if (p.star(x, r) == undef_coxnbr)
+          goto next_class;
 
-	/* find possibilities for v[.]*r */
+        /* find possibilities for v[.]*r */
 
-	b.setSize(0);
+        b.setSize(0);
 
-	for (Ulong j = 0; j < cc[c]; ++j) {
-	  Ulong cr = pi[p.star(v[i+j],r)];
-	  insert(b,cr);
-	}
+        for (Ulong j = 0; j < cc[c]; ++j) {
+          Ulong cr = pi[p.star(v[i + j], r)];
+          insert(b, cr);
+        }
 
-	if (b.size() > 1) { /* there is a refinement */
-	  a.setSize(cc[c]);
-	  for (Ulong j = 0; j < a.size(); ++j)
-	    a[j] = find(b,pi[p.star(v[i+j],r)]);
-	  for (Ulong j = 0; j < cc[c]; ++j) {
-	    if (a[j] > 0)
-	      pi[v[i+j]] = count+a[j]-1;
-	  }
-	  count += b.size()-1;
-	}
+        if (b.size() > 1) { /* there is a refinement */
+          a.setSize(cc[c]);
+          for (Ulong j = 0; j < a.size(); ++j)
+            a[j] = find(b, pi[p.star(v[i + j], r)]);
+          for (Ulong j = 0; j < cc[c]; ++j) {
+            if (a[j] > 0)
+              pi[v[i + j]] = count + a[j] - 1;
+          }
+          count += b.size() - 1;
+        }
 
       next_class:
-	i += cc[c];
-	continue;
+        i += cc[c];
+        continue;
       }
 
       pi.setClassCount(count);
-
     }
-    
+
   } while (prev < pi.classCount());
 
   return;
 }
 
-};
+}; // namespace cells
 
 /*****************************************************************************
 
@@ -746,103 +742,103 @@ void rGeneralizedTau(Partition& pi, const SchubertContext& p)
 
 namespace cells {
 
-void lGraph(OrientedGraph& X, kl::KLContext& kl)
-
-{  
-  const SchubertContext& p = kl.schubert();
-
-  X.setSize(kl.size());
-  X.reset();
-
-  for (CoxNbr y = 0; y < kl.size(); ++y) {
-    const kl::MuRow& mu = kl.muList(y);
-    for (Ulong j = 0; j < mu.size(); ++j) {
-      if (mu[j].mu != 0) {
-	CoxNbr x = mu[j].x;
-	if (p.ldescent(x) != p.ldescent(y)) /* make an edge from x to y */
-	  X.edge(x).append(y);
-      }
-    }
-  }
-
-  for (CoxNbr y = 0; y < kl.size(); ++y) {
-    const CoatomList& c = p.hasse(y);
-    for (Ulong j = 0; j < c.size(); ++j) {
-      if ((p.ldescent(c[j])&p.ldescent(y)) != p.ldescent(c[j]))
-	X.edge(c[j]).append(y);
-      if ((p.ldescent(c[j])&p.ldescent(y)) != p.ldescent(y))
-	X.edge(y).append(c[j]);
-    }
-  }
-
-  return;
-}
-
-void lrGraph(OrientedGraph& X, kl::KLContext& kl)
+void lGraph(OrientedGraph &X, kl::KLContext &kl)
 
 {
-  const SchubertContext& p = kl.schubert();
+  const SchubertContext &p = kl.schubert();
 
   X.setSize(kl.size());
   X.reset();
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    const kl::MuRow& mu = kl.muList(y);
+    const kl::MuRow &mu = kl.muList(y);
     for (Ulong j = 0; j < mu.size(); ++j) {
       if (mu[j].mu != 0) {
-	CoxNbr x = mu[j].x;
-	if (p.descent(x) != p.descent(y)) /* make an edge from x to y */
-	  X.edge(x).append(y);
+        CoxNbr x = mu[j].x;
+        if (p.ldescent(x) != p.ldescent(y)) /* make an edge from x to y */
+          X.edge(x).append(y);
       }
     }
   }
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    const CoatomList& c = p.hasse(y);
+    const CoatomList &c = p.hasse(y);
     for (Ulong j = 0; j < c.size(); ++j) {
-      if ((p.descent(c[j])&p.descent(y)) != p.descent(c[j]))
-	X.edge(c[j]).append(y);
-      if ((p.descent(c[j])&p.descent(y)) != p.descent(y))
-	X.edge(y).append(c[j]);
+      if ((p.ldescent(c[j]) & p.ldescent(y)) != p.ldescent(c[j]))
+        X.edge(c[j]).append(y);
+      if ((p.ldescent(c[j]) & p.ldescent(y)) != p.ldescent(y))
+        X.edge(y).append(c[j]);
     }
   }
 
   return;
 }
 
-void rGraph(OrientedGraph& X, kl::KLContext& kl)
+void lrGraph(OrientedGraph &X, kl::KLContext &kl)
 
 {
-  const SchubertContext& p = kl.schubert();
+  const SchubertContext &p = kl.schubert();
 
   X.setSize(kl.size());
   X.reset();
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    const kl::MuRow& mu = kl.muList(y);
+    const kl::MuRow &mu = kl.muList(y);
     for (Ulong j = 0; j < mu.size(); ++j) {
       if (mu[j].mu != 0) {
-	CoxNbr x = mu[j].x;
-	if (p.rdescent(x) != p.rdescent(y)) /* make an edge from x to y */
-	  X.edge(x).append(y);
+        CoxNbr x = mu[j].x;
+        if (p.descent(x) != p.descent(y)) /* make an edge from x to y */
+          X.edge(x).append(y);
       }
     }
   }
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    const CoatomList& c = p.hasse(y);
+    const CoatomList &c = p.hasse(y);
     for (Ulong j = 0; j < c.size(); ++j) {
-      if ((p.rdescent(c[j])&p.rdescent(y)) != p.rdescent(c[j]))
-	X.edge(c[j]).append(y);
-      if ((p.rdescent(c[j])&p.rdescent(y)) != p.rdescent(y))
-	X.edge(y).append(c[j]);
+      if ((p.descent(c[j]) & p.descent(y)) != p.descent(c[j]))
+        X.edge(c[j]).append(y);
+      if ((p.descent(c[j]) & p.descent(y)) != p.descent(y))
+        X.edge(y).append(c[j]);
     }
   }
 
   return;
 }
 
-void lWGraph(WGraph& X, kl::KLContext& kl)
+void rGraph(OrientedGraph &X, kl::KLContext &kl)
+
+{
+  const SchubertContext &p = kl.schubert();
+
+  X.setSize(kl.size());
+  X.reset();
+
+  for (CoxNbr y = 0; y < kl.size(); ++y) {
+    const kl::MuRow &mu = kl.muList(y);
+    for (Ulong j = 0; j < mu.size(); ++j) {
+      if (mu[j].mu != 0) {
+        CoxNbr x = mu[j].x;
+        if (p.rdescent(x) != p.rdescent(y)) /* make an edge from x to y */
+          X.edge(x).append(y);
+      }
+    }
+  }
+
+  for (CoxNbr y = 0; y < kl.size(); ++y) {
+    const CoatomList &c = p.hasse(y);
+    for (Ulong j = 0; j < c.size(); ++j) {
+      if ((p.rdescent(c[j]) & p.rdescent(y)) != p.rdescent(c[j]))
+        X.edge(c[j]).append(y);
+      if ((p.rdescent(c[j]) & p.rdescent(y)) != p.rdescent(y))
+        X.edge(y).append(c[j]);
+    }
+  }
+
+  return;
+}
+
+void lWGraph(WGraph &X, kl::KLContext &kl)
 
 /*
   This function constructs a W-graph directly from the k-l data. In other
@@ -861,27 +857,27 @@ void lWGraph(WGraph& X, kl::KLContext& kl)
 
 {
   X.setSize(kl.size());
-  const SchubertContext& p = kl.schubert();
-  OrientedGraph& Y = X.graph();
+  const SchubertContext &p = kl.schubert();
+  OrientedGraph &Y = X.graph();
 
   // fill in Y
 
-  lGraph(Y,kl);
+  lGraph(Y, kl);
 
   // fill in coefficients
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    CoeffList& c = X.coeffList(y);
-    const EdgeList& e = X.edge(y);
+    CoeffList &c = X.coeffList(y);
+    const EdgeList &e = X.edge(y);
     c.setSize(e.size());
     Length ly = p.length(y);
     for (Ulong j = 0; j < c.size(); ++j) {
       CoxNbr x = e[j];
       Length lx = p.length(x);
-      if ((lx < ly) || (lx-ly) == 1)
-	c[j] = 1;
+      if ((lx < ly) || (lx - ly) == 1)
+        c[j] = 1;
       else
-	c[j] = kl.mu(y,x);
+        c[j] = kl.mu(y, x);
     }
   }
 
@@ -893,7 +889,7 @@ void lWGraph(WGraph& X, kl::KLContext& kl)
   return;
 }
 
-void lWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
+void lWGraph(WGraph &X, const SubSet &q, kl::KLContext &kl)
 
 /*
   This function constructs the left W-graph for the subset q. It is
@@ -907,12 +903,12 @@ void lWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
   It is assumed that q is sorted in increasing order.
 */
 
-{  
+{
   static List<Ulong> qr(0);
 
   X.setSize(q.size());
-  const SchubertContext& p = kl.schubert();
-  OrientedGraph& Y = X.graph();
+  const SchubertContext &p = kl.schubert();
+  OrientedGraph &Y = X.graph();
   BitMap b(p.size());
 
   Y.reset();
@@ -926,7 +922,7 @@ void lWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
 
     X.descent(j) = p.ldescent(y);
 
-    p.extractClosure(b,y);
+    p.extractClosure(b, y);
     b &= q.bitMap();
     qr.setSize(0);
 
@@ -934,7 +930,7 @@ void lWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
 
     for (Ulong i = 0; i < q.size(); ++i) {
       if (b.getBit(q[i]))
-	qr.append(i);
+        qr.append(i);
     }
 
     for (Ulong i = 0; i < qr.size(); ++i) {
@@ -942,27 +938,27 @@ void lWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
       CoxNbr x = q[qr[i]];
       Length lx = p.length(x);
 
-      if ((ly-lx)%2 == 0)
-	continue;
-      if ((ly-lx) == 1) { /* found a hasse edge */
-	if ((p.ldescent(x)&p.ldescent(y)) != p.ldescent(x)) {
-	  Y.edge(qr[i]).append(j);
-	  X.coeffList(qr[i]).append(1);
-	}
-	if ((p.ldescent(x)&p.ldescent(y)) != p.ldescent(y)) {
-	  Y.edge(j).append(qr[i]);
-	  X.coeffList(j).append(1);
-	}
-	continue;
+      if ((ly - lx) % 2 == 0)
+        continue;
+      if ((ly - lx) == 1) { /* found a hasse edge */
+        if ((p.ldescent(x) & p.ldescent(y)) != p.ldescent(x)) {
+          Y.edge(qr[i]).append(j);
+          X.coeffList(qr[i]).append(1);
+        }
+        if ((p.ldescent(x) & p.ldescent(y)) != p.ldescent(y)) {
+          Y.edge(j).append(qr[i]);
+          X.coeffList(j).append(1);
+        }
+        continue;
       }
 
-      KLCoeff mu = kl.mu(x,y);
+      KLCoeff mu = kl.mu(x, y);
 
       if (mu != 0) {
-	if (p.ldescent(x) != p.ldescent(y)) {
-	  Y.edge(qr[i]).append(j);
-	  X.coeffList(qr[i]).append(mu);
-	}
+        if (p.ldescent(x) != p.ldescent(y)) {
+          Y.edge(qr[i]).append(j);
+          X.coeffList(qr[i]).append(mu);
+        }
       }
     }
   }
@@ -970,7 +966,7 @@ void lWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
   return;
 }
 
-void lrWGraph(WGraph& X, kl::KLContext& kl)
+void lrWGraph(WGraph &X, kl::KLContext &kl)
 
 /*
   Like lWGraph, but for two-sided W-graphs.
@@ -978,27 +974,27 @@ void lrWGraph(WGraph& X, kl::KLContext& kl)
 
 {
   X.setSize(kl.size());
-  const SchubertContext& p = kl.schubert();
-  OrientedGraph& Y = X.graph();
+  const SchubertContext &p = kl.schubert();
+  OrientedGraph &Y = X.graph();
 
   // fill in Y
 
-  lrGraph(Y,kl);
+  lrGraph(Y, kl);
 
   // fill in coefficients
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    CoeffList& c = X.coeffList(y);
-    const EdgeList& e = X.edge(y);
+    CoeffList &c = X.coeffList(y);
+    const EdgeList &e = X.edge(y);
     c.setSize(e.size());
     Length ly = p.length(y);
     for (Ulong j = 0; j < c.size(); ++j) {
       CoxNbr x = e[j];
       Length lx = p.length(x);
-      if ((lx < ly) || (lx-ly) == 1)
-	c[j] = 1;
+      if ((lx < ly) || (lx - ly) == 1)
+        c[j] = 1;
       else
-	c[j] = kl.mu(y,x);
+        c[j] = kl.mu(y, x);
     }
   }
 
@@ -1010,7 +1006,7 @@ void lrWGraph(WGraph& X, kl::KLContext& kl)
   return;
 }
 
-void lrWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
+void lrWGraph(WGraph &X, const SubSet &q, kl::KLContext &kl)
 
 /*
   This function constructs the left W-graph for the subset q. It is
@@ -1024,12 +1020,12 @@ void lrWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
   It is assumed that q is sorted in increasing order.
 */
 
-{  
+{
   static List<Ulong> qr(0);
 
   X.setSize(q.size());
-  const SchubertContext& p = kl.schubert();
-  OrientedGraph& Y = X.graph();
+  const SchubertContext &p = kl.schubert();
+  OrientedGraph &Y = X.graph();
   BitMap b(p.size());
 
   Y.reset();
@@ -1043,7 +1039,7 @@ void lrWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
 
     X.descent(j) = p.descent(y);
 
-    p.extractClosure(b,y);
+    p.extractClosure(b, y);
     b &= q.bitMap();
     qr.setSize(0);
 
@@ -1051,7 +1047,7 @@ void lrWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
 
     for (Ulong i = 0; i < q.size(); ++i) {
       if (b.getBit(q[i]))
-	qr.append(i);
+        qr.append(i);
     }
 
     for (Ulong i = 0; i < qr.size(); ++i) {
@@ -1059,27 +1055,27 @@ void lrWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
       CoxNbr x = q[qr[i]];
       Length lx = p.length(x);
 
-      if ((ly-lx)%2 == 0)
-	continue;
-      if ((ly-lx) == 1) { /* found a hasse edge */
-	if ((p.descent(x)&p.descent(y)) != p.descent(x)) {
-	  Y.edge(qr[i]).append(j);
-	  X.coeffList(qr[i]).append(1);
-	}
-	if ((p.descent(x)&p.descent(y)) != p.descent(y)) {
-	  Y.edge(j).append(qr[i]);
-	  X.coeffList(j).append(1);
-	}
-	continue;
+      if ((ly - lx) % 2 == 0)
+        continue;
+      if ((ly - lx) == 1) { /* found a hasse edge */
+        if ((p.descent(x) & p.descent(y)) != p.descent(x)) {
+          Y.edge(qr[i]).append(j);
+          X.coeffList(qr[i]).append(1);
+        }
+        if ((p.descent(x) & p.descent(y)) != p.descent(y)) {
+          Y.edge(j).append(qr[i]);
+          X.coeffList(j).append(1);
+        }
+        continue;
       }
 
-      KLCoeff mu = kl.mu(x,y);
+      KLCoeff mu = kl.mu(x, y);
 
       if (mu != 0) {
-	if (p.descent(x) != p.descent(y)) {
-	  Y.edge(qr[i]).append(j);
-	  X.coeffList(qr[i]).append(mu);
-	}
+        if (p.descent(x) != p.descent(y)) {
+          Y.edge(qr[i]).append(j);
+          X.coeffList(qr[i]).append(mu);
+        }
       }
     }
   }
@@ -1087,7 +1083,7 @@ void lrWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
   return;
 }
 
-void rWGraph(WGraph& X, kl::KLContext& kl)
+void rWGraph(WGraph &X, kl::KLContext &kl)
 
 /*
   Like lWGraph, but for right W-graphs.
@@ -1095,27 +1091,27 @@ void rWGraph(WGraph& X, kl::KLContext& kl)
 
 {
   X.setSize(kl.size());
-  const SchubertContext& p = kl.schubert();
-  OrientedGraph& Y = X.graph();
+  const SchubertContext &p = kl.schubert();
+  OrientedGraph &Y = X.graph();
 
   // fill in Y
 
-  rGraph(Y,kl);
+  rGraph(Y, kl);
 
   // fill in coefficients
 
   for (CoxNbr y = 0; y < kl.size(); ++y) {
-    CoeffList& c = X.coeffList(y);
-    const EdgeList& e = X.edge(y);
+    CoeffList &c = X.coeffList(y);
+    const EdgeList &e = X.edge(y);
     c.setSize(e.size());
     Length ly = p.length(y);
     for (Ulong j = 0; j < c.size(); ++j) {
       CoxNbr x = e[j];
       Length lx = p.length(x);
-      if ((lx < ly) || (lx-ly) == 1)
-	c[j] = 1;
+      if ((lx < ly) || (lx - ly) == 1)
+        c[j] = 1;
       else
-	c[j] = kl.mu(y,x);
+        c[j] = kl.mu(y, x);
     }
   }
 
@@ -1127,18 +1123,18 @@ void rWGraph(WGraph& X, kl::KLContext& kl)
   return;
 }
 
-void rWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
+void rWGraph(WGraph &X, const SubSet &q, kl::KLContext &kl)
 
 /*
   Like lWGraph, but for right W-graphs.
 */
 
-{  
+{
   static List<Ulong> qr(0);
 
   X.setSize(q.size());
-  const SchubertContext& p = kl.schubert();
-  OrientedGraph& Y = X.graph();
+  const SchubertContext &p = kl.schubert();
+  OrientedGraph &Y = X.graph();
   BitMap b(p.size());
 
   Y.reset();
@@ -1150,13 +1146,13 @@ void rWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
 
     X.descent(j) = p.rdescent(y);
 
-    p.extractClosure(b,y);
+    p.extractClosure(b, y);
     b &= q.bitMap();
     qr.setSize(0);
 
     for (Ulong i = 0; i < q.size(); ++i) {
       if (b.getBit(q[i]))
-	qr.append(i);
+        qr.append(i);
     }
 
     for (Ulong i = 0; i < qr.size(); ++i) {
@@ -1164,36 +1160,35 @@ void rWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
       CoxNbr x = q[qr[i]];
       Length lx = p.length(x);
 
-      if ((ly-lx)%2 == 0)
-	continue;
-      if ((ly-lx) == 1) { /* found a hasse edge */
-	if ((p.rdescent(x)&p.rdescent(y)) != p.rdescent(x)) {
-	  Y.edge(qr[i]).append(j);
-	  X.coeffList(qr[i]).append(1);
-	}
-	if ((p.rdescent(x)&p.rdescent(y)) != p.rdescent(y)) {
-	  Y.edge(j).append(qr[i]);
-	  X.coeffList(j).append(1);
-	}
-	continue;
+      if ((ly - lx) % 2 == 0)
+        continue;
+      if ((ly - lx) == 1) { /* found a hasse edge */
+        if ((p.rdescent(x) & p.rdescent(y)) != p.rdescent(x)) {
+          Y.edge(qr[i]).append(j);
+          X.coeffList(qr[i]).append(1);
+        }
+        if ((p.rdescent(x) & p.rdescent(y)) != p.rdescent(y)) {
+          Y.edge(j).append(qr[i]);
+          X.coeffList(j).append(1);
+        }
+        continue;
       }
 
-      KLCoeff mu = kl.mu(x,y);
+      KLCoeff mu = kl.mu(x, y);
 
       if (mu != 0) {
-	if (p.rdescent(x) != p.rdescent(y)) {
-	  Y.edge(qr[i]).append(j);
-	  X.coeffList(qr[i]).append(mu);
-	}
+        if (p.rdescent(x) != p.rdescent(y)) {
+          Y.edge(qr[i]).append(j);
+          X.coeffList(qr[i]).append(mu);
+        }
       }
-      
     }
   }
 
   return;
 }
 
-};
+}; // namespace cells
 
 /*****************************************************************************
 
@@ -1211,22 +1206,22 @@ void rWGraph(WGraph& X, const SubSet& q, kl::KLContext& kl)
 
 namespace cells {
 
-void lGraph(OrientedGraph& X, uneqkl::KLContext& kl)
+void lGraph(OrientedGraph &X, uneqkl::KLContext &kl)
 
 /*
-  Puts in X the graph corresponding to the left edges in the context. It 
+  Puts in X the graph corresponding to the left edges in the context. It
   assumes that the (right) mu-table has been filled.
 */
 
-{  
-  const SchubertContext& p = kl.schubert();
+{
+  const SchubertContext &p = kl.schubert();
   X.setSize(kl.size());
-  LFlags S = leqmask[kl.rank()-1];
+  LFlags S = leqmask[kl.rank() - 1];
 
   /* reset X */
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
-    EdgeList& e = X.edge(y);
+    EdgeList &e = X.edge(y);
     e.setSize(0);
   }
 
@@ -1234,31 +1229,31 @@ void lGraph(OrientedGraph& X, uneqkl::KLContext& kl)
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
     CoxNbr yi = kl.inverse(y);
-    for (LFlags f = ~p.rdescent(y) & S; f; f &= (f-1)) {
+    for (LFlags f = ~p.rdescent(y) & S; f; f &= (f - 1)) {
       Generator s = firstBit(f);
-      const uneqkl::MuRow& muRow = kl.muList(s,y);
+      const uneqkl::MuRow &muRow = kl.muList(s, y);
       for (Ulong j = 0; j < muRow.size(); ++j) {
-	Vertex x = kl.inverse(muRow[j].x);
-	EdgeList& e = X.edge(x);
-	e.append(yi);
+        Vertex x = kl.inverse(muRow[j].x);
+        EdgeList &e = X.edge(x);
+        e.append(yi);
       }
-      Vertex sy  = kl.inverse(p.shift(y,s));
-      EdgeList& e = X.edge(sy);
+      Vertex sy = kl.inverse(p.shift(y, s));
+      EdgeList &e = X.edge(sy);
       e.append(yi);
     }
-   }
+  }
 
   /* sort edgelists */
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
-    EdgeList& e = X.edge(y);
+    EdgeList &e = X.edge(y);
     e.sort();
   }
 
   return;
 }
 
-void lrGraph(OrientedGraph& X, uneqkl::KLContext& kl)
+void lrGraph(OrientedGraph &X, uneqkl::KLContext &kl)
 
 /*
   Puts in X the graph corresponding to the edges in the context. It assumes
@@ -1267,36 +1262,36 @@ void lrGraph(OrientedGraph& X, uneqkl::KLContext& kl)
 */
 
 {
-  const SchubertContext& p = kl.schubert();
+  const SchubertContext &p = kl.schubert();
   X.setSize(kl.size());
-  LFlags S = leqmask[kl.rank()-1];
+  LFlags S = leqmask[kl.rank() - 1];
 
   /* write down right edges */
 
-  rGraph(X,kl);
+  rGraph(X, kl);
 
   /* add left edges */
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
     Vertex yi = kl.inverse(y);
-    for (LFlags f = ~p.rdescent(y) & S; f; f &= (f-1)) {
+    for (LFlags f = ~p.rdescent(y) & S; f; f &= (f - 1)) {
       Generator s = firstBit(f);
-      const uneqkl::MuRow& muRow = kl.muList(s,y);
+      const uneqkl::MuRow &muRow = kl.muList(s, y);
       for (Ulong j = 0; j < muRow.size(); ++j) {
-	Vertex x = kl.inverse(muRow[j].x);
-	EdgeList& e = X.edge(x);
-	insert(e,yi);
+        Vertex x = kl.inverse(muRow[j].x);
+        EdgeList &e = X.edge(x);
+        insert(e, yi);
       }
-      Vertex sy  = kl.inverse(p.shift(y,s));
-      EdgeList& e = X.edge(sy);
-      insert(e,yi);
+      Vertex sy = kl.inverse(p.shift(y, s));
+      EdgeList &e = X.edge(sy);
+      insert(e, yi);
     }
-   }
+  }
 
   return;
 }
 
-void rGraph(OrientedGraph& X, uneqkl::KLContext& kl)
+void rGraph(OrientedGraph &X, uneqkl::KLContext &kl)
 
 /*
   Puts in X the graph corresponding to the edges in the context. It assumes
@@ -1304,29 +1299,29 @@ void rGraph(OrientedGraph& X, uneqkl::KLContext& kl)
 */
 
 {
-  const SchubertContext& p = kl.schubert();
+  const SchubertContext &p = kl.schubert();
   X.setSize(kl.size());
-  LFlags S = leqmask[kl.rank()-1];
+  LFlags S = leqmask[kl.rank() - 1];
 
   /* reset X */
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
-    EdgeList& e = X.edge(y);
+    EdgeList &e = X.edge(y);
     e.setSize(0);
   }
 
   /* make edges */
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
-    for (LFlags f = ~p.rdescent(y) & S; f; f &= (f-1)) {
+    for (LFlags f = ~p.rdescent(y) & S; f; f &= (f - 1)) {
       Generator s = firstBit(f);
-      const uneqkl::MuRow& muRow = kl.muList(s,y);
+      const uneqkl::MuRow &muRow = kl.muList(s, y);
       for (Ulong j = 0; j < muRow.size(); ++j) {
-	EdgeList& e = X.edge(muRow[j].x);
-	e.append(y);
+        EdgeList &e = X.edge(muRow[j].x);
+        e.append(y);
       }
-      CoxNbr ys = p.shift(y,s);
-      EdgeList& e = X.edge(ys);
+      CoxNbr ys = p.shift(y, s);
+      EdgeList &e = X.edge(ys);
       e.append(y);
     }
   }
@@ -1334,14 +1329,14 @@ void rGraph(OrientedGraph& X, uneqkl::KLContext& kl)
   /* sort lists */
 
   for (CoxNbr y = 0; y < X.size(); ++y) {
-    EdgeList& e = X.edge(y);
+    EdgeList &e = X.edge(y);
     e.sort();
   }
 
   return;
 }
 
-};
+}; // namespace cells
 /*****************************************************************************
 
         Chapter IV -- Utilities
@@ -1354,7 +1349,7 @@ void rGraph(OrientedGraph& X, uneqkl::KLContext& kl)
 
 namespace cells {
 
-CoxNbr checkClasses (const Partition& pi, const SchubertContext& p)
+CoxNbr checkClasses(const Partition &pi, const SchubertContext &p)
 
 /*
   This function checks if the classes of a refined partition are stable
@@ -1378,9 +1373,9 @@ CoxNbr checkClasses (const Partition& pi, const SchubertContext& p)
     for (; pi(v[i]) == j; ++i) {
       q.add(v[i]);
     }
-    lStringEquiv(pi_q,q,p);
+    lStringEquiv(pi_q, q, p);
     if (ERRNO) {
-      printf("error in class #%lu\n",j);
+      printf("error in class #%lu\n", j);
       return q[0];
     }
   }
@@ -1388,4 +1383,4 @@ CoxNbr checkClasses (const Partition& pi, const SchubertContext& p)
   return 0;
 }
 
-};
+}; // namespace cells

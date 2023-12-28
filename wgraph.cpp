@@ -1,6 +1,6 @@
 /*
   This is wgraph.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -32,19 +32,19 @@
  ****************************************************************************/
 
 namespace {
-  using namespace wgraph;
-  using namespace stack;
+using namespace wgraph;
+using namespace stack;
 
-  void getClass(const OrientedGraph& X, const Vertex& y, BitMap& b,
-		Partition& pi, OrientedGraph* P = 0);
+void getClass(const OrientedGraph &X, const Vertex &y, BitMap &b, Partition &pi,
+              OrientedGraph *P = 0);
 
-};
+}; // namespace
 
 /****************************************************************************
 
         Chapter I -- The WGraph class
 
-  Recall that a W-graph is an oriented graph, together with the datum of a 
+  Recall that a W-graph is an oriented graph, together with the datum of a
   subset of the generating set S for each vertex, and a coefficient mu(x,y)
   for each edge, so that certain formulae (abstracted from the formulae
   that give the action of the standard generators of the Hecke algebra on
@@ -86,11 +86,12 @@ namespace {
 
 namespace wgraph {
 
-WGraph::WGraph(const Ulong& n):d_coeff(n),d_descent(n)
+WGraph::WGraph(const Ulong &n)
+    : d_coeff(n), d_descent(n)
 
 /*
   Constructor for the WGraph class.
-*/ 
+*/
 
 {
   d_graph = new OrientedGraph(n);
@@ -98,7 +99,7 @@ WGraph::WGraph(const Ulong& n):d_coeff(n),d_descent(n)
 
 WGraph::~WGraph()
 
-/* 
+/*
    The only non-automatic part is the deletion of d_graph.
 */
 
@@ -120,7 +121,7 @@ void WGraph::reset()
   return;
 }
 
-void WGraph::setSize(const Ulong& n)
+void WGraph::setSize(const Ulong &n)
 
 /*
   Sets the sizes of the data structures so that the graph can accomodate
@@ -135,54 +136,54 @@ void WGraph::setSize(const Ulong& n)
   return;
 }
 
-void WGraph::print(FILE* file, const Interface& I) const
+void WGraph::print(FILE *file, const Interface &I) const
 
 /*
   Prints the graph on a file in ascii format.
 */
 
 {
-  const OrientedGraph& Y = *d_graph;
+  const OrientedGraph &Y = *d_graph;
 
-  int d = digits(size()-1,10);
+  int d = digits(size() - 1, 10);
 
   /* count number of edges */
 
   Ulong count = 0;
 
   for (Vertex x = 0; x < size(); ++x) {
-    const EdgeList& e = Y.edge(x);
+    const EdgeList &e = Y.edge(x);
     count += e.size();
   }
 
   // find alignement
 
   String str(0);
-  LFlags f = leqmask[I.rank()-1];
-  interface::append(str,f,I);
+  LFlags f = leqmask[I.rank() - 1];
+  interface::append(str, f, I);
   Ulong descent_maxwidth = str.length();
 
-  fprintf(file,"%lu vertices, %lu edges\n\n",size(),count);
+  fprintf(file, "%lu vertices, %lu edges\n\n", size(), count);
 
   for (Vertex x = 0; x < size(); ++x) {
-    fprintf(file,"%*lu : ",d,x);
+    fprintf(file, "%*lu : ", d, x);
     io::reset(str);
-    interface::append(str,descent(x),I);
-    pad(str,descent_maxwidth );
-    io::print(file,str);
-    fprintf(file," ");
+    interface::append(str, descent(x), I);
+    pad(str, descent_maxwidth);
+    io::print(file, str);
+    fprintf(file, " ");
     const EdgeList e = Y.edge(x);
     const CoeffList c = coeffList(x);
     for (Ulong j = 0; j < e.size(); ++j) {
-      fprintf(file,"%lu(%lu)",e[j],static_cast<Ulong>(c[j]));
-      if (j+1 < e.size()) /* there is more to come */
-	fprintf(file,",");
+      fprintf(file, "%lu(%lu)", e[j], static_cast<Ulong>(c[j]));
+      if (j + 1 < e.size()) /* there is more to come */
+        fprintf(file, ",");
     }
-    fprintf(file,"\n");
+    fprintf(file, "\n");
   }
 }
 
-};
+}; // namespace wgraph
 
 /****************************************************************************
 
@@ -209,9 +210,9 @@ void WGraph::print(FILE* file, const Interface& I) const
       - normalPermuation(a) : gives the permutation to a normalized form;
       - print() : prints out the graph;
 
-    - modifiers : 
+    - modifiers :
 
-      - edge(x) : returns a non-copnstant reference to the list of edges 
+      - edge(x) : returns a non-copnstant reference to the list of edges
         originating from x (inlined);
       - permute(a) : permutes the graph according to a;
       - reset() : resets the structure;
@@ -230,13 +231,13 @@ OrientedGraph::~OrientedGraph()
 
 {}
 
-void OrientedGraph::cells(Partition& pi, OrientedGraph* P) const
+void OrientedGraph::cells(Partition &pi, OrientedGraph *P) const
 
 /*
   Define a preorder relation on the vertices by setting x <= y iff there is an
   oriented path from x to y. This function puts in pi the partition function
-  corresponding to the equivalence classes of this preorder. We use the 
-  Tarjan algorithm, explained in one of the Knuth books, but which I learned 
+  corresponding to the equivalence classes of this preorder. We use the
+  Tarjan algorithm, explained in one of the Knuth books, but which I learned
   from Bill Casselman.
 
   The vertices for which the partition function is already defined will
@@ -263,7 +264,7 @@ void OrientedGraph::cells(Partition& pi, OrientedGraph* P) const
   y_min < x_min. Otherwise, y is seen for the first time; then we just put
   it on the stack. When we are done with the edges of x, we have now the
   value of x_min which is the inf over the edges originating from x of
-  the y_min. If this value is equal to the stack-position of x, we see that x 
+  the y_min. If this value is equal to the stack-position of x, we see that x
   is minimal in its class, and we get a new class by taking all the successors
   of x not already dealt with. We then move to the parent of x and continue
   the process there.
@@ -273,7 +274,7 @@ void OrientedGraph::cells(Partition& pi, OrientedGraph* P) const
   static Permutation a(0);
   static BitMap b(0);
   static List<Vertex> v(1);
-  static List<const EdgeList*> elist(1);
+  static List<const EdgeList *> elist(1);
   static List<Ulong> ecount(1);
   static List<Ulong> min(0);
 
@@ -302,47 +303,45 @@ void OrientedGraph::cells(Partition& pi, OrientedGraph* P) const
     min[x] = 0;
     Ulong t = 1;
 
-    while(t) {
-      Vertex y = v[t-1];
+    while (t) {
+      Vertex y = v[t - 1];
       Vertex z;
-      const EdgeList& e = *elist[t-1];
-      for (; ecount[t-1] < e.size(); ++ecount[t-1]) {
-	z = e[ecount[t-1]];
-	if (b.getBit(z))
-	  continue;
-	if (min[z] == size()) /* z is new */
-	  goto add_path;
-	if (min[y] > min[z])
-	  min[y] = min[z];
+      const EdgeList &e = *elist[t - 1];
+      for (; ecount[t - 1] < e.size(); ++ecount[t - 1]) {
+        z = e[ecount[t - 1]];
+        if (b.getBit(z))
+          continue;
+        if (min[z] == size()) /* z is new */
+          goto add_path;
+        if (min[y] > min[z])
+          min[y] = min[z];
       }
-    /* at this point we have exhausted the edges of y */
-      if (min[y] == t-1) { /* take off class */
-	getClass(*this,y,b,pi,P);
-      }
-      else if (min[y] < min[v[t-2]]) /* if t=1, previous case holds */
-	min[v[t-2]] = min[y];
+      /* at this point we have exhausted the edges of y */
+      if (min[y] == t - 1) { /* take off class */
+        getClass(*this, y, b, pi, P);
+      } else if (min[y] < min[v[t - 2]]) /* if t=1, previous case holds */
+        min[v[t - 2]] = min[y];
       t--;
       continue;
     add_path:
-      v.setSize(t+1);
-      elist.setSize(t+1);
-      ecount.setSize(t+1);
+      v.setSize(t + 1);
+      elist.setSize(t + 1);
+      ecount.setSize(t + 1);
       v[t] = z;
       elist[t] = &edge(z);
       ecount[t] = 0;
       min[z] = t;
       t++;
     }
-
   }
 
   return;
 }
 
-void OrientedGraph::levelPartition(Partition& pi) const
+void OrientedGraph::levelPartition(Partition &pi) const
 
 /*
-  Assuming the graph has no oriented cycles, this function writes in pi the 
+  Assuming the graph has no oriented cycles, this function writes in pi the
   partition of the vertices according to their level, where sinks have level
   0, then sinks in the remaining poset have level one, etc.
 
@@ -365,11 +364,11 @@ void OrientedGraph::levelPartition(Partition& pi) const
   while (count < size()) {
     for (SetElt x = 0; x < size(); ++x) {
       if (b.getBit(x))
-	continue;
+        continue;
       const EdgeList e = d_edge[x];
       for (Ulong j = 0; j < e.size(); ++j) {
-	if (!b.getBit(e[j])) /* next x */
-	  goto nextx;
+        if (!b.getBit(e[j])) /* next x */
+          goto nextx;
       }
       /* i we get here, x is the next element in the permutation */
       pi[x] = current_level;
@@ -386,7 +385,7 @@ void OrientedGraph::levelPartition(Partition& pi) const
   return;
 }
 
-void OrientedGraph::permute(const Permutation& a)
+void OrientedGraph::permute(const Permutation &a)
 
 /*
   This function permutes the graph according to the permutation a, according
@@ -407,7 +406,7 @@ void OrientedGraph::permute(const Permutation& a)
   /* permute values */
 
   for (SetElt x = 0; x < size(); ++x) {
-    EdgeList& e = d_edge[x];
+    EdgeList &e = d_edge[x];
     for (Ulong j = 0; j < e.size(); ++j) {
       e[j] = a[e[j]];
     }
@@ -439,30 +438,30 @@ void OrientedGraph::permute(const Permutation& a)
   }
 }
 
-void OrientedGraph::print(FILE* file) const
+void OrientedGraph::print(FILE *file) const
 
 /*
   Does a printout of the graph on the file.
 */
 
 {
-  fprintf(file,"size : %lu\n\n",size());
+  fprintf(file, "size : %lu\n\n", size());
 
-  int d = digits(size(),10);
+  int d = digits(size(), 10);
 
   for (Vertex x = 0; x < size(); ++x) {
-    const EdgeList& e = edge(x);
-    fprintf(file,"%*lu : ",d,x);
+    const EdgeList &e = edge(x);
+    fprintf(file, "%*lu : ", d, x);
     for (Ulong j = 0; j < e.size(); ++j) {
-      fprintf(file,"%*lu",d,e[j]);
-      if (j < e.size()-1) { /* there is more to come */
-	fprintf(file,",");
+      fprintf(file, "%*lu", d, e[j]);
+      if (j < e.size() - 1) { /* there is more to come */
+        fprintf(file, ",");
       }
     }
-    fprintf(file,"\n");
+    fprintf(file, "\n");
   }
 
-  fprintf(file,"\n");
+  fprintf(file, "\n");
 
   return;
 }
@@ -481,7 +480,7 @@ void OrientedGraph::reset()
   return;
 }
 
-};
+}; // namespace wgraph
 
 /****************************************************************************
 
@@ -496,8 +495,8 @@ void OrientedGraph::reset()
 
 namespace {
 
-void getClass(const OrientedGraph& X, const Vertex& y, BitMap& b, 
-	      Partition& pi, OrientedGraph* P)
+void getClass(const OrientedGraph &X, const Vertex &y, BitMap &b, Partition &pi,
+              OrientedGraph *P)
 
 /*
   After the element y has been identified as minimal among the elements not
@@ -514,33 +513,32 @@ void getClass(const OrientedGraph& X, const Vertex& y, BitMap& b,
   b.setBit(y);
   pi[y] = a;
   if (P)
-    P->setSize(a+1);
+    P->setSize(a + 1);
 
   while (c.size()) {
     Vertex x = c.pop();
-    const EdgeList& e = X.edge(x);
+    const EdgeList &e = X.edge(x);
     for (Ulong j = 0; j < e.size(); ++j) {
       Vertex z = e[j];
       if (b.getBit(z)) {
-	if (P && (pi[z] < a)) { /* add a new edge to P */
-	  EdgeList& f = P->edge(a);
-	  if (find(f,pi[z]) == not_found) { /* edge is new */
-	    insert(f,pi[z]);
-	  }
-	}
-	continue;
-      }
-      else {
-	c.push(z);
-	b.setBit(z);
-	pi[z] = a;
+        if (P && (pi[z] < a)) { /* add a new edge to P */
+          EdgeList &f = P->edge(a);
+          if (find(f, pi[z]) == not_found) { /* edge is new */
+            insert(f, pi[z]);
+          }
+        }
+        continue;
+      } else {
+        c.push(z);
+        b.setBit(z);
+        pi[z] = a;
       }
     }
   }
 
-  pi.setClassCount(a+1);
+  pi.setClassCount(a + 1);
 
   return;
 }
 
-};
+}; // namespace

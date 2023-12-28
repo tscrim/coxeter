@@ -1,6 +1,6 @@
 /*
   This is posets.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -19,11 +19,11 @@
 
 namespace {
 
-  using namespace posets;
+using namespace posets;
 
-  PosetElt firstMinimal(const OrientedGraph& G, const BitMap& b);
+PosetElt firstMinimal(const OrientedGraph &G, const BitMap &b);
 
-}
+} // namespace
 
 /****************************************************************************
 
@@ -61,7 +61,8 @@ Poset::Poset()
 
 {}
 
-Poset::Poset(const Ulong& n):d_closure(n)
+Poset::Poset(const Ulong &n)
+    : d_closure(n)
 
 /*
   Constructs a Poset structure capable of accomodating a Poset of size n.
@@ -71,11 +72,12 @@ Poset::Poset(const Ulong& n):d_closure(n)
   d_closure.setSizeValue(n);
 
   for (Ulong j = 0; j < n; ++j) {
-    new(d_closure.ptr()+j) BitMap(n);
+    new (d_closure.ptr() + j) BitMap(n);
   }
 }
 
-Poset::Poset(const OrientedGraph& G):d_closure(G.size())
+Poset::Poset(const OrientedGraph &G)
+    : d_closure(G.size())
 
 /*
   Constructs the poset defined by the graph G, assumed to be acyclic; i.e.,
@@ -84,13 +86,13 @@ Poset::Poset(const OrientedGraph& G):d_closure(G.size())
   relations, as a matter of convention.)
 */
 
-{  
+{
   static BitMap b(0);
 
   d_closure.setSizeValue(G.size());
 
   for (Ulong j = 0; j < size(); ++j) {
-    new(d_closure.ptr()+j) BitMap(size());
+    new (d_closure.ptr() + j) BitMap(size());
   }
 
   /* set the bitmaps */
@@ -99,9 +101,9 @@ Poset::Poset(const OrientedGraph& G):d_closure(G.size())
   b.reset();
 
   for (Ulong j = 0; j < size(); ++j) {
-    PosetElt x = firstMinimal(G,b);
+    PosetElt x = firstMinimal(G, b);
     b.setBit(x);
-    const EdgeList& e = G.edge(x);
+    const EdgeList &e = G.edge(x);
     d_closure[x].setBit(x);
     for (Ulong i = 0; i < e.size(); ++i) {
       d_closure[x] |= d_closure[e[i]];
@@ -121,7 +123,7 @@ Poset::~Poset()
 
 /******** accessors *********************************************************/
 
-void Poset::findMaximals(const BitMap& D, Set& a) const
+void Poset::findMaximals(const BitMap &D, Set &a) const
 
 /*
   This function writes in a the maximal elements of D. It assumes that
@@ -137,7 +139,7 @@ void Poset::findMaximals(const BitMap& D, Set& a) const
   b.assign(D);
 
   for (PosetElt x = b.lastBit(); x < b.size(); x = b.lastBit()) {
-    insert(a,x);
+    insert(a, x);
     b.andnot(d_closure[x]);
   }
 }
@@ -153,13 +155,13 @@ bool Poset::isTriangular() const
 
 {
   for (PosetElt x = 0; x < size(); ++x) {
-    if (!d_closure[x].isEmpty(x+1))
+    if (!d_closure[x].isEmpty(x + 1))
       return false;
   }
   return true;
 }
 
-void Poset::hasseDiagram(OrientedGraph& H)
+void Poset::hasseDiagram(OrientedGraph &H)
 
 /*
   This function returns in H the Hasse diagram of the poset, i.e. for each
@@ -171,14 +173,14 @@ void Poset::hasseDiagram(OrientedGraph& H)
 
   for (PosetElt x = 0; x < size(); ++x) {
     d_closure[x].clearBit(x);
-    findMaximals(d_closure[x],H.edge(x));
+    findMaximals(d_closure[x], H.edge(x));
     d_closure[x].setBit(x);
   }
 }
 
 /******** input/output ******************************************************/
 
-};
+}; // namespace posets
 
 /*****************************************************************************
 
@@ -186,14 +188,14 @@ void Poset::hasseDiagram(OrientedGraph& H)
 
   This chapter defines some auxiliary functions used in this module :
 
-    - firstMinimal(G,b) : return the first x in G minimal in the complement 
+    - firstMinimal(G,b) : return the first x in G minimal in the complement
       of b;
 
  *****************************************************************************/
 
 namespace {
 
-PosetElt firstMinimal(const OrientedGraph& G, const BitMap& b)
+PosetElt firstMinimal(const OrientedGraph &G, const BitMap &b)
 
 /*
   This function is an auxiliary to Poset(G). Given a bitmap b, which is
@@ -211,12 +213,12 @@ PosetElt firstMinimal(const OrientedGraph& G, const BitMap& b)
   for (; x < G.size(); ++x) {
     if (b.getBit(x))
       continue;
-    const EdgeList& e = G.edge(x);
+    const EdgeList &e = G.edge(x);
     for (Ulong i = 0; i < e.size(); ++i) {
       if (!b.getBit(e[i]))
-	goto nextx;
+        goto nextx;
     }
-  /* if we reach this point our element is found */
+    /* if we reach this point our element is found */
     break;
   nextx:
     continue;
@@ -225,5 +227,4 @@ PosetElt firstMinimal(const OrientedGraph& G, const BitMap& b)
   return x;
 }
 
-};
-
+}; // namespace

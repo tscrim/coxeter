@@ -21,14 +21,14 @@
 #include "typeA.h"
 
 namespace interactive {
-  using namespace affine;
-  using namespace automata;
-  using namespace coxeter;
-  using namespace error;
-  using namespace fcoxgroup;
-  using namespace general;
-  using namespace io;
-};
+using namespace affine;
+using namespace automata;
+using namespace coxeter;
+using namespace error;
+using namespace fcoxgroup;
+using namespace general;
+using namespace io;
+}; // namespace interactive
 
 /****************************************************************************
 
@@ -43,32 +43,32 @@ namespace interactive {
 /* local variables */
 
 namespace {
-  using namespace interactive;
-  const Letter generator_type = 0;
-};
+using namespace interactive;
+const Letter generator_type = 0;
+}; // namespace
 
 /******** local declarations ************************************************/
 
 namespace {
-  void checkCoxElement(CoxGroup *W, CoxWord g);
-  void checkCoxEntry(Rank i, Rank j, Ulong m);
-  void checkFilename(char *s);
-  void checkLength(const long& l);
-  void checkRank(const Rank& l, const Type& type);
-  void checkType(String& buf);
-  void getCoxFileName(String& buf);
-  Ulong parse(const Interface& I, Generator &s, const String& line);
-  Ulong parse(const Interface& I, Generator &s, const String& line,
-		const LFlags& f);
-  void printADiagram(FILE* file, const CoxGroup* W);
-  void printBDiagram(FILE* file, const CoxGroup* W);
-  void printDDiagram(FILE* file, const CoxGroup* W);
-  void printEDiagram(FILE* file, const CoxGroup* W);
-  void printFDiagram(FILE* file, const CoxGroup* W);
-  void printGDiagram(FILE* file, const CoxGroup* W);
-  void printHDiagram(FILE* file, const CoxGroup* W);
-  void printIDiagram(FILE* file, const CoxGroup* W);
-};
+void checkCoxElement(CoxGroup *W, CoxWord g);
+void checkCoxEntry(Rank i, Rank j, Ulong m);
+void checkFilename(char *s);
+void checkLength(const long &l);
+void checkRank(const Rank &l, const Type &type);
+void checkType(String &buf);
+void getCoxFileName(String &buf);
+Ulong parse(const Interface &I, Generator &s, const String &line);
+Ulong parse(const Interface &I, Generator &s, const String &line,
+            const LFlags &f);
+void printADiagram(FILE *file, const CoxGroup *W);
+void printBDiagram(FILE *file, const CoxGroup *W);
+void printDDiagram(FILE *file, const CoxGroup *W);
+void printEDiagram(FILE *file, const CoxGroup *W);
+void printFDiagram(FILE *file, const CoxGroup *W);
+void printGDiagram(FILE *file, const CoxGroup *W);
+void printHDiagram(FILE *file, const CoxGroup *W);
+void printIDiagram(FILE *file, const CoxGroup *W);
+}; // namespace
 
 /****************************************************************************
 
@@ -89,14 +89,13 @@ OutputFile::OutputFile()
   static String buf(0);
 
   printf("Name an output file (hit return for stdout):\n");
-  interactive::getInput(stdin,buf);
+  interactive::getInput(stdin, buf);
 
   if (buf[0] == '\0')
     d_file = stdout;
   else
-    d_file = fopen(buf.ptr(),"w");
+    d_file = fopen(buf.ptr(), "w");
 }
-
 
 OutputFile::~OutputFile()
 
@@ -129,7 +128,7 @@ OutputFile::~OutputFile()
 
  ****************************************************************************/
 
-CoxGroup* allocCoxGroup()
+CoxGroup *allocCoxGroup()
 
 /*
   This function gets a type from the user, and allocates a CoxGroup
@@ -138,7 +137,7 @@ CoxGroup* allocCoxGroup()
 */
 
 {
-  const Type& x = getType();
+  const Type &x = getType();
 
   if (ERRNO)
     return 0;
@@ -146,7 +145,7 @@ CoxGroup* allocCoxGroup()
   return allocCoxGroup(x);
 }
 
-CoxGroup* allocCoxGroup(const Type& x)
+CoxGroup *allocCoxGroup(const Type &x)
 
 /*
   This function gets a rank from the user, and allocates a CoxGroup
@@ -160,10 +159,10 @@ CoxGroup* allocCoxGroup(const Type& x)
   if (ERRNO)
     return 0;
 
-  return coxeterGroup(x,l);
+  return coxeterGroup(x, l);
 }
 
-CoxGroup* coxeterGroup(const Type& x, const Rank& l)
+CoxGroup *coxeterGroup(const Type &x, const Rank &l)
 
 /*
   This function allocates a CoxGroup of the given type and rank. More
@@ -180,38 +179,35 @@ CoxGroup* coxeterGroup(const Type& x, const Rank& l)
       return new GeneralTypeAMRCoxGroup(l);
     else if (l > maxSmallRank(x))
       return new GeneralTypeASRCoxGroup(l);
-    else  /* group is small */
+    else /* group is small */
       return new GeneralTypeASCoxGroup(l);
-  }
-  else if (isFiniteType(x)) { /* allocate a FiniteCoxGroup */
+  } else if (isFiniteType(x)) { /* allocate a FiniteCoxGroup */
     if (l > MEDRANK_MAX)
-      return new GeneralFBRCoxGroup(x,l);
+      return new GeneralFBRCoxGroup(x, l);
     else if (l > SMALLRANK_MAX)
-      return new GeneralFMRCoxGroup(x,l);
+      return new GeneralFMRCoxGroup(x, l);
     else if (l > maxSmallRank(x))
-      return new GeneralFSRCoxGroup(x,l);
-    else  /* group is small */
-      return new GeneralSCoxGroup(x,l);
-  }
-  else if (isAffineType(x)) { /* allocate an AffineCoxGroup */
+      return new GeneralFSRCoxGroup(x, l);
+    else /* group is small */
+      return new GeneralSCoxGroup(x, l);
+  } else if (isAffineType(x)) { /* allocate an AffineCoxGroup */
     if (l > MEDRANK_MAX)
-      return new GeneralABRCoxGroup(x,l);
+      return new GeneralABRCoxGroup(x, l);
     else if (l > SMALLRANK_MAX)
-      return new GeneralAMRCoxGroup(x,l);
-    else  /* l <= SMALLRANK_MAX */
-      return new GeneralASRCoxGroup(x,l);
-  }
-  else { /* allocate a GeneralCoxGroup */
+      return new GeneralAMRCoxGroup(x, l);
+    else /* l <= SMALLRANK_MAX */
+      return new GeneralASRCoxGroup(x, l);
+  } else { /* allocate a GeneralCoxGroup */
     if (l > MEDRANK_MAX)
-      return new BigRankCoxGroup(x,l);
+      return new BigRankCoxGroup(x, l);
     else if (l > SMALLRANK_MAX)
-      return new MedRankCoxGroup(x,l);
+      return new MedRankCoxGroup(x, l);
     else
-      return new SmallRankCoxGroup(x,l);
+      return new SmallRankCoxGroup(x, l);
   }
 }
 
-CoxEntry getCoxEntry(const Rank& i, const Rank& j)
+CoxEntry getCoxEntry(const Rank &i, const Rank &j)
 
 /*
   This function gets a Coxeter matrix entry from the user. It prompts
@@ -225,26 +221,25 @@ CoxEntry getCoxEntry(const Rank& i, const Rank& j)
 
   do {
     if (ERRNO)
-      Error(ERRNO,i,j,m);
-    printf("\nm[%d,%d] : ",i,j);
-    getInput(stdin,buf);
+      Error(ERRNO, i, j, m);
+    printf("\nm[%d,%d] : ", i, j);
+    getInput(stdin, buf);
     if (buf[0] == '\0') { /* abort */
       ERRNO = BAD_COXENTRY;
       return undef_coxentry;
     }
-    m = strtol(buf.ptr(),NULL,0);
-    checkCoxEntry(i,j,m);
-  }
-  while (ERRNO);
+    m = strtol(buf.ptr(), NULL, 0);
+    checkCoxEntry(i, j, m);
+  } while (ERRNO);
 
-  return static_cast<CoxEntry>(m) ;
+  return static_cast<CoxEntry>(m);
 }
 
-};
+}; // namespace interactive
 
 namespace {
 
-void getCoxFileName(String& str)
+void getCoxFileName(String &str)
 
 /*
   This function gets from the user the name of the file containing the
@@ -259,40 +254,39 @@ void getCoxFileName(String& str)
   using directories::COXMATRIX_DIR;
 
   reset(buf);
-  append(buf,COXMATRIX_DIR);
-  append(buf,"/");
+  append(buf, COXMATRIX_DIR);
+  append(buf, "/");
   Ulong c = buf.length();
 
   do {
     if (ERRNO) {
-      Error(ERRNO,buf.ptr());
+      Error(ERRNO, buf.ptr());
       reset(buf);
-      append(buf,COXMATRIX_DIR);
-      append(buf,"/");
+      append(buf, COXMATRIX_DIR);
+      append(buf, "/");
     }
-    printf("\nFile name : %s/",COXMATRIX_DIR);
-    getInput(stdin,buf,buf.length());
+    printf("\nFile name : %s/", COXMATRIX_DIR);
+    getInput(stdin, buf, buf.length());
     if (buf[c] == '\0') { /* abort */
       ERRNO = ABORT;
       return;
     }
     checkFilename(buf.ptr());
-  }
-  while (ERRNO);
+  } while (ERRNO);
 
-  str.setLength(buf.length()-c+1);
+  str.setLength(buf.length() - c + 1);
   str[0] = 'X';
-  str.setData(buf.ptr()+c,1,buf.length()-c);
+  str.setData(buf.ptr() + c, 1, buf.length() - c);
   str[str.length()] = '\0';
 
   return;
 }
 
-};
+}; // namespace
 
 namespace interactive {
 
-const CoxWord& getCoxWord(CoxGroup *W)
+const CoxWord &getCoxWord(CoxGroup *W)
 
 /*
   This function gets a coxword from the user. If the input is not
@@ -308,9 +302,9 @@ const CoxWord& getCoxWord(CoxGroup *W)
   do {
     if (ERRNO) {
       P.str[P.offset] = '\0';
-      Error(ERRNO,P.str.ptr());
+      Error(ERRNO, P.str.ptr());
     }
-    getInput(stdin,P.str,P.offset);
+    getInput(stdin, P.str, P.offset);
     if (P.str[P.offset] == '?') {
       ERRNO = ABORT;
       return P.a[0];
@@ -318,14 +312,12 @@ const CoxWord& getCoxWord(CoxGroup *W)
     W->parse(P);
     if (P.offset != P.str.length())
       ERRNO = PARSE_ERROR;
-  }
-  while (ERRNO);
+  } while (ERRNO);
 
   return P.a[0];
 }
 
-
-Generator getGenerator(CoxGroup* W)
+Generator getGenerator(CoxGroup *W)
 
 /*
   This function gets a generator from the user. The string should start
@@ -338,7 +330,7 @@ Generator getGenerator(CoxGroup* W)
 {
   static String buf(0);
 
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
   Generator s = undef_generator;
 
   Ulong r = 0;
@@ -347,21 +339,20 @@ Generator getGenerator(CoxGroup* W)
   do {
     if (ERRNO) {
       buf[r] = '\0';
-      Error(ERRNO,buf.ptr());
+      Error(ERRNO, buf.ptr());
     }
-    getInput(stdin,buf,r);
+    getInput(stdin, buf, r);
     if (buf[r] == '?') {
       ERRNO = ABORT;
       return undef_generator;
     }
-    r = parse(I,s,buf);
+    r = parse(I, s, buf);
   } while (ERRNO);
 
   return s;
 }
 
-
-Generator getGenerator(CoxGroup* W, const LFlags& f)
+Generator getGenerator(CoxGroup *W, const LFlags &f)
 
 /*
   Like getGenerator, but moreover checks if s is flagged by f.
@@ -370,7 +361,7 @@ Generator getGenerator(CoxGroup* W, const LFlags& f)
 {
   static String buf(0);
 
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
   Generator s = undef_generator;
 
   Ulong r = 0;
@@ -379,21 +370,20 @@ Generator getGenerator(CoxGroup* W, const LFlags& f)
   do {
     if (ERRNO) {
       buf[r] = '\0';
-      Error(ERRNO,buf.ptr());
+      Error(ERRNO, buf.ptr());
     }
-    getInput(stdin,buf,r);
+    getInput(stdin, buf, r);
     if (buf[r] == '?') {
       ERRNO = ABORT;
       return undef_generator;
     }
-    r = parse(I,s,buf,f);
+    r = parse(I, s, buf, f);
   } while (ERRNO);
 
   return s;
 }
 
-
-void getLength(List<Length>& L, const CoxGraph& G, const Interface& I)
+void getLength(List<Length> &L, const CoxGraph &G, const Interface &I)
 
 /*
   This function gets lengths of generators from the user, for computing
@@ -410,9 +400,9 @@ void getLength(List<Length>& L, const CoxGraph& G, const Interface& I)
   List<LFlags> cl(0);
   static String buf(0);
 
-  getConjugacyClasses(cl,G);
+  getConjugacyClasses(cl, G);
 
-  printf("There are %lu conjugacy classes of generators.",cl.size());
+  printf("There are %lu conjugacy classes of generators.", cl.size());
   printf(" Enter weights (? to abort):\n\n");
 
   for (Ulong j = 0; j < cl.size(); ++j) {
@@ -424,37 +414,36 @@ void getLength(List<Length>& L, const CoxGraph& G, const Interface& I)
 
     do {
       if (trials >= 5) {
-	ERRNO = ABORT;
-	return;
+        ERRNO = ABORT;
+        return;
       }
       ++trials;
       if (ERRNO) {
-	Error(ERRNO,l);
+        Error(ERRNO, l);
       }
-      print(stdout,cl[j],I);
+      print(stdout, cl[j], I);
       printf(" : ");
-      getInput(stdin,buf);
+      getInput(stdin, buf);
       if (buf[0] == '?') {
-	ERRNO = ABORT;
-	return;
+        ERRNO = ABORT;
+        return;
       }
-    l = strtol(buf.ptr(),NULL,0);
-    checkLength(l);
+      l = strtol(buf.ptr(), NULL, 0);
+      checkLength(l);
     } while (ERRNO);
 
     /* set corresponding lengths */
 
-    for (LFlags f = cl[j]; f; f &= f-1) {
+    for (LFlags f = cl[j]; f; f &= f - 1) {
       Generator s = firstBit(f);
       L[s] = l;
-      L[s+G.rank()] = l; // left multiplication
+      L[s + G.rank()] = l; // left multiplication
     }
   }
   return;
 }
 
-
-Rank getRank(const Type& type)
+Rank getRank(const Type &type)
 
 /*
   This function gets a rank from the user, corresponding to the given
@@ -468,38 +457,36 @@ Rank getRank(const Type& type)
   Rank l;
   int ignore_error;
 
-  if (strchr("GI",type[0]))  /* rank is 2 */
-    {
-      printf("\nsetting rank to 2\n");
-      if (type[0] == 'G')
-	printf("\n");
-      return 2;
-    }
+  if (strchr("GI", type[0])) /* rank is 2 */
+  {
+    printf("\nsetting rank to 2\n");
+    if (type[0] == 'G')
+      printf("\n");
+    return 2;
+  }
 
   ignore_error = 0;
   reset(buf);
 
   do {
     if (ERRNO)
-      Error(ERRNO,&type,&l,&ignore_error);
+      Error(ERRNO, &type, &l, &ignore_error);
     if (ignore_error)
       break;
     printf("\nrank : ");
-    getInput(stdin,buf);
+    getInput(stdin, buf);
     if (buf[0] == '\0') { /* abort */
       ERRNO = ERROR_WARNING;
       return 0;
     }
-    l = (Rank)strtol(buf.ptr(),NULL,0);
-    checkRank(l,type);
-  }
-  while (ERRNO);
+    l = (Rank)strtol(buf.ptr(), NULL, 0);
+    checkRank(l, type);
+  } while (ERRNO);
 
   return l;
 }
 
-
-const Type& getType()
+const Type &getType()
 
 /*
   This function gets a type from the user. In case of invalid input,
@@ -512,27 +499,25 @@ const Type& getType()
 {
   static Type buf("");
 
-  String& name = buf.name();
+  String &name = buf.name();
   reset(name);
 
   do {
     if (ERRNO)
       Error(ERRNO);
     printf("\ntype : ");
-    getInput(stdin,name);
+    getInput(stdin, name);
     if (name[0] == '\0') { /* abort */
       ERRNO = ABORT;
       return undef_type;
     }
     checkType(name);
-  }
-  while (ERRNO);  /* give the user another chance */
+  } while (ERRNO); /* give the user another chance */
 
   return buf;
 }
 
-
-CoxEntry readCoxEntry(const Rank& i, const Rank& j, FILE *inputfile)
+CoxEntry readCoxEntry(const Rank &i, const Rank &j, FILE *inputfile)
 
 /*
   Reads the entry i,j of a Coxeter matrix from the file inputfile.
@@ -541,11 +526,11 @@ CoxEntry readCoxEntry(const Rank& i, const Rank& j, FILE *inputfile)
 {
   Ulong m;
 
-  fscanf(inputfile,"%lu",&m);
+  fscanf(inputfile, "%lu", &m);
 
-  checkCoxEntry(i,j,m);
+  checkCoxEntry(i, j, m);
   if (ERRNO) {
-    Error(ERRNO,i,j,m);
+    Error(ERRNO, i, j, m);
     ERRNO = ABORT;
     return 1;
   }
@@ -566,29 +551,26 @@ CoxEntry readCoxEntry(const Rank& i, const Rank& j, FILE *inputfile)
 
 ******************************************************************************/
 
-
 /*
   This function allows the user to specify a new ordering of the generators.
   He should input the standard generators in the ordering that he wants
   them (this is perhaps easier than to work from the current ordering,
   which would have been another possibility.)
 */
-void changeOrdering(CoxGroup *W, Permutation& order)
-{
+void changeOrdering(CoxGroup *W, Permutation &order) {
   static CoxWord g(0);
 
-  printRepresentation(stdout,W);
+  printRepresentation(stdout, W);
 
   printf("Current ordering of the generators:\n\n\t");
-  printOrdering(stdout,W);
+  printOrdering(stdout, W);
   printf("\n\n");
 
-  printf
-    ("To change the numbering of the generators, enter the Coxeter element\n");
-  printf
-    ("for which the generators are written in their new ordering (use the\n");
-  printf
-    ("current symbols, prefix, postfix and separator)\n\n");
+  printf(
+      "To change the numbering of the generators, enter the Coxeter element\n");
+  printf(
+      "for which the generators are written in their new ordering (use the\n");
+  printf("current symbols, prefix, postfix and separator)\n\n");
   printf("new ordering : ");
 
   do {
@@ -597,21 +579,20 @@ void changeOrdering(CoxGroup *W, Permutation& order)
     g = getCoxWord(W);
     if (g.length() == 0)
       ERRNO = ABORT;
-    if (ERRNO)  /* abort */
+    if (ERRNO) /* abort */
       return;
-    checkCoxElement(W,g);
-  }
-  while (ERRNO);
+    checkCoxElement(W, g);
+  } while (ERRNO);
 
   /* transfer ordering to the permutation */
 
   for (Generator s = 0; s < W->rank(); s++)
-    order[s] = g[s]-1;
+    order[s] = g[s] - 1;
 
   return;
 }
 
-}
+} // namespace interactive
 
 /*****************************************************************************
 
@@ -658,7 +639,6 @@ void checkCoxElement(CoxGroup *W, CoxWord g)
   return;
 }
 
-
 void checkCoxEntry(Rank i, Rank j, Ulong m)
 
 /*
@@ -689,7 +669,7 @@ void checkFilename(char *s)
 {
   FILE *f;
 
-  f = fopen(s,"r");
+  f = fopen(s, "r");
 
   if (f == NULL) { /* error */
     ERRNO = FILE_NOT_FOUND;
@@ -701,7 +681,7 @@ void checkFilename(char *s)
   return;
 }
 
-void checkLength(const long& l)
+void checkLength(const long &l)
 
 /*
   Checks if l is an acceptable length. Acceptable values are nonnegative
@@ -718,7 +698,7 @@ void checkLength(const long& l)
   return;
 }
 
-void checkRank(const Rank& l, const Type& type)
+void checkRank(const Rank &l, const Type &type)
 
 /*
   It is assumed that W->type() has been succesfully filled in. This function
@@ -730,83 +710,81 @@ void checkRank(const Rank& l, const Type& type)
 */
 
 {
-  switch(type[0])
-    {
-    case 'A':
-      if ((l < 1) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'B':
-      if ((l < 2) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'D':
-      if ((l < 2) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'E':
-      if ((l < 3) || (l > 8))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'F':
-      if ((l < 3) || (l > 4))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'G':
-      if (l != 2)
-	ERRNO = WRONG_RANK;
-      break;
-    case 'H':
-      if ((l < 2) || (l > 4))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'I':
-      if (l != 2)
-	ERRNO = WRONG_RANK;
-      break;
-    case 'a':
-      if ((l < 2) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'b':
-      if ((l < 3) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'c':
-      if ((l < 3) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'd':
-      if ((l < 5) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'e':
-      if ((l < 7) || (l > 9))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'f':
-      if (l != 5)
-	ERRNO = WRONG_RANK;
-      break;
-    case 'g':
-      if (l != 3)
-	ERRNO = WRONG_RANK;
-      break;
-    case 'X':
-      if ((l < 1) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    case 'Y':
-      if ((l < 1) || (l > RANK_MAX))
-	ERRNO = WRONG_RANK;
-      break;
-    }
+  switch (type[0]) {
+  case 'A':
+    if ((l < 1) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'B':
+    if ((l < 2) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'D':
+    if ((l < 2) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'E':
+    if ((l < 3) || (l > 8))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'F':
+    if ((l < 3) || (l > 4))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'G':
+    if (l != 2)
+      ERRNO = WRONG_RANK;
+    break;
+  case 'H':
+    if ((l < 2) || (l > 4))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'I':
+    if (l != 2)
+      ERRNO = WRONG_RANK;
+    break;
+  case 'a':
+    if ((l < 2) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'b':
+    if ((l < 3) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'c':
+    if ((l < 3) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'd':
+    if ((l < 5) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'e':
+    if ((l < 7) || (l > 9))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'f':
+    if (l != 5)
+      ERRNO = WRONG_RANK;
+    break;
+  case 'g':
+    if (l != 3)
+      ERRNO = WRONG_RANK;
+    break;
+  case 'X':
+    if ((l < 1) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  case 'Y':
+    if ((l < 1) || (l > RANK_MAX))
+      ERRNO = WRONG_RANK;
+    break;
+  }
 
   return;
 }
 
-
-void checkType(String& str)
+void checkType(String &str)
 
 /*
   Checks if the string s is a valid type for a Coxeter group. Currently
@@ -832,11 +810,10 @@ void checkType(String& str)
   }
 
   if ((str[0] >= 'A') && (str[0] <= 'I')) {
-    if (str[0] == 'C')
-      {
-	printf("\nwarning: type was changed to B\n");
-	str[0] = 'B';
-      }
+    if (str[0] == 'C') {
+      printf("\nwarning: type was changed to B\n");
+      str[0] = 'B';
+    }
     return;
   }
 
@@ -858,7 +835,7 @@ void checkType(String& str)
   return;
 }
 
-};
+}; // namespace
 
 /*****************************************************************************
 
@@ -877,57 +854,57 @@ void checkType(String& str)
 
 namespace interactive {
 
-void printInterface(FILE* file, const GroupEltInterface& GI,
-		       const Permutation& a)
+void printInterface(FILE *file, const GroupEltInterface &GI,
+                    const Permutation &a)
 
 {
-  fprintf(file,"prefix: ");
-  print(file,GI.prefix);
-  fprintf(file,"\n");
-  fprintf(file,"separator: ");
-  print(file,GI.separator);
-  fprintf(file,"\n");
-  fprintf(file,"postfix: ");
-  print(file,GI.postfix);
-  fprintf(file,"\n");
+  fprintf(file, "prefix: ");
+  print(file, GI.prefix);
+  fprintf(file, "\n");
+  fprintf(file, "separator: ");
+  print(file, GI.separator);
+  fprintf(file, "\n");
+  fprintf(file, "postfix: ");
+  print(file, GI.postfix);
+  fprintf(file, "\n");
 
   for (Ulong j = 0; j < a.size(); ++j) {
-    fprintf(file,"generator ");
+    fprintf(file, "generator ");
     Generator s = a[j];
-    print(file,GI.symbol[s]);
-    fprintf(file,"\n");
+    print(file, GI.symbol[s]);
+    fprintf(file, "\n");
   }
 
   return;
 }
 
-void printInterface(FILE* file, const GroupEltInterface& GI,
-		    const GroupEltInterface& WI, const Permutation& a)
+void printInterface(FILE *file, const GroupEltInterface &GI,
+                    const GroupEltInterface &WI, const Permutation &a)
 
 {
-  fprintf(file,"prefix: ");
-  print(file,GI.prefix);
-  fprintf(file,"\n");
-  fprintf(file,"separator: ");
-  print(file,GI.separator);
-  fprintf(file,"\n");
-  fprintf(file,"postfix: ");
-  print(file,GI.postfix);
-  fprintf(file,"\n");
+  fprintf(file, "prefix: ");
+  print(file, GI.prefix);
+  fprintf(file, "\n");
+  fprintf(file, "separator: ");
+  print(file, GI.separator);
+  fprintf(file, "\n");
+  fprintf(file, "postfix: ");
+  print(file, GI.postfix);
+  fprintf(file, "\n");
 
   for (Ulong j = 0; j < a.size(); ++j) {
-    fprintf(file,"generator ");
+    fprintf(file, "generator ");
     Generator s = a[j];
-    print(file,WI.symbol[s]);
-    fprintf(file,": ");
-    print(file,GI.symbol[s]);
-    fprintf(file,"\n");
+    print(file, WI.symbol[s]);
+    fprintf(file, ": ");
+    print(file, GI.symbol[s]);
+    fprintf(file, "\n");
   }
 
   return;
 }
 
-void printMatrix(FILE* file, const CoxGroup* W)
+void printMatrix(FILE *file, const CoxGroup *W)
 
 /*
   Prints the Coxeter matrix on file.
@@ -939,15 +916,15 @@ void printMatrix(FILE* file, const CoxGroup* W)
 
   for (Ulong i = 0; i < W->rank(); ++i) {
     for (Ulong j = 0; j < W->rank(); j++) {
-      fprintf(file,"%4d",W->M(a[i],a[j]));
+      fprintf(file, "%4d", W->M(a[i], a[j]));
     }
-    fprintf(file,"\n");
+    fprintf(file, "\n");
   }
 
   return;
 }
 
-void printOrdering(FILE* file, const CoxGroup* W)
+void printOrdering(FILE *file, const CoxGroup *W)
 
 /*
   Prints the current ordering of the generators.
@@ -959,15 +936,15 @@ void printOrdering(FILE* file, const CoxGroup* W)
 
   for (Ulong j = 0; j < a.size(); ++j) {
     Generator s = a[j];
-    print(file,W->interface().inSymbol(s));
-    if (j+1 < a.size()) /* there is more to come */
-      fprintf(file," < ");
+    print(file, W->interface().inSymbol(s));
+    if (j + 1 < a.size()) /* there is more to come */
+      fprintf(file, " < ");
   }
 
   return;
 }
 
-void printRepresentation(FILE* file, const CoxGroup* W)
+void printRepresentation(FILE *file, const CoxGroup *W)
 
 /*
   Prints the numbering of the generators on the file, for
@@ -975,270 +952,265 @@ void printRepresentation(FILE* file, const CoxGroup* W)
 */
 
 {
-  switch (W->type()[0])
-    {
-    case 'A':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printADiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'B':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printBDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'D':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printDDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'E':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printEDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'F':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printFDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'G':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printGDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'H':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printHDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    case 'I':
-      fprintf(file,"The labelling of the generators is as follows :\n\n");
-      printIDiagram(file,W);
-      fprintf(file,"\n");
-      return;
-    default:
-      fprintf(file,"The current Coxeter matrix is as follows :\n\n");
-      printMatrix(file,W);
-      fprintf(file,"\n");
-      return;
-    };
+  switch (W->type()[0]) {
+  case 'A':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printADiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'B':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printBDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'D':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printDDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'E':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printEDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'F':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printFDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'G':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printGDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'H':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printHDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  case 'I':
+    fprintf(file, "The labelling of the generators is as follows :\n\n");
+    printIDiagram(file, W);
+    fprintf(file, "\n");
+    return;
+  default:
+    fprintf(file, "The current Coxeter matrix is as follows :\n\n");
+    printMatrix(file, W);
+    fprintf(file, "\n");
+    return;
+  };
 }
 
-};
+}; // namespace interactive
 
 namespace {
 
-void printADiagram(FILE* file, const CoxGroup* W)
+void printADiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
-  fprintf(file,"\t");
+  fprintf(file, "\t");
 
   if (W->rank() <= 8) { /* rank is at least 4 */
-    print(file,I.inSymbol(0));
+    print(file, I.inSymbol(0));
     for (Generator s = 1; s < W->rank(); ++s) {
-      fprintf(file," - ");
-      print(file,I.inSymbol(s));
+      fprintf(file, " - ");
+      print(file, I.inSymbol(s));
     }
-  }
-  else {
-    print(file,I.inSymbol(0));
-    fprintf(file," - ");
-    print(file,I.inSymbol(1));
-    fprintf(file," - ... - ");
-    print(file,I.inSymbol(W->rank()-1));
+  } else {
+    print(file, I.inSymbol(0));
+    fprintf(file, " - ");
+    print(file, I.inSymbol(1));
+    fprintf(file, " - ... - ");
+    print(file, I.inSymbol(W->rank() - 1));
   }
 
-  fprintf(file,"\n");
+  fprintf(file, "\n");
 
   return;
 }
 
-void printBDiagram(FILE* file, const CoxGroup* W)
+void printBDiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
-  fprintf(file,"\t");
+  fprintf(file, "\t");
 
   if (W->rank() <= 8) { /* rank is at least 4 */
-    print(file,I.inSymbol(0));
-    fprintf(file," = ");
-    print(file,I.inSymbol(1));
+    print(file, I.inSymbol(0));
+    fprintf(file, " = ");
+    print(file, I.inSymbol(1));
     for (Generator s = 2; s < W->rank(); ++s) {
-      fprintf(file," - ");
-      print(file,I.inSymbol(s));
+      fprintf(file, " - ");
+      print(file, I.inSymbol(s));
     }
-  }
-  else {
-    print(file,I.inSymbol(0));
-    fprintf(file," = ");
-    print(file,I.inSymbol(1));
-    fprintf(file," - ... - ");
-    print(file,I.inSymbol(W->rank()-1));
+  } else {
+    print(file, I.inSymbol(0));
+    fprintf(file, " = ");
+    print(file, I.inSymbol(1));
+    fprintf(file, " - ... - ");
+    print(file, I.inSymbol(W->rank() - 1));
   }
 
-  fprintf(file,"\n");
+  fprintf(file, "\n");
 
   return;
 }
 
-void printDDiagram(FILE* file, const CoxGroup* W)
+void printDDiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
-  fprintf(file,"\t");
+  fprintf(file, "\t");
 
   if (W->rank() <= 8) {
-    print(file,I.inSymbol(0));
-    fprintf(file," - ");
-    print(file,I.inSymbol(2));
+    print(file, I.inSymbol(0));
+    fprintf(file, " - ");
+    print(file, I.inSymbol(2));
     for (Generator s = 3; s < W->rank(); ++s) {
-      fprintf(file," - ");
-      print(file,I.inSymbol(s));
+      fprintf(file, " - ");
+      print(file, I.inSymbol(s));
     }
     int c = I.inSymbol(0).length() + 3;
-    c += I.inSymbol(2).length()/2;
-    printf("\n\t%*s|",c,"");
-    c -= I.inSymbol(1).length()/2;
+    c += I.inSymbol(2).length() / 2;
+    printf("\n\t%*s|", c, "");
+    c -= I.inSymbol(1).length() / 2;
     if (c < 0)
       c = 0;
-    printf("\n\t%*s",c,"");
-    print(file,I.inSymbol(1));
-  }
-  else {
-    print(file,I.inSymbol(0));
-    fprintf(file," - ");
-    print(file,I.inSymbol(2));
-    fprintf(file," - ... - ");
-    print(file,I.inSymbol(W->rank()-1));
+    printf("\n\t%*s", c, "");
+    print(file, I.inSymbol(1));
+  } else {
+    print(file, I.inSymbol(0));
+    fprintf(file, " - ");
+    print(file, I.inSymbol(2));
+    fprintf(file, " - ... - ");
+    print(file, I.inSymbol(W->rank() - 1));
     int c = I.inSymbol(0).length() + 3;
-    c += I.inSymbol(2).length()/2;
-    printf("\n\t%*s|",c,"");
-    c -= I.inSymbol(1).length()/2;
+    c += I.inSymbol(2).length() / 2;
+    printf("\n\t%*s|", c, "");
+    c -= I.inSymbol(1).length() / 2;
     if (c < 0)
       c = 0;
-    printf("\n\t%*s",c,"");
-    print(file,I.inSymbol(1));
+    printf("\n\t%*s", c, "");
+    print(file, I.inSymbol(1));
   }
 
-  fprintf(file,"\n");
+  fprintf(file, "\n");
 
   return;
 }
 
-void printEDiagram(FILE* file, const CoxGroup* W)
+void printEDiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
-  fprintf(file,"\t");
+  fprintf(file, "\t");
 
-  print(file,I.inSymbol(0));
-  fprintf(file," - ");
-  print(file,I.inSymbol(2));
-  fprintf(file," - ");
-  print(file,I.inSymbol(3));
+  print(file, I.inSymbol(0));
+  fprintf(file, " - ");
+  print(file, I.inSymbol(2));
+  fprintf(file, " - ");
+  print(file, I.inSymbol(3));
   for (Generator s = 4; s < W->rank(); ++s) {
-    fprintf(file," - ");
-    print(file,I.inSymbol(s));
+    fprintf(file, " - ");
+    print(file, I.inSymbol(s));
   }
   int c = I.inSymbol(0).length() + I.inSymbol(2).length() + 6;
-  c += I.inSymbol(3).length()/2;
-  printf("\n\t%*s|",c,"");
-  c -= I.inSymbol(1).length()/2;
+  c += I.inSymbol(3).length() / 2;
+  printf("\n\t%*s|", c, "");
+  c -= I.inSymbol(1).length() / 2;
   if (c < 0)
     c = 0;
-  printf("\n\t%*s",c,"");
-  print(file,I.inSymbol(1));
+  printf("\n\t%*s", c, "");
+  print(file, I.inSymbol(1));
 
-  fprintf(file,"\n");
-
-  return;
-}
-
-void printFDiagram(FILE* file, const CoxGroup* W)
-
-{
-  const Interface& I = W->interface();
-
-  fprintf(file,"\t");
-  print(file,I.inSymbol(0));
-  fprintf(file," - ");
-  print(file,I.inSymbol(1));
-  fprintf(file," = ");
-  print(file,I.inSymbol(2));
-  fprintf(file," - ");
-  print(file,I.inSymbol(3));
+  fprintf(file, "\n");
 
   return;
 }
 
-void printGDiagram(FILE* file, const CoxGroup* W)
+void printFDiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
-  fprintf(file,"\t");
+  fprintf(file, "\t");
+  print(file, I.inSymbol(0));
+  fprintf(file, " - ");
+  print(file, I.inSymbol(1));
+  fprintf(file, " = ");
+  print(file, I.inSymbol(2));
+  fprintf(file, " - ");
+  print(file, I.inSymbol(3));
+
+  return;
+}
+
+void printGDiagram(FILE *file, const CoxGroup *W)
+
+{
+  const Interface &I = W->interface();
+
+  fprintf(file, "\t");
   int c = I.inSymbol(0).length() + 1;
-  fprintf(file,"%*s6\n",c,"");
-  fprintf(file,"\t");
-  print(file,I.inSymbol(0));
-  fprintf(file," - ");
-  print(file,I.inSymbol(1));
+  fprintf(file, "%*s6\n", c, "");
+  fprintf(file, "\t");
+  print(file, I.inSymbol(0));
+  fprintf(file, " - ");
+  print(file, I.inSymbol(1));
 
   return;
 }
 
-void printHDiagram(FILE* file, const CoxGroup* W)
+void printHDiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
-  fprintf(file,"\t");
+  fprintf(file, "\t");
   int c = I.inSymbol(0).length() + 1;
-  fprintf(file,"%*s5\n",c,"");
-  fprintf(file,"\t");
-  print(file,I.inSymbol(0));
+  fprintf(file, "%*s5\n", c, "");
+  fprintf(file, "\t");
+  print(file, I.inSymbol(0));
   for (Generator s = 1; s < W->rank(); ++s) {
-    fprintf(file," - ");
-    print(file,I.inSymbol(s));
+    fprintf(file, " - ");
+    print(file, I.inSymbol(s));
   }
 
   return;
 }
 
-void printIDiagram(FILE* file, const CoxGroup* W)
+void printIDiagram(FILE *file, const CoxGroup *W)
 
 {
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
 
   /* print the tag */
 
-  CoxEntry m = W->M(0,1);
-  fprintf(file,"\t");
+  CoxEntry m = W->M(0, 1);
+  fprintf(file, "\t");
   int c = I.inSymbol(0).length() + 1;
-  fprintf(file,"%*s%d\n",c,"",m);
+  fprintf(file, "%*s%d\n", c, "", m);
 
   /* print the symbols */
 
-  int d = digits(m,10);
-  fprintf(file,"\t");
-  print(file,I.inSymbol(0));
-  fprintf(file," ");
+  int d = digits(m, 10);
+  fprintf(file, "\t");
+  print(file, I.inSymbol(0));
+  fprintf(file, " ");
   for (int j = 0; j < d; ++j)
-    fprintf(file,"-");
-  fprintf(file," ");
-  print(file,I.inSymbol(1));
+    fprintf(file, "-");
+  fprintf(file, " ");
+  print(file, I.inSymbol(1));
 
   return;
 }
 
-};
-
+}; // namespace
 
 /*****************************************************************************
 
@@ -1265,13 +1237,13 @@ int interactive::endOfLine(FILE *f)
 {
   int c;
 
-  while((c = getc(f)) != EOF) {
+  while ((c = getc(f)) != EOF) {
     if (!isspace(c)) {
-      ungetc(c,f);
+      ungetc(c, f);
       return 0;
     }
     if (c == '\n') {
-      ungetc(c,f);
+      ungetc(c, f);
       return 1;
     }
   }
@@ -1283,7 +1255,7 @@ int interactive::endOfLine(FILE *f)
 
 namespace {
 
-Ulong parse(const Interface& I, Generator &s, const String& line)
+Ulong parse(const Interface &I, Generator &s, const String &line)
 
 /*
   This function parses a generator from the line.
@@ -1296,10 +1268,10 @@ Ulong parse(const Interface& I, Generator &s, const String& line)
 {
   Token tok;
 
-  Ulong q = io::skipSpaces(line,0);
+  Ulong q = io::skipSpaces(line, 0);
 
-  const char* str = line.ptr()+q;
-  Ulong strsize = line.length()-q;
+  const char *str = line.ptr() + q;
+  Ulong strsize = line.length() - q;
 
   if (strsize == 0) { /* default generator */
     s = undef_generator;
@@ -1322,23 +1294,23 @@ Ulong parse(const Interface& I, Generator &s, const String& line)
   strsize--;
   q++;
 
-  q += io::skipSpaces(line,q);
+  q += io::skipSpaces(line, q);
 
-  str = line.ptr()+q;
-  Ulong p = I.symbolTree().find(str,0,tok);
+  str = line.ptr() + q;
+  Ulong p = I.symbolTree().find(str, 0, tok);
   if (tokenType(tok) != interface::generator_type) { /* error */
     ERRNO = PARSE_ERROR;
     return q;
   }
 
-  s += tok-1;
+  s += tok - 1;
   q += p;
 
   return q;
 }
 
-Ulong parse(const Interface& I, Generator &s, const String& line,
-	      const LFlags& f)
+Ulong parse(const Interface &I, Generator &s, const String &line,
+            const LFlags &f)
 
 /*
   This function parses a generator from the line, checking if the
@@ -1352,10 +1324,10 @@ Ulong parse(const Interface& I, Generator &s, const String& line,
 {
   Token tok;
 
-  Ulong q = io::skipSpaces(line,0);
+  Ulong q = io::skipSpaces(line, 0);
 
-  const char* str = line.ptr()+q;
-  Ulong strsize = line.length()-q;
+  const char *str = line.ptr() + q;
+  Ulong strsize = line.length() - q;
 
   if (strsize == 0) { /* default generator */
     s = undef_generator;
@@ -1378,28 +1350,28 @@ Ulong parse(const Interface& I, Generator &s, const String& line,
   strsize--;
   q++;
 
-  q += io::skipSpaces(line,q);
+  q += io::skipSpaces(line, q);
 
-  str = line.ptr()+q;
-  strsize = line.length()-q;
+  str = line.ptr() + q;
+  strsize = line.length() - q;
 
-  Ulong p = I.symbolTree().find(str,0,tok);
+  Ulong p = I.symbolTree().find(str, 0, tok);
   if (tokenType(tok) != interface::generator_type) { /* error */
     ERRNO = PARSE_ERROR;
     return q;
   }
-  if (!(f & lmask[s+tok-1])) { /* error */
+  if (!(f & lmask[s + tok - 1])) { /* error */
     ERRNO = NOT_DESCENT;
     return q;
   }
 
-  s += tok-1;
+  s += tok - 1;
   q += p;
 
   return q;
 }
 
-};
+}; // namespace
 
 namespace interactive {
 
@@ -1414,10 +1386,10 @@ bool yesNo()
 
   do {
     if (ERRNO) {
-      fprintf(stderr,"please answer yes or no\n");
+      fprintf(stderr, "please answer yes or no\n");
       ERRNO = 0;
     }
-    getInput(stdin,buf);
+    getInput(stdin, buf);
     char c = buf[0];
     if (c == 'y')
       return true;
@@ -1429,4 +1401,4 @@ bool yesNo()
   return true; // should be unreachable
 }
 
-};
+}; // namespace interactive

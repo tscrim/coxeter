@@ -1,6 +1,6 @@
 /*
   This is coxtypes.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -27,7 +27,8 @@
 
 namespace coxtypes {
 
-CoxWord::CoxWord(const Ulong& n):d_list(n+1)
+CoxWord::CoxWord(const Ulong &n)
+    : d_list(n + 1)
 
 {
   d_list.setSize(1);
@@ -37,7 +38,7 @@ CoxWord::~CoxWord()
 
 {}
 
-CoxWord& CoxWord::append(const CoxLetter& a)
+CoxWord &CoxWord::append(const CoxLetter &a)
 
 /*
   Appends a to the end of g, resizing as necessary. Recall that for now
@@ -45,14 +46,13 @@ CoxWord& CoxWord::append(const CoxLetter& a)
 */
 
 {
-  d_list[d_list.size()-1] = a;
+  d_list[d_list.size() - 1] = a;
   d_list.append('\0');
 
   return *this;
 }
 
-
-CoxWord& CoxWord::append(const CoxWord& h)
+CoxWord &CoxWord::append(const CoxWord &h)
 
 /*
   Appends h to the end of g.
@@ -63,46 +63,46 @@ CoxWord& CoxWord::append(const CoxWord& h)
 */
 
 {
-  d_list.setData(h.d_list.ptr(),d_list.size()-1,h.d_list.size());
+  d_list.setData(h.d_list.ptr(), d_list.size() - 1, h.d_list.size());
   return *this;
 }
 
-CoxWord& CoxWord::erase(const Length& j)
+CoxWord &CoxWord::erase(const Length &j)
 
 /*
   Erases the j-th letter from g.
 
   NOTE : care should be exercised in applying this function, that the result
-  be reduced; otherwise we would violate the basic principle that only 
+  be reduced; otherwise we would violate the basic principle that only
   reduced words enter the program.
 */
 
 {
-  d_list.setData(d_list.ptr()+j+1,j,d_list.size()-1-j);
-  d_list.setSize(d_list.size()-1);
+  d_list.setData(d_list.ptr() + j + 1, j, d_list.size() - 1 - j);
+  d_list.setSize(d_list.size() - 1);
 
   return *this;
 }
 
-CoxWord& CoxWord::insert(const Length& j, const CoxLetter& a)
+CoxWord &CoxWord::insert(const Length &j, const CoxLetter &a)
 
 /*
   Inserts a at the j-th place in g.
 
   NOTE : care should be exercised in applying this function, that the result
-  be reduced; otherwise we would violate the basic principle that only 
+  be reduced; otherwise we would violate the basic principle that only
   reduced words enter the program.
 */
 
 {
-  d_list.setSize(d_list.size()+1);
-  d_list.setData(d_list.ptr()+j,j+1,d_list.size()-1-j);
+  d_list.setSize(d_list.size() + 1);
+  d_list.setData(d_list.ptr() + j, j + 1, d_list.size() - 1 - j);
   d_list[j] = a;
 
   return *this;
 }
 
-CoxWord& CoxWord::reset()
+CoxWord &CoxWord::reset()
 
 /*
   Sets g to the identity.
@@ -115,15 +115,15 @@ CoxWord& CoxWord::reset()
   return *this;
 }
 
-CoxWord& CoxWord::setSubWord(const CoxWord& h, const Length& first, 
-			     const Length& r)
+CoxWord &CoxWord::setSubWord(const CoxWord &h, const Length &first,
+                             const Length &r)
 
-{      
-  d_list.setData(h.d_list.ptr(),first,r);
+{
+  d_list.setData(h.d_list.ptr(), first, r);
   return *this;
 }
 
-};
+}; // namespace coxtypes
 
 /*****************************************************************************
 
@@ -140,7 +140,7 @@ CoxWord& CoxWord::setSubWord(const CoxWord& h, const Length& first,
 
 namespace coxtypes {
 
-bool operator== (const CoxWord& g, const CoxWord& h)
+bool operator==(const CoxWord &g, const CoxWord &h)
 
 /*
   Tells if g and h are equal as words.
@@ -158,7 +158,7 @@ bool operator== (const CoxWord& g, const CoxWord& h)
   return true;
 }
 
-bool operator< (const CoxWord& g, const CoxWord& h)
+bool operator<(const CoxWord &g, const CoxWord &h)
 
 /*
   Tells if g < h length-lexicographically
@@ -182,13 +182,13 @@ bool operator< (const CoxWord& g, const CoxWord& h)
   return false;
 }
 
-};
+}; // namespace coxtypes
 
 /****************************************************************************
 
       Chapter III -- Input/Output.
 
- This section provides some input/output functions for the basic types 
+ This section provides some input/output functions for the basic types
  defined in this module. The following functions are provided :
 
  - append(str,x) : appends a CoxNbr to the string;
@@ -198,16 +198,16 @@ bool operator< (const CoxWord& g, const CoxWord& h)
 
 namespace coxtypes {
 
-String& append(String& str, const CoxNbr& x)
+String &append(String &str, const CoxNbr &x)
 
 /*
   Appends x to str in numeral form; uses buf to write out the value.
 */
 
 {
-  static String buf(digits(COXNBR_MAX,10)+1);
-  buf.setLength(sprintf(buf.ptr(),"%lu",static_cast<Ulong>(x)));
-  append(str,buf);
+  static String buf(digits(COXNBR_MAX, 10) + 1);
+  buf.setLength(sprintf(buf.ptr(), "%lu", static_cast<Ulong>(x)));
+  append(str, buf);
   return str;
 }
 
@@ -218,20 +218,19 @@ void print(FILE *outputfile, CoxArr a, Rank l)
 */
 
 {
-  fprintf(outputfile,"[");
+  fprintf(outputfile, "[");
 
-  for (Ulong j = 0; j < l; ++j)
+  for (Ulong j = 0; j < l; ++j) {
+    fprintf(outputfile, "%d", a[j]);
+    if (j + 1 < l) /* there is more to come */
     {
-      fprintf(outputfile,"%d",a[j]);
-      if (j+1 < l)  /* there is more to come */
-	{
-	  fprintf(outputfile,",");
-	}
+      fprintf(outputfile, ",");
     }
+  }
 
-  fprintf(outputfile,"]");
+  fprintf(outputfile, "]");
 
   return;
 }
 
-};
+}; // namespace coxtypes

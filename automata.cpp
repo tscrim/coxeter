@@ -1,6 +1,6 @@
 /*
   This is automata.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -10,7 +10,7 @@
 #include "memory.h"
 
 namespace automata {
-  using namespace memory;
+using namespace memory;
 };
 
 /****************************************************************************
@@ -44,28 +44,28 @@ namespace automata {
 namespace automata {
 
 ExplicitAutomaton::ExplicitAutomaton(Ulong n, Ulong m)
-  :d_accept(n),d_rank(m),d_size(n)
+    : d_accept(n), d_rank(m), d_size(n)
 
 {
-  d_table = (State **)arena().alloc(d_size*sizeof(Ulong *));
-  d_table[0] = (State *)arena().alloc(d_size*d_rank*sizeof(Ulong));
+  d_table = (State **)arena().alloc(d_size * sizeof(Ulong *));
+  d_table[0] = (State *)arena().alloc(d_size * d_rank * sizeof(Ulong));
 
   for (Ulong j = 1; j < d_size; ++j)
-    d_table[j] = d_table[j-1] + d_rank;
+    d_table[j] = d_table[j - 1] + d_rank;
 }
 
 ExplicitAutomaton::~ExplicitAutomaton()
 
 /*
   The memory allocated directly by ExplicitAutomaton is the one for
-  the table, and for the pointers to the rows. Recall that the number of 
-  states is recorded in d_size, the number of letters in the alphabet in 
+  the table, and for the pointers to the rows. Recall that the number of
+  states is recorded in d_size, the number of letters in the alphabet in
   d_rank. Hence we have the size of our allocation.
 */
 
 {
-  arena().free(d_table[0],d_size*d_rank*sizeof(Ulong));
-  arena().free(d_table,d_size*sizeof(Ulong *));
+  arena().free(d_table[0], d_size * d_rank * sizeof(Ulong));
+  arena().free(d_table, d_size * sizeof(Ulong *));
 }
 
-};
+}; // namespace automata

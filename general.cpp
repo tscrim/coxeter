@@ -1,6 +1,6 @@
 /*
   This is general.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -23,8 +23,8 @@
 
 namespace general {
 
-GeneralCoxGroup::GeneralCoxGroup(const Type& x, const Rank& l)
-  :CoxGroup(x,l)
+GeneralCoxGroup::GeneralCoxGroup(const Type &x, const Rank &l)
+    : CoxGroup(x, l)
 
 /*
   Initializes a GeneralCoxGroup structure of the given type and rank.
@@ -44,8 +44,8 @@ GeneralCoxGroup::~GeneralCoxGroup()
 
 {}
 
-BigRankCoxGroup::BigRankCoxGroup(const Type& x, const Rank& l)
-  :GeneralCoxGroup(x,l)
+BigRankCoxGroup::BigRankCoxGroup(const Type &x, const Rank &l)
+    : GeneralCoxGroup(x, l)
 
 /*
   Initializes a GeneralCoxGroup structure of the given type and rank.
@@ -63,8 +63,8 @@ BigRankCoxGroup::~BigRankCoxGroup()
 
 {}
 
-GeneralBRCoxGroup::GeneralBRCoxGroup(const Type& x, const Rank& l)
-  :BigRankCoxGroup(x,l)
+GeneralBRCoxGroup::GeneralBRCoxGroup(const Type &x, const Rank &l)
+    : BigRankCoxGroup(x, l)
 
 {}
 
@@ -77,15 +77,15 @@ GeneralBRCoxGroup::~GeneralBRCoxGroup()
 
 {}
 
-MedRankCoxGroup::MedRankCoxGroup(const Type& x, const Rank& l)
-  :GeneralCoxGroup(x,l)
+MedRankCoxGroup::MedRankCoxGroup(const Type &x, const Rank &l)
+    : GeneralCoxGroup(x, l)
 
 /*
   Initializes a GeneralCoxGroup structure of the given type and rank.
   Used when SMALLRANK_MAX < rank <= MEDRANK_MAX.
 */
 
-{ 
+{
   if (ERRNO)
     return;
 
@@ -105,8 +105,8 @@ MedRankCoxGroup::~MedRankCoxGroup()
 
 {}
 
-GeneralMRCoxGroup::GeneralMRCoxGroup(const Type& x, const Rank& l)
-  :MedRankCoxGroup(x,l)
+GeneralMRCoxGroup::GeneralMRCoxGroup(const Type &x, const Rank &l)
+    : MedRankCoxGroup(x, l)
 
 {}
 
@@ -119,8 +119,8 @@ GeneralMRCoxGroup::~GeneralMRCoxGroup()
 
 {}
 
-SmallRankCoxGroup::SmallRankCoxGroup(const Type& x, const Rank& l)
-  :MedRankCoxGroup(x,l)
+SmallRankCoxGroup::SmallRankCoxGroup(const Type &x, const Rank &l)
+    : MedRankCoxGroup(x, l)
 
 /*
   Initializes a GeneralCoxGroup structure of the given type and rank.
@@ -141,8 +141,8 @@ SmallRankCoxGroup::~SmallRankCoxGroup()
 
 {}
 
-GeneralSRCoxGroup::GeneralSRCoxGroup(const Type& x, const Rank& l)
-  :SmallRankCoxGroup(x,l)
+GeneralSRCoxGroup::GeneralSRCoxGroup(const Type &x, const Rank &l)
+    : SmallRankCoxGroup(x, l)
 
 {}
 
@@ -155,4 +155,4 @@ GeneralSRCoxGroup::~GeneralSRCoxGroup()
 
 {}
 
-};
+}; // namespace general

@@ -1,6 +1,6 @@
 /*
   This is stack.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -42,12 +42,14 @@
 
 namespace stack {
 
-template <class T> Fifo<T>::Fifo()
-  : d_list(0), d_first(0), d_last(~0L), d_size(0)
+template <class T>
+Fifo<T>::Fifo()
+    : d_list(0), d_first(0), d_last(~0L), d_size(0)
 
 {}
 
-template <class T> void Fifo<T>::push(const T& object)
+template <class T>
+void Fifo<T>::push(const T &object)
 
 /*
   Pushes an object on the list, enlarging the list if necessary.
@@ -57,13 +59,13 @@ template <class T> void Fifo<T>::push(const T& object)
   d_last++;
 
   if (d_last == d_first) { /* we need more space */
-    d_list.setSize(d_list.size()+1);
-    if (d_first < (d_list.size()-1)) { /* move up */
-      d_list.setData(d_list.ptr()+d_first,d_first+1,d_list.size()-d_first-1);
+    d_list.setSize(d_list.size() + 1);
+    if (d_first < (d_list.size() - 1)) { /* move up */
+      d_list.setData(d_list.ptr() + d_first, d_first + 1,
+                     d_list.size() - d_first - 1);
     }
     d_first++;
-  }
-  else if (d_last == d_list.size()) /* wrap around */
+  } else if (d_last == d_list.size()) /* wrap around */
     d_last = 0;
 
   d_list[d_last] = object;
@@ -72,7 +74,8 @@ template <class T> void Fifo<T>::push(const T& object)
   return;
 }
 
-template <class T> const T& Fifo<T>::pop()
+template <class T>
+const T &Fifo<T>::pop()
 
 /*
   Pops the list; it is assumed that the user has checked for non-emptyness.
@@ -81,20 +84,19 @@ template <class T> const T& Fifo<T>::pop()
 {
   if (d_first == d_list.size())
     d_first = 0;
-  const T& result = d_list[d_first];
+  const T &result = d_list[d_first];
   d_size--;
 
   if (d_size == 0) { /* reset an empty list */
     d_first = d_list.size();
     d_last = ~0L;
-  }
-  else
+  } else
     d_first++;
 
   return result;
 }
 
-};
+}; // namespace stack
 
 /****************************************************************************
 
@@ -113,11 +115,13 @@ template <class T> const T& Fifo<T>::pop()
 
 namespace stack {
 
-template <class T> Stack<T>::Stack()
+template <class T>
+Stack<T>::Stack()
 
 {}
 
-template <class T> Stack<T>::~Stack()
+template <class T>
+Stack<T>::~Stack()
 
 /*
   Destructing the components is enough.
@@ -125,7 +129,8 @@ template <class T> Stack<T>::~Stack()
 
 {}
 
-template <class T> void Stack<T>::push(const T& object)
+template <class T>
+void Stack<T>::push(const T &object)
 
 /*
   Assumes that copy constructor is defined for class T.
@@ -135,7 +140,8 @@ template <class T> void Stack<T>::push(const T& object)
   d_list.append(object);
 }
 
-template <class T> const T* Stack<T>::pop()
+template <class T>
+const T *Stack<T>::pop()
 
 /*
   Pops the stack, returning the address of the corresponding object.
@@ -144,11 +150,11 @@ template <class T> const T* Stack<T>::pop()
 
 {
   if (d_list.size() != 0) {
-    d_list.setSize(d_list.size()-1);
+    d_list.setSize(d_list.size() - 1);
     return &d_list[d_list.size()];
   }
 
   return 0;
 }
 
-};
+}; // namespace stack
