@@ -7,9 +7,11 @@ dependencies := $(patsubst %.cpp,%.d,$(wildcard *.cpp))
 
 globals = globals.h
 
-pflags = -c $(includedirs) -pg -O
-oflags = -c $(includedirs) -O -Wall
-gflags = -c $(includedirs) -g
+flags = -std=c++20
+
+pflags = -c $(includedirs) -pg -O $(flags)
+oflags = -c $(includedirs) -O -Wall $(flags)
+gflags = -c $(includedirs) -g $(flags)
 
 cflags = $(gflags) # the default setting
 
