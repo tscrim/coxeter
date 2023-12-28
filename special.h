@@ -6,8 +6,7 @@
 
 */
 
-#ifndef SPECIAL_H
-#define SPECIAL_H
+#pragma once
 
 #include "globals.h"
 #include "commands.h"
@@ -20,5 +19,3 @@ using namespace coxeter;
 void addSpecialCommands(commands::CommandTree *tree);
 
 } // namespace special
-
-#endif

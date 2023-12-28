@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef INVKL_H
-#define INVKL_H
+#pragma once
 
 #include "globals.h"
 #include "coxtypes.h"
@@ -200,5 +199,3 @@ inline void KLContext::setFullKL() { d_status->flags |= KLStatus::kl_done; }
 inline void KLContext::setFullMu() { d_status->flags |= KLStatus::mu_done; }
 
 } // namespace invkl
-
-#endif

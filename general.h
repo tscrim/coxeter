@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef GENERAL_H
-#define GENERAL_H
+#pragma once
 
 #include "globals.h"
 #include "coxgroup.h"
@@ -111,5 +110,3 @@ public:
 inline CoxSize GeneralCoxGroup::order() const { return undef_coxsize; }
 
 } // namespace general
-
-#endif

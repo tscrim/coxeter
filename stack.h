@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef STACK_H
-#define STACK_H
+#pragma once
 
 #include "globals.h"
 #include "list.h"
@@ -73,5 +72,3 @@ template <class T> inline const T &Fifo<T>::top() const {
 } // namespace stack
 
 #include "stack.hpp"
-
-#endif

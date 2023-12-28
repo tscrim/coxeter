@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef DOTVAL_H
-#define DOTVAL_H
+#pragma once
 
 namespace dotval {
 enum DotVal {
@@ -26,5 +25,3 @@ enum DotVal {
   one = 6
 };
 };
-
-#endif

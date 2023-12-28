@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef POSETS_H
-#define POSETS_H
+#pragma once
 
 #include "globals.h"
 
@@ -66,5 +65,3 @@ namespace posets {
 inline Ulong Poset::size() const { return d_closure.size(); }
 
 }; // namespace posets
-
-#endif

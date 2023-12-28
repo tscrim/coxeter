@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef TRANSDUCER_H
-#define TRANSDUCER_H
+#pragma once
 
 #include "globals.h"
 
@@ -174,5 +173,3 @@ inline const FiltrationTerm *Transducer::transducer(const Rank &l) const {
 }
 
 }; // namespace transducer
-
-#endif

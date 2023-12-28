@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef MEMORY_H
-#define MEMORY_H
+#pragma once
 
 #include "globals.h"
 #include "constants.h"
@@ -78,5 +77,3 @@ inline void *operator new(size_t size, memory::Arena &a) {
 inline void *operator new[](size_t size, memory::Arena &a) {
   return a.alloc(size);
 }
-
-#endif

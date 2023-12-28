@@ -6,12 +6,9 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef VERSION_H
-#define VERSION_H
+#pragma once
 
 namespace version {
 const char *const NAME = "Coxeter";
 const char *const VERSION = "3.1";
 }; // namespace version
-
-#endif

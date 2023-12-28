@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef SCHUBERT_H
-#define SCHUBERT_H
+#pragma once
 
 #include "globals.h"
 #include "coxtypes.h"
@@ -361,5 +360,3 @@ inline ClosureIterator::operator bool() const { return d_valid; }
 inline const CoxNbr &ClosureIterator::current() const { return d_current; }
 
 } // namespace schubert
-
-#endif

@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef AUTOMATA_H
-#define AUTOMATA_H
+#pragma once
 
 #include "globals.h"
 #include "bits.h"
@@ -84,5 +83,3 @@ inline Ulong ExplicitAutomaton::rank() const { return d_rank; }
 inline Ulong ExplicitAutomaton::size() const { return d_size; }
 
 } // namespace automata
-
-#endif

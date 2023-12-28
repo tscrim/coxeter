@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef INTERACTIVE_H
-#define INTERACTIVE_H
+#pragma once
 
 #include "globals.h"
 #include "bits.h"
@@ -69,5 +68,3 @@ public:
 };
 
 }; // namespace interactive
-
-#endif

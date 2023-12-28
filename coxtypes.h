@@ -11,8 +11,7 @@
 
  ****************************************************************************/
 
-#ifndef COXTYPES_H
-#define COXTYPES_H
+#pragma once
 
 #include <limits.h>
 
@@ -119,5 +118,3 @@ inline CoxWord &CoxWord::operator=(const CoxWord &h) {
 inline CoxLetter &CoxWord::operator[](const Length &j) { return d_list[j]; }
 inline void CoxWord::setLength(Length n) { d_list.setSize(n + 1); }
 } // namespace coxtypes
-
-#endif

@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef HECKE_H
-#define HECKE_H
+#pragma once
 
 #include "globals.h"
 #include "list.h"
@@ -117,5 +116,3 @@ inline void HeckeMonomial<P>::setData(const CoxNbr &x, const P *pol) {
 }; // namespace hecke
 
 #include "hecke.hpp"
-
-#endif

@@ -9,8 +9,7 @@
   as permutations.
 */
 
-#ifndef TYPEA_H
-#define TYPEA_H
+#pragma once
 
 #include "globals.h"
 #include "fcoxgroup.h"
@@ -228,5 +227,3 @@ inline TypeAInterface &TypeACoxGroup::typeAInterface() {
 }
 
 } // namespace coxeter
-
-#endif

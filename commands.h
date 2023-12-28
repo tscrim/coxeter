@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef COMMANDS_H
-#define COMMANDS_H
+#pragma once
 
 #include "globals.h"
 #include "coxgroup.h"
@@ -102,5 +101,3 @@ inline void CommandTree::exit() const { return d_exit(); }
 inline CommandTree *CommandTree::helpMode() const { return d_help; }
 
 } // namespace commands
-
-#endif

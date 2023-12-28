@@ -7,8 +7,7 @@
 
 /* type definitions */
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#pragma once
 
 #include "globals.h"
 #include "list.h"
@@ -100,5 +99,3 @@ inline const List<LFlags> &CoxGraph::starOps() const { return d_starOps; }
 inline const Type &CoxGraph::type() const { return d_type; }
 
 }; // namespace graph
-
-#endif

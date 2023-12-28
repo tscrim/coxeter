@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef KL_H
-#define KL_H
+#pragma once
 
 #include <limits.h>
 
@@ -249,5 +248,3 @@ inline void KLContext::setFullKL() { d_status->flags |= KLStatus::kl_done; }
 inline void KLContext::setFullMu() { d_status->flags |= KLStatus::mu_done; }
 
 } // namespace kl
-
-#endif

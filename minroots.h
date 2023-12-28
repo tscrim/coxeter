@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef MINROOTS_H
-#define MINROOTS_H
+#pragma once
 
 #include <limits.h>
 #include "globals.h"
@@ -121,5 +120,3 @@ inline Rank MinTable::rank() const { return d_rank; }
 inline MinNbr MinTable::size() const { return d_size; }
 
 }; // namespace minroots
-
-#endif

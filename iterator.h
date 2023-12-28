@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef ITERATOR_H
-#define ITERATOR_H
+#pragma once
 
 #include "globals.h"
 
@@ -54,5 +53,3 @@ public:
 };
 
 } // namespace iterator
-
-#endif

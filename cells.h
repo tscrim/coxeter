@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef CELLS_H
-#define CELLS_H
+#pragma once
 
 #include "globals.h"
 #include "bits.h"
@@ -49,5 +48,3 @@ void lrWGraph(WGraph &X, kl::KLContext &kl);
 void lrWGraph(WGraph &X, const SubSet &q, kl::KLContext &kl);
 void printCellPartition(FILE *file, const kl::KLContext &kl);
 } // namespace cells
-
-#endif

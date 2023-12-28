@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef LIST_H
-#define LIST_H
+#pragma once
 
 #include <limits.h>
 
@@ -145,5 +144,3 @@ template <class T> inline typename List<T>::ConstIterator List<T>::end() const {
 } // namespace list
 
 #include "list.hpp"
-
-#endif

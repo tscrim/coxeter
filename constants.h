@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#pragma once
 
 #include <limits.h>
 
@@ -28,5 +27,3 @@ unsigned firstBit(Ulong f);
 void initConstants();
 unsigned lastBit(Ulong f);
 } // namespace constants
-
-#endif

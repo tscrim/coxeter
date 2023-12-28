@@ -16,8 +16,7 @@
 
  ****************************************************************************/
 
-#ifndef FCOXGROUP_H
-#define FCOXGROUP_H
+#pragma once
 
 #include "globals.h"
 #include "coxgroup.h"
@@ -258,5 +257,3 @@ inline const FiltrationTerm *FiniteCoxGroup::transducer(const Rank &l) const {
 }
 
 } // namespace fcoxgroup
-
-#endif

@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef ERROR_H
-#define ERROR_H
+#pragma once
 
 #include "globals.h"
 
@@ -77,5 +76,3 @@ extern int ERRNO;
 
 void Error(int number, ...);
 } // namespace error
-
-#endif

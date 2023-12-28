@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef DICTIONARY_H
-#define DICTIONARY_H
+#pragma once
 
 #include "globals.h"
 #include "memory.h"
@@ -70,5 +69,3 @@ public:
 } // namespace dictionary
 
 #include "dictionary.hpp"
-
-#endif

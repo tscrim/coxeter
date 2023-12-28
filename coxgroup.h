@@ -51,8 +51,7 @@
 
  */
 
-#ifndef COXGROUP_H
-#define COXGROUP_H
+#pragma once
 
 #include "globals.h"
 #include "coxtypes.h"
@@ -450,5 +449,3 @@ template <class C> void CoxGroup::setOutputTraits(C) {
 }
 
 } // namespace coxeter
-
-#endif

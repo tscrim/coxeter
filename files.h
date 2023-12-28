@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef FILES_H
-#define FILES_H
+#pragma once
 
 #include "globals.h"
 #include "hecke.h"
@@ -448,5 +447,3 @@ struct OutputTraits {
 /******** inline definitions *************************************************/
 
 #include "files.hpp"
-
-#endif

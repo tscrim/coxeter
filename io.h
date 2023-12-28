@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef IO_H
-#define IO_H
+#pragma once
 
 #include "globals.h"
 #include "list.h"
@@ -96,5 +95,3 @@ inline bool String::isDefined() const { return size(); }
 inline Ulong String::length() const { return size() - 1; }
 
 } // namespace io
-
-#endif

@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef KLSUPPORT_H
-#define KLSUPPORT_H
+#pragma once
 
 #include "globals.h"
 
@@ -123,5 +122,3 @@ inline const SchubertContext &KLSupport::schubert() const {
 }
 
 } // namespace klsupport
-
-#endif

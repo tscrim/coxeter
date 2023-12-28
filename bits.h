@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef BITS_H
-#define BITS_H
+#pragma once
 
 #include <limits.h>
 #include <new>
@@ -514,5 +513,3 @@ void sortI_f(const List<T> &r, F &f, Permutation &a) {
 }
 
 } // namespace bits
-
-#endif

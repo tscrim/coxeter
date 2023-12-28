@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef HELP_H
-#define HELP_H
+#pragma once
 
 #include "globals.h"
 
@@ -119,5 +118,3 @@ void terse_h();
 }; // namespace out
 } // namespace interface
 }; // namespace help
-
-#endif

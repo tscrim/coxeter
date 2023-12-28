@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef TYPE_H
-#define TYPE_H
+#pragma once
 
 #include "globals.h"
 #include "io.h"
@@ -57,5 +56,3 @@ inline char &Type::operator[](const Ulong &j) { return d_name[j]; }
 inline String &Type::name() { return d_name; }
 
 }; // namespace coxeter
-
-#endif

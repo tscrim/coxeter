@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef SEARCH_H
-#define SEARCH_H
+#pragma once
 
 #include "globals.h"
 #include "list.h"
@@ -72,5 +71,3 @@ template <class T> inline TreeNode<T> *BinaryTree<T>::root() const {
 } // namespace search
 
 #include "search.hpp"
-
-#endif

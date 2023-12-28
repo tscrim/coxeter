@@ -138,6 +138,7 @@ Permutation &Permutation::compose(const Permutation &a)
 
 {
   for (SetElt x = 0; x < size(); ++x)
+    // this[x] = a[x];
     operator[](x) = a[operator[](x)];
 
   return *this;

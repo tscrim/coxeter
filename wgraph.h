@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef WGRAPH_H
-#define WGRAPH_H
+#pragma once
 
 #include "globals.h"
 #include "list.h"
@@ -117,5 +116,3 @@ inline EdgeList &OrientedGraph::edge(const Vertex &x) { return d_edge[x]; }
 inline void OrientedGraph::setSize(const Ulong &n) { d_edge.setSize(n); }
 
 } // namespace wgraph
-
-#endif

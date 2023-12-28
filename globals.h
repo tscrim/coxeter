@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#pragma once
 
 // TODO: Check to make sure we need these
 #include <iostream>
@@ -18,5 +17,3 @@
 namespace coxeter {
 typedef unsigned long Ulong; /* shorthand */
 };
-
-#endif

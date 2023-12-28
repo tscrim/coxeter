@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef UNEQKL_H
-#define UNEQKL_H
+#pragma once
 
 #include "globals.h"
 #include "coxtypes.h"
@@ -203,5 +202,3 @@ inline void KLContext::applyIPermutation(const CoxNbr &y,
 }
 
 } // namespace uneqkl
-
-#endif

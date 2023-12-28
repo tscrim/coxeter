@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#pragma once
 
 #include "globals.h"
 #include "automata.h"
@@ -355,5 +354,3 @@ inline void Interface::print(FILE *file, const CoxWord &g) const {
 }
 
 } // namespace interface
-
-#endif

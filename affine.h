@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef AFFINE_H
-#define AFFINE_H
+#pragma once
 
 #include "globals.h"
 #include "coxgroup.h"
@@ -112,5 +111,3 @@ public:
 */
 inline CoxSize AffineCoxGroup::order() const { return infinite_coxsize; }
 } // namespace affine
-
-#endif

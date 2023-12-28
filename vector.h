@@ -5,8 +5,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
 #include "globals.h"
 #include "io.h"
@@ -115,5 +114,3 @@ template <class T> inline const T *Vector<T>::ptr() const {
 } // namespace vector
 
 #include "vector.hpp"
-
-#endif

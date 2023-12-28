@@ -6,8 +6,7 @@
   See file main.cpp for full copyright notice
 */
 
-#ifndef DIRECTORIES_H
-#define DIRECTORIES_H
+#pragma once
 
 /*
   This file tells where the directories can be found which contain some
@@ -29,5 +28,3 @@ const char *const COXMATRIX_DIR = "/usr/local/coxeter/coxeter_matrices";
 const char *const HEADER_DIR = "/usr/local/coxeter/headers";
 const char *const MESSAGE_DIR = "/usr/local/coxeter/messages";
 }; // namespace directories
-
-#endif
