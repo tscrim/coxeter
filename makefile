@@ -28,6 +28,9 @@ cc = g++
 
 all: coxeter #clean
 
+format:
+	clang-format -i *.h *.cpp *.hpp
+
 coxeter: $(objects)
 	$(cc) -o coxeter $(objects)
 

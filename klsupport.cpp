@@ -1,6 +1,6 @@
 /*
   This is klsupport.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -49,11 +49,11 @@
 
     - KLSupport(SchubertContext*, const Interface*);
     - ~KLSupport();
-   
+
    - accessors :
 
     - inverseMin(const CoxNbr& x) : returns min(x,x_inverse);
-    - standardPath(List<Generator>& g, const CoxNbr& x) : returns in g the 
+    - standardPath(List<Generator>& g, const CoxNbr& x) : returns in g the
       standard descent path from x
 
    - manipulators :
@@ -70,19 +70,19 @@
 
 namespace klsupport {
 
-KLSupport::KLSupport(SchubertContext* p)
-  :d_schubert(p), d_extrList(1), d_inverse(1), d_last(1), d_involution(1)
+KLSupport::KLSupport(SchubertContext *p)
+    : d_schubert(p), d_extrList(1), d_inverse(1), d_last(1), d_involution(1)
 
 {
   /* make first row of d_extrList, for the identity element */
 
   d_extrList[0] = new ExtrRow(1);
   d_extrList.setSizeValue(1);
-  ExtrRow& e = *d_extrList[0];
+  ExtrRow &e = *d_extrList[0];
   e.setSizeValue(1);
 
   d_inverse.setSizeValue(1);
-  
+
   d_last.setSizeValue(1);
   d_last[0] = undef_generator;
 
@@ -107,7 +107,7 @@ KLSupport::~KLSupport()
 
 /******** accessors *********************************************************/
 
-CoxNbr KLSupport::inverseMin(const CoxNbr& x) const
+CoxNbr KLSupport::inverseMin(const CoxNbr &x) const
 
 /*
   Returns the minimum of x and x_inverse.
@@ -120,37 +120,36 @@ CoxNbr KLSupport::inverseMin(const CoxNbr& x) const
     return inverse(x);
 }
 
-void KLSupport::standardPath(List<Generator>& g, const CoxNbr& x) const
+void KLSupport::standardPath(List<Generator> &g, const CoxNbr &x) const
 
-{  
-  const SchubertContext& p = schubert();
+{
+  const SchubertContext &p = schubert();
 
   /* find sequence of shifts */
 
   Length j = p.length(x);
   g.setSize(j);
   CoxNbr x1 = x;
-  
+
   while (j) {
     --j;
     if (inverse(x1) < x1) { /* left shift */
       Generator s = last(inverse(x1));
       g[j] = s + rank();
-      x1 = p.lshift(x1,s);
-    }
-    else {
+      x1 = p.lshift(x1, s);
+    } else {
       Generator s = last(x1);
       g[j] = last(x1);
-      x1 = p.rshift(x1,s);
+      x1 = p.rshift(x1, s);
     }
   }
-  
+
   return;
 }
 
 /******** manipulators ******************************************************/
 
-void KLSupport::allocExtrRow(const CoxNbr& y)
+void KLSupport::allocExtrRow(const CoxNbr &y)
 
 /*
   Allocates one row in d_extrList. The row contains the list of elements
@@ -160,24 +159,24 @@ void KLSupport::allocExtrRow(const CoxNbr& y)
   Forwards the error MEMORY_WARNING if CATCH_MEMORY_ERROR is set.
 */
 
-{  
-  const SchubertContext& p = schubert();
+{
+  const SchubertContext &p = schubert();
   BitMap b(size());
 
-  p.extractClosure(b,y);
+  p.extractClosure(b, y);
   if (ERRNO)
     return;
 
-  maximize(p,b,p.descent(y));
+  maximize(p, b, p.descent(y));
 
-  d_extrList[y] = new ExtrRow(b.begin(),b.end());
+  d_extrList[y] = new ExtrRow(b.begin(), b.end());
 
   /* an error may be set here */
 
   return;
 }
 
-void KLSupport::allocRowComputation(const CoxNbr& y)
+void KLSupport::allocRowComputation(const CoxNbr &y)
 
 /*
   This function makes sure that all the extremal rows in the standard
@@ -191,13 +190,13 @@ void KLSupport::allocRowComputation(const CoxNbr& y)
   Things wouldn't be so bad if there wasn't also the passage to inverses!
 */
 
-{  
+{
   static List<Generator> e(0);
-  const SchubertContext& p = schubert();
+  const SchubertContext &p = schubert();
 
   /* find sequence of shifts */
 
-  standardPath(e,y);
+  standardPath(e, y);
 
   SubSet q(size());
 
@@ -213,45 +212,44 @@ void KLSupport::allocRowComputation(const CoxNbr& y)
     for (Ulong j = 0; j < e.size(); ++j) {
 
       Generator s = e[j];
-      p.extendSubSet(q,s);  /* extend the subset */
+      p.extendSubSet(q, s); /* extend the subset */
       if (ERRNO)
-	goto abort;
+        goto abort;
 
-      y1 = p.shift(y1,s);
+      y1 = p.shift(y1, s);
       CoxNbr y2 = inverseMin(y1);
-    
+
       if (!isExtrAllocated(y2)) { /* allocate row */
 
-	/* copy bitmap of subset to buffer */
+        /* copy bitmap of subset to buffer */
 
-	BitMap b = q.bitMap();
-	if (ERRNO)
-	  goto abort;
+        BitMap b = q.bitMap();
+        if (ERRNO)
+          goto abort;
 
-	/* extremalize */
+        /* extremalize */
 
-	maximize(p,b,p.descent(y1));
-	d_extrList[y1] = new ExtrRow(b.begin(),b.end());
-      
-	/* go over to inverses if necessary */
+        maximize(p, b, p.descent(y1));
+        d_extrList[y1] = new ExtrRow(b.begin(), b.end());
 
-	if (s >= rank()) {
-	  applyInverse(y2);
-	  d_extrList[y2]->sort();
-	}
+        /* go over to inverses if necessary */
+
+        if (s >= rank()) {
+          applyInverse(y2);
+          d_extrList[y2]->sort();
+        }
       }
     }
-    
   }
 
-  return; 
- abort:
+  return;
+abort:
   Error(ERRNO);
   ERRNO = ERROR_WARNING;
-  return; 
+  return;
 }
 
-void KLSupport::applyInverse(const CoxNbr& y)
+void KLSupport::applyInverse(const CoxNbr &y)
 
 /*
   This function puts in d_extrList[y] the row of inverses of d_extrList[yi],
@@ -264,7 +262,7 @@ void KLSupport::applyInverse(const CoxNbr& y)
   d_extrList[y] = d_extrList[yi];
   d_extrList[yi] = 0;
 
-  ExtrRow& e = *d_extrList[y];
+  ExtrRow &e = *d_extrList[y];
   for (Ulong j = 0; j < e.size(); ++j) {
     e[j] = inverse(e[j]);
   }
@@ -272,7 +270,7 @@ void KLSupport::applyInverse(const CoxNbr& y)
   return;
 }
 
-CoxNbr KLSupport::extendContext(const CoxWord& g)
+CoxNbr KLSupport::extendContext(const CoxWord &g)
 
 /*
   Extends the context to accomodate g.
@@ -285,7 +283,7 @@ CoxNbr KLSupport::extendContext(const CoxWord& g)
 
 {
   CoxNbr prev_size = size();
-  SchubertContext& p = *d_schubert;
+  SchubertContext &p = *d_schubert;
 
   CoxNbr x = p.extendContext(g);
 
@@ -314,21 +312,21 @@ CoxNbr KLSupport::extendContext(const CoxWord& g)
   for (CoxNbr x = 0; x < prev_size; ++x) {
     if (inverse(x) == undef_coxnbr) { /* try to extend */
       Generator s = p.firstRDescent(x);
-      CoxNbr xs = p.rshift(x,s);
+      CoxNbr xs = p.rshift(x, s);
       if (inverse(xs) == undef_coxnbr)
-	d_inverse[x] = undef_coxnbr;
+        d_inverse[x] = undef_coxnbr;
       else
-	d_inverse[x] = p.lshift(inverse(xs),s);
+        d_inverse[x] = p.lshift(inverse(xs), s);
     }
   }
 
   for (CoxNbr x = prev_size; x < size(); ++x) {
     Generator s = p.firstRDescent(x);
-    CoxNbr xs = p.rshift(x,s);
+    CoxNbr xs = p.rshift(x, s);
     if (inverse(xs) == undef_coxnbr)
       d_inverse[x] = undef_coxnbr;
     else
-      d_inverse[x] = p.lshift(inverse(xs),s);
+      d_inverse[x] = p.lshift(inverse(xs), s);
   }
 
   for (CoxNbr x = prev_size; x < size(); ++x) {
@@ -340,7 +338,7 @@ CoxNbr KLSupport::extendContext(const CoxWord& g)
 
   for (CoxNbr x = prev_size; x < size(); ++x) {
     Generator s = p.firstLDescent(x);
-    CoxNbr sx = p.lshift(x,s);
+    CoxNbr sx = p.lshift(x, s);
     if (sx)
       d_last[x] = d_last[sx];
     else /* x = s */
@@ -349,14 +347,14 @@ CoxNbr KLSupport::extendContext(const CoxWord& g)
 
   return x;
 
- revert:
+revert:
   CATCH_MEMORY_OVERFLOW = false;
   revertSize(prev_size);
 
   return undef_coxnbr;
 }
 
-void KLSupport::permute(const Permutation& a)
+void KLSupport::permute(const Permutation &a)
 
 /*
   Applies the permutation a to the data in the context. The meaning of a
@@ -372,10 +370,10 @@ void KLSupport::permute(const Permutation& a)
 
   /* permute values */
 
-    for (CoxNbr y = 0; y < size(); ++y) {
+  for (CoxNbr y = 0; y < size(); ++y) {
     if (d_extrList[y] == 0)
       continue;
-    ExtrRow& e = *d_extrList[y];
+    ExtrRow &e = *d_extrList[y];
     for (Ulong j = 0; j < e.size(); ++j) {
       e[j] = a[e[j]];
     }
@@ -399,7 +397,7 @@ void KLSupport::permute(const Permutation& a)
     }
     for (CoxNbr y = a[x]; y != x; y = a[y]) {
       /* back up values for y */
-      ExtrRow* extr_buf = d_extrList[y];
+      ExtrRow *extr_buf = d_extrList[y];
       CoxNbr inverse_buf = inverse(y);
       Generator last_buf = last(y);
       bool involution_buf = isInvolution(y);
@@ -408,17 +406,17 @@ void KLSupport::permute(const Permutation& a)
       d_inverse[y] = inverse(x);
       d_last[y] = last(x);
       if (isInvolution(x))
-	d_involution.setBit(y);
+        d_involution.setBit(y);
       else
-	d_involution.clearBit(y);
+        d_involution.clearBit(y);
       /* store backup values in x */
       d_extrList[x] = extr_buf;
       d_inverse[x] = inverse_buf;
       d_last[x] = last_buf;
       if (involution_buf)
-	d_involution.setBit(x);
+        d_involution.setBit(x);
       else
-	d_involution.clearBit(x);
+        d_involution.clearBit(x);
       /* set bit*/
       b.setBit(y);
     }
@@ -429,7 +427,7 @@ void KLSupport::permute(const Permutation& a)
   return;
 }
 
-void KLSupport::revertSize(const Ulong& n)
+void KLSupport::revertSize(const Ulong &n)
 
 /*
   This function reverts the size of the context to a previous value n. Note
@@ -437,7 +435,7 @@ void KLSupport::revertSize(const Ulong& n)
   the consistency of the various size values.
 */
 
-{  
+{
   d_schubert->revertSize(n);
   d_extrList.setSize(n);
   d_inverse.setSize(n);
@@ -446,7 +444,7 @@ void KLSupport::revertSize(const Ulong& n)
   return;
 }
 
-};
+}; // namespace klsupport
 
 /*****************************************************************************
 
@@ -461,7 +459,7 @@ void KLSupport::revertSize(const Ulong& n)
 
 namespace klsupport {
 
-KLCoeff& safeAdd(KLCoeff& a, const KLCoeff& b)
+KLCoeff &safeAdd(KLCoeff &a, const KLCoeff &b)
 
 /*
   This function increments a with b, if the result does not exceed
@@ -478,7 +476,7 @@ KLCoeff& safeAdd(KLCoeff& a, const KLCoeff& b)
   return a;
 }
 
-SKLCoeff& safeAdd(SKLCoeff& a, const SKLCoeff& b) 
+SKLCoeff &safeAdd(SKLCoeff &a, const SKLCoeff &b)
 
 /*
   This function increments a with b if the result lies in the interval
@@ -493,17 +491,15 @@ SKLCoeff& safeAdd(SKLCoeff& a, const SKLCoeff& b)
 {
   if ((b > 0) && (a > SKLCOEFF_MAX - b)) {
     ERRNO = SKLCOEFF_OVERFLOW;
-  }
-  else if ((b < 0) && (a < SKLCOEFF_MIN - b)) {
+  } else if ((b < 0) && (a < SKLCOEFF_MIN - b)) {
     ERRNO = SKLCOEFF_UNDERFLOW;
-  }
-  else
+  } else
     a += b;
 
   return a;
 }
 
-KLCoeff& safeMultiply(KLCoeff& a, const KLCoeff& b)
+KLCoeff &safeMultiply(KLCoeff &a, const KLCoeff &b)
 
 /*
   This function multiplies a with b, if the result does not exceed
@@ -515,7 +511,7 @@ KLCoeff& safeMultiply(KLCoeff& a, const KLCoeff& b)
   if (a == 0)
     return a;
 
-  if (b <= KLCOEFF_MAX/a)
+  if (b <= KLCOEFF_MAX / a)
     a *= b;
   else
     ERRNO = KLCOEFF_OVERFLOW;
@@ -523,7 +519,7 @@ KLCoeff& safeMultiply(KLCoeff& a, const KLCoeff& b)
   return a;
 }
 
-SKLCoeff& safeMultiply(SKLCoeff& a, const SKLCoeff& b)
+SKLCoeff &safeMultiply(SKLCoeff &a, const SKLCoeff &b)
 
 /*
   This function multiplies a with b, if the result lies between SKLCOEFF_MIN
@@ -536,17 +532,16 @@ SKLCoeff& safeMultiply(SKLCoeff& a, const SKLCoeff& b)
     return a;
 
   if (a > 0) {
-    if (b > SKLCOEFF_MAX/a)
+    if (b > SKLCOEFF_MAX / a)
       ERRNO = SKLCOEFF_OVERFLOW;
-    else if (b < SKLCOEFF_MIN/a)
+    else if (b < SKLCOEFF_MIN / a)
       ERRNO = SKLCOEFF_UNDERFLOW;
     else
       a *= b;
-  }
-  else {
-    if (b > SKLCOEFF_MIN/a)
+  } else {
+    if (b > SKLCOEFF_MIN / a)
       ERRNO = SKLCOEFF_UNDERFLOW;
-    else if (b < SKLCOEFF_MAX/a)
+    else if (b < SKLCOEFF_MAX / a)
       ERRNO = SKLCOEFF_OVERFLOW;
     else
       a *= b;
@@ -555,7 +550,7 @@ SKLCoeff& safeMultiply(SKLCoeff& a, const SKLCoeff& b)
   return a;
 }
 
-KLCoeff& safeSubtract(KLCoeff& a, const KLCoeff& b)
+KLCoeff &safeSubtract(KLCoeff &a, const KLCoeff &b)
 
 /*
   This function subtracts b from a, if the result is non-negative; sets
@@ -571,4 +566,4 @@ KLCoeff& safeSubtract(KLCoeff& a, const KLCoeff& b)
   return a;
 }
 
-};
+}; // namespace klsupport

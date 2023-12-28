@@ -20,7 +20,8 @@
 
 namespace coxeter {
 
-TypeACoxGroup::TypeACoxGroup(const Rank& l):FiniteCoxGroup(Type("A"),l)
+TypeACoxGroup::TypeACoxGroup(const Rank &l)
+    : FiniteCoxGroup(Type("A"), l)
 
 /*
   Constructor for the type A Coxeter groups.
@@ -36,13 +37,13 @@ TypeACoxGroup::~TypeACoxGroup()
 
 {}
 
-bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
+bool TypeACoxGroup::parseGroupElement(ParseInterface &P) const
 
 {
   Ulong r = P.offset;
 
   if (parseContextNumber(P)) { // the next token is a ContextNumber
-    if (ERRNO) // parse error
+    if (ERRNO)                 // parse error
       return true;
     else
       goto modify;
@@ -52,21 +53,19 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
 
   if (hasPermutationInput()) {
     typeAInterface().parsePermutation(P);
-  }
-  else {
-    interface().parseCoxWord(P,mintable());
+  } else {
+    interface().parseCoxWord(P, mintable());
   }
 
-  if (ERRNO) { // no CoxWord could be parsed
+  if (ERRNO) {           // no CoxWord could be parsed
     if (P.offset == r) { // nothing was parsed
       ERRNO = 0;
       return false;
-    }
-    else // parse error
+    } else // parse error
       return true;
   }
 
- modify:
+modify:
 
   // if we get to this point, a group element was successfully read
 
@@ -77,7 +76,7 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
 
   // flush the current group element
 
-  prod(P.a[P.nestlevel],P.c);
+  prod(P.a[P.nestlevel], P.c);
   P.c.reset();
 
   if (P.offset == r) // nothing was read; c is unchanged
@@ -85,7 +84,6 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
   else
     return true;
 }
-
 
 /****************************************************************************
 
@@ -96,7 +94,8 @@ bool TypeACoxGroup::parseGroupElement(ParseInterface& P) const
 
 *****************************************************************************/
 
-TypeAMedRankCoxGroup::TypeAMedRankCoxGroup(const Rank& l):TypeACoxGroup(l)
+TypeAMedRankCoxGroup::TypeAMedRankCoxGroup(const Rank &l)
+    : TypeACoxGroup(l)
 
 {
   mintable().fill(graph());
@@ -110,7 +109,7 @@ TypeAMedRankCoxGroup::~TypeAMedRankCoxGroup()
 
 {}
 
-bool TypeASmallCoxGroup::parseDenseArray(ParseInterface& P) const
+bool TypeASmallCoxGroup::parseDenseArray(ParseInterface &P) const
 
 /*
   Tries to parse a DenseArray from P. This is a '#' character, followed
@@ -119,10 +118,10 @@ bool TypeASmallCoxGroup::parseDenseArray(ParseInterface& P) const
 */
 
 {
-  const Interface& I = interface();
+  const Interface &I = interface();
 
   Token tok = 0;
-  Ulong p = I.getToken(P,tok);
+  Ulong p = I.getToken(P, tok);
 
   if (p == 0)
     return false;
@@ -133,23 +132,22 @@ bool TypeASmallCoxGroup::parseDenseArray(ParseInterface& P) const
   // if we get to this point, we must read a valid integer
 
   P.offset += p;
-  CoxNbr x = interface::readCoxNbr(P,d_order);
+  CoxNbr x = interface::readCoxNbr(P, d_order);
 
-  if (x == undef_coxnbr) { //error
+  if (x == undef_coxnbr) { // error
     P.offset -= p;
-    Error(DENSEARRAY_OVERFLOW,d_order);
+    Error(DENSEARRAY_OVERFLOW, d_order);
     ERRNO = PARSE_ERROR;
-  }
-  else { // x is valid
+  } else { // x is valid
     CoxWord g(0);
-    prodD(g,x);
-    CoxGroup::prod(P.c,g);
+    prodD(g, x);
+    CoxGroup::prod(P.c, g);
   }
 
   return true;
 }
 
-bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
+bool TypeASmallCoxGroup::parseGroupElement(ParseInterface &P) const
 
 /*
   This is the parseGroupElement function for the SmallCoxGroup type. In
@@ -166,14 +164,14 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
   Ulong r = P.offset;
 
   if (parseContextNumber(P)) { // next token is a context number
-    if (ERRNO) // parse error
+    if (ERRNO)                 // parse error
       return true;
     else
       goto modify;
   }
 
   if (parseDenseArray(P)) { // next token is a dense array
-    if (ERRNO) // parse error
+    if (ERRNO)              // parse error
       return true;
     else
       goto modify;
@@ -183,21 +181,19 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
 
   if (hasPermutationInput()) {
     typeAInterface().parsePermutation(P);
-  }
-  else {
-    interface().parseCoxWord(P,mintable());
+  } else {
+    interface().parseCoxWord(P, mintable());
   }
 
-  if (ERRNO) { // no CoxWord could be parsed
+  if (ERRNO) {           // no CoxWord could be parsed
     if (P.offset == r) { // nothing was parsed
       ERRNO = 0;
       return false;
-    }
-    else // parse error
+    } else // parse error
       return true;
   }
 
- modify:
+modify:
 
   // if we get to this point, a group element was successfully read
 
@@ -208,7 +204,7 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
 
   // flush the current group element
 
-  prod(P.a[P.nestlevel],P.c);
+  prod(P.a[P.nestlevel], P.c);
   P.c.reset();
 
   if (P.offset == r) // nothing was read; c is unchanged
@@ -217,7 +213,7 @@ bool TypeASmallCoxGroup::parseGroupElement(ParseInterface& P) const
     return true;
 }
 
-int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
+int TypeASmallCoxGroup::prodD(CoxWord &g, const DenseArray &d_x) const
 
 /*
   Does the multiplication of g by x, by recovering the normal pieces of x.
@@ -225,15 +221,15 @@ int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
 */
 
 {
-  const Transducer& T = d_transducer[0];
+  const Transducer &T = d_transducer[0];
 
   DenseArray x = d_x;
   int l = 0;
 
   for (Ulong j = 0; j < rank(); ++j) {
-    const FiltrationTerm& X = T.transducer(rank()-1-j)[0];
-    ParNbr c = x%X.size();
-    l += CoxGroup::prod(g,X.np(c));
+    const FiltrationTerm &X = T.transducer(rank() - 1 - j)[0];
+    ParNbr c = x % X.size();
+    l += CoxGroup::prod(g, X.np(c));
     x /= X.size();
   }
 
@@ -250,11 +246,12 @@ int TypeASmallCoxGroup::prodD(CoxWord& g, const DenseArray& d_x) const
 
 *****************************************************************************/
 
-TypeAInterface::TypeAInterface(const Rank& l):Interface(Type("A"),l)
+TypeAInterface::TypeAInterface(const Rank &l)
+    : Interface(Type("A"), l)
 
 {
-  d_pInterface = new Interface(Type("A"),l+1);
-  GroupEltInterface GI(l+1,HexadecimalFromZero());
+  d_pInterface = new Interface(Type("A"), l + 1);
+  GroupEltInterface GI(l + 1, HexadecimalFromZero());
   d_pInterface->setIn(GI);
   d_pInterface->setOut(GI);
 };
@@ -265,7 +262,7 @@ TypeAInterface::~TypeAInterface()
   delete d_pInterface;
 };
 
-String& TypeAInterface::append(String& str, const CoxWord& g) const
+String &TypeAInterface::append(String &str, const CoxWord &g) const
 
 /*
   Special append function for type A. If hasPermutationOutput is true,
@@ -276,15 +273,14 @@ String& TypeAInterface::append(String& str, const CoxWord& g) const
   if (hasPermutationOutput()) { // print out as permutation
     CoxWord a(0);
     a.setLength(d_pInterface->rank());
-    coxWordToPermutation(a,g);
-    return d_pInterface->append(str,a);
-  }
-  else {
-    return interface::append(str,g,*d_out);
+    coxWordToPermutation(a, g);
+    return d_pInterface->append(str, a);
+  } else {
+    return interface::append(str, g, *d_out);
   }
 }
 
-bool TypeAInterface::parsePermutation(ParseInterface& P) const
+bool TypeAInterface::parsePermutation(ParseInterface &P) const
 
 /*
   Parses a permutation. For us, a permutation should be represented as a
@@ -303,12 +299,12 @@ bool TypeAInterface::parsePermutation(ParseInterface& P) const
   }
 
   if (P.offset > r)
-    permutationToCoxWord(P.c,P.c);
+    permutationToCoxWord(P.c, P.c);
 
   return true;
 }
 
-void TypeAInterface::print(FILE* file, const CoxWord& g) const
+void TypeAInterface::print(FILE *file, const CoxWord &g) const
 
 /*
   Special print function for type A. If hasPermutationOutput is true,
@@ -319,17 +315,16 @@ void TypeAInterface::print(FILE* file, const CoxWord& g) const
   if (hasPermutationOutput()) { // print out as permutation
     CoxWord a(0);
     a.setLength(d_pInterface->rank());
-    coxWordToPermutation(a,g);
-    d_pInterface->print(file,a);
-  }
-  else {
-    interface::print(file,g,*d_out);
+    coxWordToPermutation(a, g);
+    d_pInterface->print(file, a);
+  } else {
+    interface::print(file, g, *d_out);
   }
 
   return;
 }
 
-void TypeAInterface::setIn(const GroupEltInterface& i)
+void TypeAInterface::setIn(const GroupEltInterface &i)
 
 /*
   Resets d_in to i, and clears hasPermutationInput.
@@ -346,7 +341,7 @@ void TypeAInterface::setIn(const GroupEltInterface& i)
   return;
 }
 
-void TypeAInterface::setOut(const GroupEltInterface& i)
+void TypeAInterface::setOut(const GroupEltInterface &i)
 
 /*
   Resets d_out to i, and clears hasPermutationOutput.
@@ -373,7 +368,7 @@ void TypeAInterface::setOut(const GroupEltInterface& i)
 
 ******************************************************************************/
 
-void coxWordToPermutation(CoxWord& a, const CoxWord& g)
+void coxWordToPermutation(CoxWord &a, const CoxWord &g)
 
 /*
   Puts in a the permutation of the numbers {0,...,l} whose reduced
@@ -388,20 +383,20 @@ void coxWordToPermutation(CoxWord& a, const CoxWord& g)
   CoxWord h(g);
 
   for (Ulong j = 0; j < a.length(); ++j)
-    a[j] = j+1;
+    a[j] = j + 1;
 
   for (Ulong j = 0; j < h.length(); ++j) {
-    Generator s = h[j]-1;
+    Generator s = h[j] - 1;
     // interchange a[s] and a[s+1]
-    Generator t = a[s+1];
-    a[s+1] = a[s];
+    Generator t = a[s + 1];
+    a[s + 1] = a[s];
     a[s] = t;
   }
 
   return;
 }
 
-void permutationToCoxWord(CoxWord& g, const CoxWord& a)
+void permutationToCoxWord(CoxWord &g, const CoxWord &a)
 
 /*
   Puts in g the standard normal form of a, which is assumed to hold
@@ -419,12 +414,12 @@ void permutationToCoxWord(CoxWord& g, const CoxWord& a)
   CoxWord b(a);
   Length c = 0;
 
-  for (Rank l = b.length()-1; l; --l) {
+  for (Rank l = b.length() - 1; l; --l) {
     Rank j = 0;
-    for (; b[l-j] != l+1; ++j)
+    for (; b[l - j] != l + 1; ++j)
       ;
-    for (Rank i = l-j; i < l; ++i)
-      b[i] = b[i+1];
+    for (Rank i = l - j; i < l; ++i)
+      b[i] = b[i + 1];
     b[l] = j;
     c += j;
   }
@@ -435,11 +430,11 @@ void permutationToCoxWord(CoxWord& g, const CoxWord& a)
 
   for (Ulong j = 1; j < b.length(); ++j) {
     for (Ulong i = 0; i < b[j]; ++i)
-      g[c+i] = j-i;
+      g[c + i] = j - i;
     c += b[j];
   }
 
   return;
 }
 
-}
+} // namespace coxeter

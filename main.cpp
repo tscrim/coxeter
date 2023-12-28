@@ -10,7 +10,7 @@
       Free Software Foundation
       675 Mass. Ave., Cambridge, MA 02139, USA
 
-  		    GNU GENERAL PUBLIC LICENSE
+                    GNU GENERAL PUBLIC LICENSE
      TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
     0. This License Agreement applies to any program or other work which
@@ -128,7 +128,7 @@
   of preserving the free status of all derivatives of our free software and
   of promoting the sharing and reuse of software generally.
 
-  			    NO WARRANTY
+                            NO WARRANTY
 
     9. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
   FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
@@ -150,7 +150,7 @@
   PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGES.
 
-  		     END OF TERMS AND CONDITIONS
+                     END OF TERMS AND CONDITIONS
 */
 
 #include "constants.h"
@@ -158,9 +158,9 @@
 #include "version.h"
 
 namespace {
-  using namespace version;
-  void printVersion();
-};
+using namespace version;
+void printVersion();
+}; // namespace
 
 int main()
 
@@ -177,7 +177,6 @@ int main()
   exit(0);
 }
 
-
 namespace {
 
 void printVersion()
@@ -186,12 +185,13 @@ void printVersion()
   Prints an opening message and the version number.
 */
 
-{      
+{
 
   printf("This is %s version %s.\nEnter help if you need assistance,\
- carriage return to start the program.\n\n",NAME,VERSION);
+ carriage return to start the program.\n\n",
+         NAME, VERSION);
 
   return;
 }
 
-};
+}; // namespace

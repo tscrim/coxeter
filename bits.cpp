@@ -1,6 +1,6 @@
 /*
   This is bits.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -55,11 +55,13 @@
 
 namespace bits {
 
-Permutation::Permutation():List<Ulong>()
+Permutation::Permutation()
+    : List<Ulong>()
 
 {}
 
-Permutation::Permutation(const Ulong& n):List<Ulong>(n)
+Permutation::Permutation(const Ulong &n)
+    : List<Ulong>(n)
 
 {}
 
@@ -67,7 +69,7 @@ Permutation::~Permutation()
 
 {}
 
-Permutation& Permutation::identity(const Ulong& n)
+Permutation &Permutation::identity(const Ulong &n)
 
 /*
   Sets the permutation to the identity permutation of [0,n[.
@@ -83,7 +85,7 @@ Permutation& Permutation::identity(const Ulong& n)
   return *this;
 }
 
-Permutation& Permutation::inverse()
+Permutation &Permutation::inverse()
 
 /*
   Inverts the current permutation : new(old(x)) = x. This is a little
@@ -96,7 +98,7 @@ Permutation& Permutation::inverse()
   static Permutation i(0);
 
   i.setSize(size());
-  Permutation& t = *this;
+  Permutation &t = *this;
 
   for (SetElt x = 0; x < size(); ++x)
     i[t[x]] = x;
@@ -106,7 +108,7 @@ Permutation& Permutation::inverse()
   return t;
 }
 
-Permutation& Permutation::rightCompose(const Permutation& a)
+Permutation &Permutation::rightCompose(const Permutation &a)
 
 /*
   Increments the current permutation by composition on the right with a :
@@ -117,7 +119,7 @@ Permutation& Permutation::rightCompose(const Permutation& a)
   static Permutation c(0);
 
   c.setSize(size());
-  Permutation& t = *this;
+  Permutation &t = *this;
 
   for (SetElt x = 0; x < size(); ++x)
     c[x] = t[a[x]];
@@ -127,7 +129,7 @@ Permutation& Permutation::rightCompose(const Permutation& a)
   return t;
 }
 
-Permutation& Permutation::compose(const Permutation& a)
+Permutation &Permutation::compose(const Permutation &a)
 
 /*
   Increments the current permutation by composition on the left with a :
@@ -141,7 +143,7 @@ Permutation& Permutation::compose(const Permutation& a)
   return *this;
 }
 
-};
+}; // namespace bits
 
 /*****************************************************************************
 
@@ -171,7 +173,7 @@ Permutation& Permutation::compose(const Permutation& a)
     - setSize(n) : resizes the bitmap to size n;
 
   - operations :
-    
+
     - operator~ () : changes into opposite bitmap;
     - operator&= (map) : intersects with map;
     - operator|= (map) : does union with map;
@@ -183,8 +185,8 @@ namespace bits {
 
 /********** constructors and destructors *************************************/
 
-BitMap::BitMap(const Ulong& n)
-  :d_map(n/BITS(LFlags)+(bool)(n%BITS(LFlags))), d_size(n)
+BitMap::BitMap(const Ulong &n)
+    : d_map(n / BITS(LFlags) + (bool)(n % BITS(LFlags))), d_size(n)
 
 /*
   Constructor for the BitMap class; constructs a bitmap capable of
@@ -192,7 +194,7 @@ BitMap::BitMap(const Ulong& n)
 */
 
 {
-  d_map.setSize(n/BITS(LFlags)+(bool)(n%BITS(LFlags)));
+  d_map.setSize(n / BITS(LFlags) + (bool)(n % BITS(LFlags)));
 }
 
 BitMap::~BitMap()
@@ -236,15 +238,14 @@ Ulong BitMap::firstBit() const
     if (d_map[j]) { /* first bit found */
       f = d_map[j];
       return f;
-    }
-    else
+    } else
       first += BITS(LFlags);
   }
 
   return first + bits::firstBit(f);
 }
 
-bool BitMap::isEmpty(const Ulong& m) const
+bool BitMap::isEmpty(const Ulong &m) const
 
 /*
   This function checks whether the intersection of the bitmap with the
@@ -252,19 +253,19 @@ bool BitMap::isEmpty(const Ulong& m) const
 */
 
 {
-  Ulong lsize = d_size/BITS(LFlags)+(bool)(d_size%BITS(LFlags));
+  Ulong lsize = d_size / BITS(LFlags) + (bool)(d_size % BITS(LFlags));
 
   /* look at word containing m */
 
-  Ulong ml = m/BITS(LFlags);
-  Ulong mr = m%BITS(LFlags);
-  Ulong mc = BITS(LFlags)-1 - mr;
+  Ulong ml = m / BITS(LFlags);
+  Ulong mr = m % BITS(LFlags);
+  Ulong mc = BITS(LFlags) - 1 - mr;
   LFlags f = leqmask[mc] << mr;
 
-  if (d_map[ml]&f)
-    return(false);
+  if (d_map[ml] & f)
+    return (false);
 
-  for (Ulong j = ml+1; j < lsize; ++j) {
+  for (Ulong j = ml + 1; j < lsize; ++j) {
     if (d_map[j])
       return false;
   }
@@ -283,13 +284,13 @@ Ulong BitMap::lastBit() const
   if (d_size == 0)
     return 0;
 
-  Ulong base = (d_size-1)/BITS(LFlags)+1;
+  Ulong base = (d_size - 1) / BITS(LFlags) + 1;
 
-  while(base) {
+  while (base) {
     base--;
     LFlags f = d_map[base];
     if (f)
-      return (base*BITS(LFlags)+constants::lastBit(f));
+      return (base * BITS(LFlags) + constants::lastBit(f));
   }
 
   /* if we reach this point, the bitmap is empty */
@@ -299,7 +300,7 @@ Ulong BitMap::lastBit() const
 
 /********** modifiers ********************************************************/
 
-BitMap& BitMap::assign(const BitMap& map)
+BitMap &BitMap::assign(const BitMap &map)
 
 /*
   Copies the content of map into the current map.
@@ -312,8 +313,7 @@ BitMap& BitMap::assign(const BitMap& map)
   return *this;
 }
 
-
-void BitMap::permute(Permutation& q)
+void BitMap::permute(Permutation &q)
 
 /*
   This function applies the permutation q to the bitmap b. Here b is
@@ -333,8 +333,8 @@ void BitMap::permute(Permutation& q)
       continue;
     for (Ulong j = q[i]; j != i; j = q[j]) {
       bool t = getBit(j);
-      setBit(j,getBit(i));
-      setBit(i,t);
+      setBit(j, getBit(i));
+      setBit(i, t);
       b.setBit(j);
     }
     b.setBit(i);
@@ -343,8 +343,7 @@ void BitMap::permute(Permutation& q)
   return;
 }
 
-
-void BitMap::setSize(const Ulong& n)
+void BitMap::setSize(const Ulong &n)
 
 /*
   Resizes the bitmap to hold n bits. If the size grows, it is guaranteed
@@ -352,14 +351,14 @@ void BitMap::setSize(const Ulong& n)
 */
 
 {
-  d_map.setSize(n/BITS(LFlags) + (bool)(n%BITS(LFlags)));
+  d_map.setSize(n / BITS(LFlags) + (bool)(n % BITS(LFlags)));
 
-  if (n > size()) { /* set new bits to zero  */
-    Ulong f = size()/BITS(LFlags);  /* word holding first new bit */
-    Ulong fb = size()%BITS(LFlags); /* bit address of first new bit in f */
-    LFlags old = ((1L << fb) - 1L);     /* flags old bits */
+  if (n > size()) {                   /* set new bits to zero  */
+    Ulong f = size() / BITS(LFlags);  /* word holding first new bit */
+    Ulong fb = size() % BITS(LFlags); /* bit address of first new bit in f */
+    LFlags old = ((1L << fb) - 1L);   /* flags old bits */
     d_map[f] &= old;
-    d_map.setZero(f+1,d_map.size()-f-1);
+    d_map.setZero(f + 1, d_map.size() - f - 1);
   }
 
   d_size = n;
@@ -367,7 +366,7 @@ void BitMap::setSize(const Ulong& n)
 
 /********** operators ********************************************************/
 
-void BitMap::operator~ ()
+void BitMap::operator~()
 
 /*
   Transforms the bitmap into its complement. One has to be careful not to
@@ -378,12 +377,12 @@ void BitMap::operator~ ()
   for (Ulong j = 0; j < d_map.size(); ++j)
     d_map[j] = ~d_map[j];
 
-  d_map[d_map.size()-1] &= lastchunk();
+  d_map[d_map.size() - 1] &= lastchunk();
 
   return;
 }
 
-void BitMap::operator&= (const BitMap& map)
+void BitMap::operator&=(const BitMap &map)
 
 /*
   Does the bitwise intersection with map. It is assumed that map has at
@@ -396,7 +395,7 @@ void BitMap::operator&= (const BitMap& map)
   return;
 }
 
-void BitMap::operator|= (const BitMap& map)
+void BitMap::operator|=(const BitMap &map)
 
 /*
   Does the bitwise union with map. It is assumed that map has at
@@ -409,7 +408,7 @@ void BitMap::operator|= (const BitMap& map)
   return;
 }
 
-void BitMap::andnot(const BitMap& map)
+void BitMap::andnot(const BitMap &map)
 
 /*
   Does the bitwise intersection with ~map. It is assumed that map has at
@@ -422,7 +421,7 @@ void BitMap::andnot(const BitMap& map)
   return;
 }
 
-};
+}; // namespace bits
 
 /****************************************************************************
 
@@ -446,7 +445,7 @@ void BitMap::andnot(const BitMap& map)
 
   The following functions are defined :
 
-   - Iterator(const BitMap&, bool) : constructs begin() if true, end() if 
+   - Iterator(const BitMap&, bool) : constructs begin() if true, end() if
      false;
    - operator* () : returns the position of the current bit;
    - operator++ () : moves to the next set bit, or past-the-end;
@@ -464,8 +463,8 @@ BitMap::Iterator::Iterator()
 
 {}
 
-BitMap::Iterator::Iterator(const BitMap& b)
-  :d_b(&b)
+BitMap::Iterator::Iterator(const BitMap &b)
+    : d_b(&b)
 
 /*
   Constructs begin().
@@ -475,7 +474,7 @@ BitMap::Iterator::Iterator(const BitMap& b)
   d_chunk = d_b->d_map.ptr();
   d_bitAddress = 0;
 
-  for (d_bitAddress = 0; d_bitAddress < d_b->size(); 
+  for (d_bitAddress = 0; d_bitAddress < d_b->size();
        d_bitAddress += BITS(LFlags)) {
     if (*d_chunk) {
       d_bitAddress += bits::firstBit(*d_chunk);
@@ -495,10 +494,10 @@ BitMap::Iterator::~Iterator()
 
 {}
 
-BitMap::Iterator& BitMap::Iterator::operator++ ()
+BitMap::Iterator &BitMap::Iterator::operator++()
 
 /*
-  Increment operator (prefix notation). Valid if the iterator is 
+  Increment operator (prefix notation). Valid if the iterator is
   dereferenceable. Result is dereferenceable or past-the-end.
 */
 
@@ -507,16 +506,15 @@ BitMap::Iterator& BitMap::Iterator::operator++ ()
   f >>= 1;
 
   if (f) {
-    d_bitAddress += bits::firstBit(f)+1;
-  }
-  else { /* go to next chunk */
+    d_bitAddress += bits::firstBit(f) + 1;
+  } else { /* go to next chunk */
     d_bitAddress &= baseBits;
     ++d_chunk;
-    for (d_bitAddress += BITS(LFlags) ; d_bitAddress < d_b->size(); 
-	 d_bitAddress += BITS(LFlags)) {
+    for (d_bitAddress += BITS(LFlags); d_bitAddress < d_b->size();
+         d_bitAddress += BITS(LFlags)) {
       if (*d_chunk) {
-	d_bitAddress += bits::firstBit(*d_chunk);
-	break;
+        d_bitAddress += bits::firstBit(*d_chunk);
+        break;
       }
       ++d_chunk;
     }
@@ -527,7 +525,7 @@ BitMap::Iterator& BitMap::Iterator::operator++ ()
   return *this;
 }
 
-BitMap::Iterator& BitMap::Iterator::operator-- ()
+BitMap::Iterator &BitMap::Iterator::operator--()
 
 /*
   Decrement operator (prefix notation). Valid if the iterator is past-the-end,
@@ -538,25 +536,24 @@ BitMap::Iterator& BitMap::Iterator::operator-- ()
   LFlags f = 0;
 
   if (bitPos()) {
-    f = *d_chunk & leqmask[bitPos()-1];
+    f = *d_chunk & leqmask[bitPos() - 1];
   }
 
   if (f) {
     d_bitAddress &= baseBits;
     d_bitAddress += bits::lastBit(f);
-  }
-  else { /* go to previous chunk */
+  } else { /* go to previous chunk */
     d_bitAddress &= baseBits;
     while (d_bitAddress) {
       d_bitAddress -= BITS(LFlags);
       --d_chunk;
       if (*d_chunk) {
-	d_bitAddress += bits::lastBit(*d_chunk);
-	break;
+        d_bitAddress += bits::lastBit(*d_chunk);
+        break;
       }
     }
   }
-  
+
   return *this;
 }
 
@@ -567,8 +564,8 @@ BitMap::Iterator BitMap::begin() const
 */
 
 {
-  static Iterator i; 
-  new(&i) Iterator(*this); 
+  static Iterator i;
+  new (&i) Iterator(*this);
   return i;
 }
 
@@ -579,14 +576,14 @@ BitMap::Iterator BitMap::end() const
 
   i.d_b = this;
   i.d_bitAddress = d_size;
-  i.d_chunk = d_map.ptr()+d_map.size();
+  i.d_chunk = d_map.ptr() + d_map.size();
   if (i.bitPos())
     i.d_chunk--;
 
   return i;
 }
 
-};
+}; // namespace bits
 
 /****************************************************************************
 
@@ -634,7 +631,8 @@ Partition::Partition()
 
 {}
 
-Partition::Partition(const Ulong &n):d_list(n),d_classCount(0) 
+Partition::Partition(const Ulong &n)
+    : d_list(n), d_classCount(0)
 
 {
   d_list.setSize(n);
@@ -650,7 +648,7 @@ Partition::~Partition()
 
 /******* accessors **********************************************************/
 
-void Partition::sort(Permutation& a) const
+void Partition::sort(Permutation &a) const
 
 /*
   Puts in a the permutation vector for which the classes are contiguous,
@@ -678,10 +676,10 @@ void Partition::sort(Permutation& a) const
 
   /* put class offsets in count */
 
-  count.setData(count.ptr(),1,count.size()-1);
+  count.setData(count.ptr(), 1, count.size() - 1);
 
   for (Ulong j = 2; j < count.size(); ++j)
-    count[j] += count[j-1];
+    count[j] += count[j - 1];
 
   count[0] = 0;
 
@@ -696,7 +694,7 @@ void Partition::sort(Permutation& a) const
   }
 }
 
-void Partition::sortI(Permutation& a) const
+void Partition::sortI(Permutation &a) const
 
 /*
   Like sort, but returns the inverse permutation directly. This is in fact
@@ -723,10 +721,10 @@ void Partition::sortI(Permutation& a) const
 
   /* put class offsets in count */
 
-  count.setData(count.ptr(),1,count.size()-1);
+  count.setData(count.ptr(), 1, count.size() - 1);
 
   for (Ulong j = 2; j < count.size(); ++j)
-    count[j] += count[j-1];
+    count[j] += count[j - 1];
 
   count[0] = 0;
 
@@ -741,7 +739,7 @@ void Partition::sortI(Permutation& a) const
   }
 }
 
-void Partition::writeClass(BitMap& b, const Ulong& n) const
+void Partition::writeClass(BitMap &b, const Ulong &n) const
 
 /*
   This function sets the bitmap to the bitmap of class #n. It is assumed
@@ -796,7 +794,7 @@ void Partition::normalize()
   return;
 }
 
-void Partition::normalize(Permutation& a)
+void Partition::normalize(Permutation &a)
 
 /*
   Same as normalize(), but records the permutation in a.
@@ -828,7 +826,7 @@ void Partition::normalize(Permutation& a)
   return;
 }
 
-void Partition::permute(const Permutation& a)
+void Partition::permute(const Permutation &a)
 
 /*
   Permutes the partition according to a (i.e., apply a to the domain of
@@ -840,7 +838,7 @@ void Partition::permute(const Permutation& a)
 
   b.setSize(size());
   b.reset();
-  
+
   for (SetElt x = 0; x < size(); ++x) {
     if (b.getBit(x))
       continue;
@@ -856,7 +854,7 @@ void Partition::permute(const Permutation& a)
   return;
 }
 
-void Partition::permuteRange(const Permutation& a)
+void Partition::permuteRange(const Permutation &a)
 
 /*
   Applies the permutation a to the range of the partition function.
@@ -880,7 +878,7 @@ void Partition::setClassCount()
 
   for (Ulong j = 0; j < size(); ++j) {
     if (d_list[j] >= count)
-      count = d_list[j]+1;
+      count = d_list[j] + 1;
   }
 
   d_classCount = count;
@@ -890,7 +888,7 @@ void Partition::setClassCount()
 
 /******** input/output ******************************************************/
 
-void Partition::printClassSizes(FILE* file) const
+void Partition::printClassSizes(FILE *file) const
 
 /*
   This function prints out the sizes of the classes in the partition.
@@ -907,17 +905,17 @@ void Partition::printClassSizes(FILE* file) const
   }
 
   for (Ulong j = 0; j < d_classCount; ++j) {
-    fprintf(file,"%lu",count[j]);
-    if (j < d_classCount-1)
-      fprintf(file,",");
+    fprintf(file, "%lu", count[j]);
+    if (j < d_classCount - 1)
+      fprintf(file, ",");
   }
 
-  fprintf(file,"\n");
+  fprintf(file, "\n");
 
   return;
 }
 
-};
+}; // namespace bits
 
 /****************************************************************************
 
@@ -933,11 +931,11 @@ void Partition::printClassSizes(FILE* file) const
 
 namespace bits {
 
-PartitionIterator::PartitionIterator(const Partition& pi)
-  :d_pi(pi),d_a(pi.size()),d_class(0),d_base(0),d_valid(true)
+PartitionIterator::PartitionIterator(const Partition &pi)
+    : d_pi(pi), d_a(pi.size()), d_class(0), d_base(0), d_valid(true)
 
 /*
-  
+
 */
 
 {
@@ -949,18 +947,17 @@ PartitionIterator::PartitionIterator(const Partition& pi)
   {
     d_a.setSize(pi.size());
     pi.sortI(d_a);
-    
+
     /* load first class */
-    
+
     Ulong j = 0;
-    
+
     for (; (j < d_a.size()) && (d_pi(d_a[j]) == d_pi(d_a[d_base])); ++j) {
       d_class.append(d_a[j]);
     }
   }
 
- done:
-  ;
+done:;
 }
 
 PartitionIterator::~PartitionIterator()
@@ -971,7 +968,7 @@ PartitionIterator::~PartitionIterator()
 
 {}
 
-void PartitionIterator::operator++ ()
+void PartitionIterator::operator++()
 
 {
   d_base += d_class.size();
@@ -989,7 +986,7 @@ void PartitionIterator::operator++ ()
   }
 }
 
-};
+}; // namespace bits
 
 /****************************************************************************
 
@@ -1026,7 +1023,6 @@ void PartitionIterator::operator++ ()
 
  *****************************************************************************/
 
-
 namespace bits {
 
 SubSet::~SubSet()
@@ -1037,7 +1033,7 @@ SubSet::~SubSet()
 
 {}
 
-void SubSet::add(const Ulong& n)
+void SubSet::add(const Ulong &n)
 
 /*
   Adds a new element to the subset. It is assumed that n is a legal value
@@ -1091,7 +1087,7 @@ void SubSet::reset()
   return;
 }
 
-};
+}; // namespace bits
 
 /*****************************************************************************
 
@@ -1103,22 +1099,20 @@ void SubSet::reset()
 
  *****************************************************************************/
 
+unsigned bits::bitCount(const LFlags &d_f)
 
-unsigned bits::bitCount(const LFlags& d_f)
-     
 /*
   Returns the number of set bits in f.
 */
-     
+
 {
   unsigned count = 0;
 
-  for (LFlags f = d_f; f; f &= f-1)
-    count++;	/* see K&R */
-  
+  for (LFlags f = d_f; f; f &= f - 1)
+    count++; /* see K&R */
+
   return count;
 }
-
 
 /*****************************************************************************
 
@@ -1131,11 +1125,10 @@ unsigned bits::bitCount(const LFlags& d_f)
 
  *****************************************************************************/
 
-
 void bits::memSet(void *dest, void *source, Ulong size, Ulong count)
 
 /*
-  Copies into dest count repetitions of the pattern made up by the first size 
+  Copies into dest count repetitions of the pattern made up by the first size
   bits in source.
 */
 
@@ -1145,21 +1138,19 @@ void bits::memSet(void *dest, void *source, Ulong size, Ulong count)
   if (count == 0)
     return;
 
-  memmove(dest,source,size);
+  memmove(dest, source, size);
   source = dest;
   dest = (void *)((char *)dest + size);
 
-  for (c = 1; c <= count/2; c *= 2)
-    {
-      memmove(dest,source,c*size);
-      dest = (void *)((char *)dest + c*size);
-    }
+  for (c = 1; c <= count / 2; c *= 2) {
+    memmove(dest, source, c * size);
+    dest = (void *)((char *)dest + c * size);
+  }
 
-  memmove(dest,source,(count-c)*size);
+  memmove(dest, source, (count - c) * size);
 
   return;
 }
-
 
 /*****************************************************************************
 
@@ -1175,7 +1166,7 @@ void bits::memSet(void *dest, void *source, Ulong size, Ulong count)
 
 namespace bits {
 
-String& append(String& l, const BitMap& map)
+String &append(String &l, const BitMap &map)
 
 /*
   Appends the map to the string. Uses a representation in terms of zeroes
@@ -1185,15 +1176,15 @@ String& append(String& l, const BitMap& map)
 {
   for (Ulong j = 0; j < map.size(); ++j) {
     if (map.getBit(j)) /* bit is set */
-      append(l,"1");
+      append(l, "1");
     else
-      append(l,"0");
+      append(l, "0");
   }
 
   return l;
 }
 
-void print(FILE* file, const BitMap& map)
+void print(FILE *file, const BitMap &map)
 
 /*
   Prints the map to the file. Uses append.
@@ -1203,13 +1194,13 @@ void print(FILE* file, const BitMap& map)
   static String buf(0);
 
   reset(buf);
-  append(buf,map);
-  print(file,buf);
+  append(buf, map);
+  print(file, buf);
 
   return;
 }
 
-};
+}; // namespace bits
 
 /*****************************************************************************
 
@@ -1223,7 +1214,7 @@ void print(FILE* file, const BitMap& map)
 
 namespace bits {
 
-bool isRefinement(const Partition& pi1, const Partition& pi2)
+bool isRefinement(const Partition &pi1, const Partition &pi2)
 
 /*
   Tells whether pi1 is a refinement of pi2. Both are assumed to be partitions
@@ -1233,14 +1224,14 @@ bool isRefinement(const Partition& pi1, const Partition& pi2)
 
 {
   for (PartitionIterator i(pi1); i; ++i) {
-    const Set& l = i();
+    const Set &l = i();
     Ulong a = pi2(l[0]);
     for (Ulong j = 1; j < l.size(); ++j)
       if (pi2(l[j]) != a)
-	return false;
+        return false;
   }
 
   return true;
 }
 
-};
+}; // namespace bits

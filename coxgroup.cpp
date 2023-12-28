@@ -57,20 +57,22 @@
 
 namespace coxeter {
 
-  class CoxGroup::CoxHelper {
-  private:
-    CoxGroup* d_W;
-  public:
-    void* operator new(size_t size) {return arena().alloc(size);}
-    void operator delete(void* ptr)
-      {return arena().free(ptr,sizeof(CoxHelper));}
-    CoxHelper(CoxGroup* W);
-    ~CoxHelper ();
-    void sortContext();
-    void checkInverses();
-  };
+class CoxGroup::CoxHelper {
+private:
+  CoxGroup *d_W;
 
-CoxGroup::CoxGroup(const Type& x, const Rank& l)
+public:
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(CoxHelper));
+  }
+  CoxHelper(CoxGroup *W);
+  ~CoxHelper();
+  void sortContext();
+  void checkInverses();
+};
+
+CoxGroup::CoxGroup(const Type &x, const Rank &l)
 
 /*
   Constructor for the abstract CoxGroup class. Does the basic initializations
@@ -83,17 +85,17 @@ CoxGroup::CoxGroup(const Type& x, const Rank& l)
 */
 
 {
-  d_graph = new CoxGraph(x,l);
+  d_graph = new CoxGraph(x, l);
   if (ERRNO) /* problem with the Coxeter matrix */
     return;
 
   d_mintable = new MinTable(graph());
 
-  SchubertContext* p = new StandardSchubertContext(graph());
+  SchubertContext *p = new StandardSchubertContext(graph());
   d_klsupport = new KLSupport(p);
 
-  d_interface = new Interface(x,l);
-  d_outputTraits = new OutputTraits(graph(),interface(),Pretty());
+  d_interface = new Interface(x, l);
+  d_outputTraits = new OutputTraits(graph(), interface(), Pretty());
 
   d_help = new CoxHelper(this);
 
@@ -118,7 +120,7 @@ CoxGroup::~CoxGroup()
 
 /******** accessors **********************************************************/
 
-void CoxGroup::coatoms(List<CoxWord>& c, const CoxWord& g) const
+void CoxGroup::coatoms(List<CoxWord> &c, const CoxWord &g) const
 
 /*
   This is a simple-minded "local" function that puts a list of reduced
@@ -135,10 +137,10 @@ void CoxGroup::coatoms(List<CoxWord>& c, const CoxWord& g) const
       h.append(g[i]);
     ++i;
     for (; i < g.length(); ++i) {
-      Generator s = g[i]-1;
-      int d = prod(h,s);
+      Generator s = g[i] - 1;
+      int d = prod(h, s);
       if (d == -1)
-	goto next;
+        goto next;
     }
     // if we get here, h is a coatom
     c.append(h);
@@ -149,7 +151,7 @@ void CoxGroup::coatoms(List<CoxWord>& c, const CoxWord& g) const
   return;
 }
 
-bool CoxGroup::isDescent(const CoxWord& g, const Generator& s) const
+bool CoxGroup::isDescent(const CoxWord &g, const Generator &s) const
 
 /*
   Tells if s is a descent of g.
@@ -163,7 +165,7 @@ bool CoxGroup::isDescent(const CoxWord& g, const Generator& s) const
     return false;
 }
 
-bool CoxGroup::isDihedral(const CoxWord& g) const
+bool CoxGroup::isDihedral(const CoxWord &g) const
 
 /*
   Tells if g is a dihedral element.
@@ -177,20 +179,19 @@ bool CoxGroup::isDihedral(const CoxWord& g) const
   CoxLetter t = g[1];
 
   for (Ulong j = 2; j < g.length(); ++j) {
-    if (j%2) { // g[j] should be t
+    if (j % 2) { // g[j] should be t
       if (g[j] != t)
-	return false;
-    }
-    else { // g[j] should be s
+        return false;
+    } else { // g[j] should be s
       if (g[j] != s)
-	return false;
+        return false;
     }
   }
 
   return true;
 }
 
-void CoxGroup::modify(ParseInterface& P, const Token& tok) const
+void CoxGroup::modify(ParseInterface &P, const Token &tok) const
 
 /*
   Executes the modification indicated by tok, which is assumed to be of
@@ -207,12 +208,12 @@ void CoxGroup::modify(ParseInterface& P, const Token& tok) const
   }
 
   if (isPower(tok)) {
-    Ulong m = readCoxNbr(P,ULONG_MAX);
-    CoxGroup::power(P.c,m);
+    Ulong m = readCoxNbr(P, ULONG_MAX);
+    CoxGroup::power(P.c, m);
   }
 }
 
-void CoxGroup::parse(ParseInterface& P) const
+void CoxGroup::parse(ParseInterface &P) const
 
 /*
   This function parses a group element from the line, starting
@@ -260,7 +261,7 @@ void CoxGroup::parse(ParseInterface& P) const
   for (;;) {
     if (parseGroupElement(P)) {
       if (ERRNO)
-	return;
+        return;
       continue;
     }
     if (parseBeginGroup(P)) { /* enter new nesting level */
@@ -282,14 +283,13 @@ void CoxGroup::parse(ParseInterface& P) const
 
   /* flush the current group element */
 
-  prod(P.a[0],P.c);
+  prod(P.a[0], P.c);
   P.c.reset();
 
   return;
-
 }
 
-bool CoxGroup::parseBeginGroup(ParseInterface& P) const
+bool CoxGroup::parseBeginGroup(ParseInterface &P) const
 
 /*
   Tries to parse a begingroup token off P; in case of success, advances
@@ -299,9 +299,9 @@ bool CoxGroup::parseBeginGroup(ParseInterface& P) const
 
 {
   Token tok = 0;
-  const Interface& I = interface();
+  const Interface &I = interface();
 
-  Ulong p = I.getToken(P,tok);
+  Ulong p = I.getToken(P, tok);
 
   if (p == 0)
     return false;
@@ -310,14 +310,14 @@ bool CoxGroup::parseBeginGroup(ParseInterface& P) const
     return false;
 
   P.nestlevel++;
-  P.a.setSize(P.nestlevel+1);
+  P.a.setSize(P.nestlevel + 1);
   P.a[P.nestlevel].reset();
   P.offset += p;
 
   return true;
 }
 
-bool CoxGroup::parseContextNumber(ParseInterface& P) const
+bool CoxGroup::parseContextNumber(ParseInterface &P) const
 
 /*
   Tries to parse a ContextNumber from P. This is a '%' character, followed
@@ -326,10 +326,10 @@ bool CoxGroup::parseContextNumber(ParseInterface& P) const
 */
 
 {
-  const Interface& I = interface();
+  const Interface &I = interface();
 
   Token tok = 0;
-  Ulong p = I.getToken(P,tok);
+  Ulong p = I.getToken(P, tok);
 
   if (p == 0)
     return false;
@@ -340,20 +340,19 @@ bool CoxGroup::parseContextNumber(ParseInterface& P) const
   // if we get to this point, we must read a valid integer
 
   P.offset += p;
-  CoxNbr x = interface::readCoxNbr(P,contextSize());
+  CoxNbr x = interface::readCoxNbr(P, contextSize());
 
-  if (x == undef_coxnbr) { //error
+  if (x == undef_coxnbr) { // error
     P.offset -= p;
-    Error(CONTEXTNBR_OVERFLOW,contextSize());
+    Error(CONTEXTNBR_OVERFLOW, contextSize());
     ERRNO = PARSE_ERROR;
-  }
-  else // x is valid
-    prod(P.c,x);
+  } else // x is valid
+    prod(P.c, x);
 
   return true;
 }
 
-bool CoxGroup::parseEndGroup(ParseInterface& P) const
+bool CoxGroup::parseEndGroup(ParseInterface &P) const
 
 /*
   Tries to parse an endgroup token; in case of success, reduces the nestlevel
@@ -362,9 +361,9 @@ bool CoxGroup::parseEndGroup(ParseInterface& P) const
 
 {
   Token tok = 0;
-  const Interface& I = interface();
+  const Interface &I = interface();
 
-  Ulong p = I.getToken(P,tok);
+  Ulong p = I.getToken(P, tok);
 
   if (p == 0)
     return false;
@@ -392,13 +391,13 @@ bool CoxGroup::parseEndGroup(ParseInterface& P) const
 
   // flush modified group into accumulator
 
-  prod(P.a[P.nestlevel],P.c);
+  prod(P.a[P.nestlevel], P.c);
   P.c.reset();
 
   return true;
 }
 
-bool CoxGroup::parseGroupElement(ParseInterface& P) const
+bool CoxGroup::parseGroupElement(ParseInterface &P) const
 
 /*
   This function parses a group element from the string. A group element
@@ -412,7 +411,7 @@ bool CoxGroup::parseGroupElement(ParseInterface& P) const
   Ulong r = P.offset;
 
   if (parseContextNumber(P)) { // the next token is a ContextNumber
-    if (ERRNO) // parse error
+    if (ERRNO)                 // parse error
       return true;
     else
       goto modify;
@@ -421,19 +420,18 @@ bool CoxGroup::parseGroupElement(ParseInterface& P) const
   // if we get to this point, we have to read a CoxWord
 
   {
-    interface().parseCoxWord(P,mintable());
+    interface().parseCoxWord(P, mintable());
 
-    if (ERRNO) { // no CoxWord could be parsed
-    if (P.offset == r) { // nothing was parsed
-      ERRNO = 0;
-      return false;
-    }
-    else // parse error
-      return true;
+    if (ERRNO) {           // no CoxWord could be parsed
+      if (P.offset == r) { // nothing was parsed
+        ERRNO = 0;
+        return false;
+      } else // parse error
+        return true;
     }
   }
 
- modify:
+modify:
 
   // if we get to this point, a group element was successfully read
 
@@ -444,7 +442,7 @@ bool CoxGroup::parseGroupElement(ParseInterface& P) const
 
   // flush the current group element
 
-  prod(P.a[P.nestlevel],P.c);
+  prod(P.a[P.nestlevel], P.c);
   P.c.reset();
 
   if (P.offset == r) // nothing was read; c is unchanged
@@ -453,7 +451,7 @@ bool CoxGroup::parseGroupElement(ParseInterface& P) const
     return true;
 }
 
-bool CoxGroup::parseModifier(ParseInterface& P) const
+bool CoxGroup::parseModifier(ParseInterface &P) const
 
 /*
   This function parses a modifier from P.str at P.offset, and acts upon
@@ -466,9 +464,9 @@ bool CoxGroup::parseModifier(ParseInterface& P) const
 
 {
   Token tok = 0;
-  const Interface& I = interface();
+  const Interface &I = interface();
 
-  Ulong p = I.getToken(P,tok);
+  Ulong p = I.getToken(P, tok);
 
   if (p == 0)
     return false;
@@ -482,12 +480,12 @@ bool CoxGroup::parseModifier(ParseInterface& P) const
   }
 
   P.offset += p;
-  modify(P,tok);
+  modify(P, tok);
 
   return true;
 }
 
-int CoxGroup::prod(CoxNbr& x, const Generator& s) const
+int CoxGroup::prod(CoxNbr &x, const Generator &s) const
 
 /*
   This function increments x by right multiplication with s (i.e., it could
@@ -497,7 +495,7 @@ int CoxGroup::prod(CoxNbr& x, const Generator& s) const
 
 {
   CoxNbr x_old = x;
-  x = schubert().shift(x,s);
+  x = schubert().shift(x, s);
 
   if (x > x_old)
     return 1;
@@ -505,7 +503,7 @@ int CoxGroup::prod(CoxNbr& x, const Generator& s) const
     return -1;
 }
 
-int CoxGroup::prod(CoxNbr& x, const CoxWord& g) const
+int CoxGroup::prod(CoxNbr &x, const CoxWord &g) const
 
 /*
   Multiplies x consecutively by the terms in g. Stops at the first undefined
@@ -516,7 +514,7 @@ int CoxGroup::prod(CoxNbr& x, const CoxWord& g) const
   int l = 0;
 
   for (Ulong j = 0; j < g.length(); ++j) {
-    l += prod(x,g[j]-1);
+    l += prod(x, g[j] - 1);
     if (x == undef_coxnbr)
       break;
   }
@@ -524,7 +522,7 @@ int CoxGroup::prod(CoxNbr& x, const CoxWord& g) const
   return l;
 }
 
-int CoxGroup::prod(CoxWord& g, const CoxNbr& d_x) const
+int CoxGroup::prod(CoxWord &g, const CoxNbr &d_x) const
 
 /*
   Multiplies g by the terms in x. Returns the length increase.
@@ -534,10 +532,10 @@ int CoxGroup::prod(CoxWord& g, const CoxNbr& d_x) const
   int l = 0;
   CoxNbr x = d_x;
 
-  while(x) {
+  while (x) {
     Generator s = firstBit(ldescent(x));
-    l += prod(g,s);
-    prod(x,s+rank());
+    l += prod(g, s);
+    prod(x, s + rank());
   }
 
   return l;
@@ -591,7 +589,7 @@ void CoxGroup::activateUEKL()
 
 {
   if (d_uneqkl == 0) {
-    d_uneqkl = new uneqkl::KLContext(d_klsupport,graph(),interface());
+    d_uneqkl = new uneqkl::KLContext(d_klsupport, graph(), interface());
     if (ERRNO) {
       Error(ERRNO);
       delete d_uneqkl;
@@ -602,7 +600,7 @@ void CoxGroup::activateUEKL()
   return;
 }
 
-void CoxGroup::cBasis(kl::HeckeElt& h, const CoxNbr& y)
+void CoxGroup::cBasis(kl::HeckeElt &h, const CoxNbr &y)
 
 /*
   Puts in h the data of the full row for y in the k-l context corresponding
@@ -612,11 +610,11 @@ void CoxGroup::cBasis(kl::HeckeElt& h, const CoxNbr& y)
 
 {
   activateKL();
-  kl::cBasis(h,y,*d_kl);
+  kl::cBasis(h, y, *d_kl);
   return;
 }
 
-CoxNbr CoxGroup::extendContext(const CoxWord& g)
+CoxNbr CoxGroup::extendContext(const CoxWord &g)
 
 /*
   This function extends the active contexts to acccomodate g. An active
@@ -641,23 +639,23 @@ CoxNbr CoxGroup::extendContext(const CoxWord& g)
 
   if (d_kl) {
     d_kl->setSize(contextSize());
-  if (ERRNO)
-    goto revert;
+    if (ERRNO)
+      goto revert;
   }
   if (d_uneqkl) {
     d_uneqkl->setSize(contextSize());
-  if (ERRNO)
-    goto revert;
+    if (ERRNO)
+      goto revert;
   }
   if (d_invkl) {
     d_invkl->setSize(contextSize());
-  if (ERRNO)
-    goto revert;
+    if (ERRNO)
+      goto revert;
   }
 
   return x;
 
- revert:
+revert:
   d_klsupport->revertSize(prev_size);
   if (d_kl)
     d_kl->revertSize(prev_size);
@@ -757,7 +755,7 @@ void CoxGroup::fillUEMu()
   return;
 }
 
-const invkl::KLPol& CoxGroup::invklPol(const CoxNbr& x, const CoxNbr& y)
+const invkl::KLPol &CoxGroup::invklPol(const CoxNbr &x, const CoxNbr &y)
 
 /*
   Returns the inverse k-l polynomial Q_{x,y}, after activating the context
@@ -767,10 +765,10 @@ const invkl::KLPol& CoxGroup::invklPol(const CoxNbr& x, const CoxNbr& y)
 {
   activateIKL();
 
-  return d_invkl->klPol(x,y);
+  return d_invkl->klPol(x, y);
 }
 
-void CoxGroup::invklRow(invkl::HeckeElt& h, const CoxNbr& y)
+void CoxGroup::invklRow(invkl::HeckeElt &h, const CoxNbr &y)
 
 /*
   Puts in h the data of the full row for y in the inverse k-l context
@@ -780,11 +778,11 @@ void CoxGroup::invklRow(invkl::HeckeElt& h, const CoxNbr& y)
 
 {
   activateIKL();
-  d_invkl->row(h,y);
+  d_invkl->row(h, y);
   return;
 }
 
-const kl::KLPol& CoxGroup::klPol(const CoxNbr& x, const CoxNbr& y)
+const kl::KLPol &CoxGroup::klPol(const CoxNbr &x, const CoxNbr &y)
 
 /*
   Returns the ordinary k-l polynomial P_{x,y}, after activating the context
@@ -794,10 +792,10 @@ const kl::KLPol& CoxGroup::klPol(const CoxNbr& x, const CoxNbr& y)
 {
   activateKL();
 
-  return d_kl->klPol(x,y);
+  return d_kl->klPol(x, y);
 }
 
-void CoxGroup::klRow(kl::HeckeElt& h, const CoxNbr& y)
+void CoxGroup::klRow(kl::HeckeElt &h, const CoxNbr &y)
 
 /*
   Puts in h the data of the full row for y in the k-l context corresponding
@@ -807,11 +805,11 @@ void CoxGroup::klRow(kl::HeckeElt& h, const CoxNbr& y)
 
 {
   activateKL();
-  d_kl->row(h,y);
+  d_kl->row(h, y);
   return;
 }
 
-KLCoeff CoxGroup::mu(const CoxNbr& x, const CoxNbr& y)
+KLCoeff CoxGroup::mu(const CoxNbr &x, const CoxNbr &y)
 
 /*
   Returns the ordinary mu-coefficent mu(x,y), after activating the context
@@ -821,10 +819,10 @@ KLCoeff CoxGroup::mu(const CoxNbr& x, const CoxNbr& y)
 {
   activateKL();
 
-  return d_kl->mu(x,y);
+  return d_kl->mu(x, y);
 }
 
-void CoxGroup::permute(const Permutation& a)
+void CoxGroup::permute(const Permutation &a)
 
 /*
   This function permutes all the active contexts w.r.t. the permutation a.
@@ -876,7 +874,7 @@ void CoxGroup::permute(const Permutation& a)
   return;
 }
 
-void CoxGroup::uneqcBasis(uneqkl::HeckeElt& h, const CoxNbr& y)
+void CoxGroup::uneqcBasis(uneqkl::HeckeElt &h, const CoxNbr &y)
 
 /*
   Puts in h the data of the full row for y in the k-l context corresponding
@@ -886,11 +884,11 @@ void CoxGroup::uneqcBasis(uneqkl::HeckeElt& h, const CoxNbr& y)
 
 {
   activateUEKL();
-  uneqkl::cBasis(h,y,*d_uneqkl);
+  uneqkl::cBasis(h, y, *d_uneqkl);
   return;
 }
 
-const uneqkl::KLPol& CoxGroup::uneqklPol(const CoxNbr& x, const CoxNbr& y)
+const uneqkl::KLPol &CoxGroup::uneqklPol(const CoxNbr &x, const CoxNbr &y)
 
 /*
   Returns the unequal-parameter k-l polynomial P_{x,y}, after activating the
@@ -900,11 +898,11 @@ const uneqkl::KLPol& CoxGroup::uneqklPol(const CoxNbr& x, const CoxNbr& y)
 {
   activateUEKL();
 
-  return d_uneqkl->klPol(x,y);
+  return d_uneqkl->klPol(x, y);
 }
 
-const uneqkl::MuPol& CoxGroup::uneqmu(const Generator& s, const CoxNbr& x,
-				      const CoxNbr& y)
+const uneqkl::MuPol &CoxGroup::uneqmu(const Generator &s, const CoxNbr &x,
+                                      const CoxNbr &y)
 
 /*
   Returns the unequal-parameter mu-polynomial mu_{s,x,y}, after activating
@@ -914,10 +912,10 @@ const uneqkl::MuPol& CoxGroup::uneqmu(const Generator& s, const CoxNbr& x,
 {
   activateUEKL();
 
-  return d_uneqkl->mu(s,x,y);
+  return d_uneqkl->mu(s, x, y);
 }
 
-void CoxGroup::uneqklRow(uneqkl::HeckeElt& h, const CoxNbr& y)
+void CoxGroup::uneqklRow(uneqkl::HeckeElt &h, const CoxNbr &y)
 
 /*
   Puts in e_row and kl_row the data of the full row of the unequal-parameter
@@ -928,7 +926,7 @@ void CoxGroup::uneqklRow(uneqkl::HeckeElt& h, const CoxNbr& y)
 {
   activateUEKL();
 
-  d_uneqkl->row(h,y);
+  d_uneqkl->row(h, y);
   return;
 }
 
@@ -945,7 +943,8 @@ void CoxGroup::uneqklRow(uneqkl::HeckeElt& h, const CoxNbr& y)
 
  *****************************************************************************/
 
-CoxGroup::CoxHelper::CoxHelper(CoxGroup* W):d_W(W)
+CoxGroup::CoxHelper::CoxHelper(CoxGroup *W)
+    : d_W(W)
 
 {}
 
@@ -960,27 +959,27 @@ void CoxGroup::CoxHelper::sortContext()
 */
 
 {
-  KLSupport* kls = d_W->d_klsupport;
+  KLSupport *kls = d_W->d_klsupport;
 
   for (CoxNbr y = 0; y < d_W->contextSize(); ++y) {
     if (!kls->isExtrAllocated(y))
       continue;
 
     Permutation a(0);
-    sortI(d_W->extrList(y),a);
+    sortI(d_W->extrList(y), a);
 
-    kls->applyIPermutation(y,a);
+    kls->applyIPermutation(y, a);
 
     /* apply to the various klcontexts */
 
     if (d_W->d_kl) {
-      d_W->d_kl->applyIPermutation(y,a);
+      d_W->d_kl->applyIPermutation(y, a);
     }
     if (d_W->d_invkl) {
-      d_W->d_invkl->applyIPermutation(y,a);
+      d_W->d_invkl->applyIPermutation(y, a);
     }
     if (d_W->d_uneqkl) {
-      d_W->d_uneqkl->applyIPermutation(y,a);
+      d_W->d_uneqkl->applyIPermutation(y, a);
     }
   }
 
@@ -996,7 +995,7 @@ void CoxGroup::CoxHelper::checkInverses()
 */
 
 {
-  KLSupport& kls = *(d_W->d_klsupport);
+  KLSupport &kls = *(d_W->d_klsupport);
 
   for (CoxNbr y = 0; y < d_W->contextSize(); ++y) {
     CoxNbr yi = d_W->inverse(y);
@@ -1017,4 +1016,4 @@ void CoxGroup::CoxHelper::checkInverses()
   return;
 }
 
-};
+}; // namespace coxeter

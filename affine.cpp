@@ -26,9 +26,9 @@
 /* local variables */
 
 namespace affine {
-  using namespace error;
-  using namespace graph;
-  using namespace minroots;
+using namespace error;
+using namespace graph;
+using namespace minroots;
 
 /****************************************************************************
 
@@ -50,37 +50,30 @@ namespace affine {
 
  ****************************************************************************/
 
-AffineCoxGroup::AffineCoxGroup(const Type& x, const Rank& l):CoxGroup(x,l)
-{}
+AffineCoxGroup::AffineCoxGroup(const Type &x, const Rank &l) : CoxGroup(x, l) {}
 
 /**
   Virtual destructor for the AffineCoxGroup class. Currently, nothing has
   to be done.
 */
-AffineCoxGroup::~AffineCoxGroup()
-{}
+AffineCoxGroup::~AffineCoxGroup() {}
 
-AffineBigRankCoxGroup::AffineBigRankCoxGroup(const Type& x, const Rank& l)
- : AffineCoxGroup(x,l)
-{}
+AffineBigRankCoxGroup::AffineBigRankCoxGroup(const Type &x, const Rank &l)
+    : AffineCoxGroup(x, l) {}
 
 /**
   Virtual destructor for the AffineBigRankCoxGroup class. Currently, nothing
   has to be done.
 */
-AffineBigRankCoxGroup::~AffineBigRankCoxGroup()
-{}
+AffineBigRankCoxGroup::~AffineBigRankCoxGroup() {}
 
-GeneralABRCoxGroup::GeneralABRCoxGroup(const Type& x, const Rank& l)
-  :AffineBigRankCoxGroup(x,l)
-{}
+GeneralABRCoxGroup::GeneralABRCoxGroup(const Type &x, const Rank &l)
+    : AffineBigRankCoxGroup(x, l) {}
 
-GeneralABRCoxGroup::~GeneralABRCoxGroup()
-{}
+GeneralABRCoxGroup::~GeneralABRCoxGroup() {}
 
-AffineMedRankCoxGroup::AffineMedRankCoxGroup(const Type& x, const Rank& l)
-  :AffineCoxGroup(x,l)
-{
+AffineMedRankCoxGroup::AffineMedRankCoxGroup(const Type &x, const Rank &l)
+    : AffineCoxGroup(x, l) {
   mintable().fill(graph());
   /* an error is set here in case of failure */
 }
@@ -89,40 +82,33 @@ AffineMedRankCoxGroup::AffineMedRankCoxGroup(const Type& x, const Rank& l)
   Virtual destructor for the AffineMedRankCoxGroup class. The destruction
   of the mintable should be the job of the CoxGroup destructor.
 */
-AffineMedRankCoxGroup::~AffineMedRankCoxGroup()
-{}
+AffineMedRankCoxGroup::~AffineMedRankCoxGroup() {}
 
-GeneralAMRCoxGroup::GeneralAMRCoxGroup(const Type& x, const Rank& l)
-  :AffineMedRankCoxGroup(x,l)
-{}
+GeneralAMRCoxGroup::GeneralAMRCoxGroup(const Type &x, const Rank &l)
+    : AffineMedRankCoxGroup(x, l) {}
 
 /**
   Virtual destructor for the GeneralAMRCoxGroup class. Currently, nothing has
   to be done.
 */
-GeneralAMRCoxGroup::~GeneralAMRCoxGroup()
-{}
+GeneralAMRCoxGroup::~GeneralAMRCoxGroup() {}
 
-AffineSmallRankCoxGroup::AffineSmallRankCoxGroup(const Type& x, const Rank& l)
-  :AffineMedRankCoxGroup(x,l)
-{}
+AffineSmallRankCoxGroup::AffineSmallRankCoxGroup(const Type &x, const Rank &l)
+    : AffineMedRankCoxGroup(x, l) {}
 
 /**
   Virtual destructor for the AffineSmallRankCoxGroup class. Currently,
   nothing has to be done.
 */
-AffineSmallRankCoxGroup::~AffineSmallRankCoxGroup()
-{}
+AffineSmallRankCoxGroup::~AffineSmallRankCoxGroup() {}
 
-GeneralASRCoxGroup::GeneralASRCoxGroup(const Type& x, const Rank& l)
-  :AffineSmallRankCoxGroup(x,l)
-{}
+GeneralASRCoxGroup::GeneralASRCoxGroup(const Type &x, const Rank &l)
+    : AffineSmallRankCoxGroup(x, l) {}
 
 /**
   Virtual destructor for the GeneralASRCoxGroup class. Currently, nothing has
   to be done.
 */
-GeneralASRCoxGroup::~GeneralASRCoxGroup()
-{}
+GeneralASRCoxGroup::~GeneralASRCoxGroup() {}
 
-}
+} // namespace affine

@@ -1,13 +1,13 @@
 /*
   This is vector.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
 
 /****************************************************************************
 
-  This module contains the implementation of the vector template. 
+  This module contains the implementation of the vector template.
 
   Just as for lists, we define vectors only for types where copy-constructors
   are simply bitwise copy; i.e., vectors are really strings. Otheerwise,
@@ -32,7 +32,8 @@
 
 namespace vector {
 
-template <class T> Vector<T>& Vector<T>::operator+= (const Vector<T>& w)
+template <class T>
+Vector<T> &Vector<T>::operator+=(const Vector<T> &w)
 
 /*
   Operator += for Vectors always makes sure that there is enough
@@ -40,7 +41,7 @@ template <class T> Vector<T>& Vector<T>::operator+= (const Vector<T>& w)
 */
 
 {
-  if (w.dim() > dim())  /* enlarge v if necessary and extend by zero */
+  if (w.dim() > dim()) /* enlarge v if necessary and extend by zero */
     setDim(w.dim());
 
   for (Ulong j = 0; j < w.dim(); j++)
@@ -49,8 +50,8 @@ template <class T> Vector<T>& Vector<T>::operator+= (const Vector<T>& w)
   return *this;
 }
 
-
-template <class T> Vector<T>& Vector<T>::operator-= (const Vector<T>& w)
+template <class T>
+Vector<T> &Vector<T>::operator-=(const Vector<T> &w)
 
 /*
   Operator -= for Vectors always makes sure that there is enough
@@ -60,7 +61,7 @@ template <class T> Vector<T>& Vector<T>::operator-= (const Vector<T>& w)
 {
   unsigned long j;
 
-  if (w.dim() > dim())  /* enlarge v if necessary and extend by zero */
+  if (w.dim() > dim()) /* enlarge v if necessary and extend by zero */
     setDim(w.dim());
 
   for (Ulong j = 0; j < w.dim(); j++)
@@ -69,8 +70,8 @@ template <class T> Vector<T>& Vector<T>::operator-= (const Vector<T>& w)
   return *this;
 }
 
-
-template <class T> Vector<T>& Vector<T>::operator*= (const T& a)
+template <class T>
+Vector<T> &Vector<T>::operator*=(const T &a)
 
 /*
   Scalar multiplication operator.
@@ -83,7 +84,8 @@ template <class T> Vector<T>& Vector<T>::operator*= (const T& a)
   return *this;
 }
 
-template <class T> void Vector<T>::reduceDim()
+template <class T>
+void Vector<T>::reduceDim()
 
 /*
   This function reduces the dimension to the smallest value that will contain
@@ -94,13 +96,13 @@ template <class T> void Vector<T>::reduceDim()
   for (Ulong j = dim(); j;) {
     j--;
     if (d_list[j]) {
-      d_list.setSize(j+1);
+      d_list.setSize(j + 1);
       return;
     }
   }
-  
+
   d_list.setSize(0);
   return;
 }
 
-};
+}; // namespace vector

@@ -11,15 +11,15 @@
 #include "error.h"
 
 namespace memory {
-  using namespace error;
+using namespace error;
 };
 
 namespace {
-  using namespace memory;
-  const Ulong MEMORY_MAX = ULONG_MAX;
-  const Ulong ABYTES = sizeof(Align);
-  const Ulong ARENA_BITS = 16;
-};
+using namespace memory;
+const Ulong MEMORY_MAX = ULONG_MAX;
+const Ulong ABYTES = sizeof(Align);
+const Ulong ARENA_BITS = 16;
+}; // namespace
 
 /****************************************************************************
 
@@ -52,7 +52,7 @@ namespace memory {
 /**
   Return the memory arena.
 */
-Arena& arena() {
+Arena &arena() {
   static Arena a(ARENA_BITS);
   return a;
 }
@@ -64,9 +64,9 @@ Arena& arena() {
  ****************************************************************************/
 
 Arena::Arena(Ulong bsBits) {
-  memset(d_list,0,BITS(Ulong)*sizeof(void *));
-  memset(d_used,0,BITS(Ulong)*sizeof(Ulong));
-  memset(d_allocated,0,BITS(Ulong)*sizeof(Ulong));
+  memset(d_list, 0, BITS(Ulong) * sizeof(void *));
+  memset(d_used, 0, BITS(Ulong) * sizeof(Ulong));
+  memset(d_allocated, 0, BITS(Ulong) * sizeof(Ulong));
   d_bsBits = bsBits;
   d_count = 0;
 }
@@ -93,59 +93,59 @@ Arena::~Arena() {}
   using a bitmap of available blocks.
 */
 void Arena::newBlock(unsigned b) {
-  for (unsigned j = b+1; j < BITS(Ulong); ++j) {
+  for (unsigned j = b + 1; j < BITS(Ulong); ++j) {
     if (d_list[j]) /* split this block up */
-      {
-	Align *ptr = reinterpret_cast<Align *> (d_list[j]);
-	d_list[j] = d_list[j]->next;
-	d_allocated[j]--;
-	for (unsigned i = b; i < j; ++i) {
-	  d_list[i] = reinterpret_cast<MemBlock *> (ptr + (1L<<i));
-	  d_allocated[i]++;
-	}
-	d_list[b]->next = reinterpret_cast<MemBlock *> (ptr);
-	d_list[b]->next->next = 0;
-	d_allocated[b]++;
-	return;
+    {
+      Align *ptr = reinterpret_cast<Align *>(d_list[j]);
+      d_list[j] = d_list[j]->next;
+      d_allocated[j]--;
+      for (unsigned i = b; i < j; ++i) {
+        d_list[i] = reinterpret_cast<MemBlock *>(ptr + (1L << i));
+        d_allocated[i]++;
       }
+      d_list[b]->next = reinterpret_cast<MemBlock *>(ptr);
+      d_list[b]->next->next = 0;
+      d_allocated[b]++;
+      return;
+    }
   }
 
   /* if we get here we need more memory from the system */
 
   if (b >= d_bsBits) { /* get block directly */
-    if (d_count > MEMORY_MAX-(1L<<b)) {
+    if (d_count > MEMORY_MAX - (1L << b)) {
       Error(OUT_OF_MEMORY);
       return;
     }
-    d_list[b] = static_cast<MemBlock *> (calloc(1L<<b,ABYTES));
+    d_list[b] = static_cast<MemBlock *>(calloc(1L << b, ABYTES));
     if (d_list[b] == 0) {
       Error(OUT_OF_MEMORY);
       return;
     }
-    d_count += 1L<<b;
+    d_count += 1L << b;
     d_allocated[b]++;
     return;
   }
 
-  if (d_count > MEMORY_MAX-(1L<<d_bsBits)) {
+  if (d_count > MEMORY_MAX - (1L << d_bsBits)) {
     Error(OUT_OF_MEMORY);
     return;
   }
 
-  Align *ptr = static_cast<Align *> (calloc(1L<<d_bsBits,ABYTES));
+  Align *ptr = static_cast<Align *>(calloc(1L << d_bsBits, ABYTES));
   if (ptr == 0) {
     Error(OUT_OF_MEMORY);
     return;
   }
 
-  d_count += 1L<<d_bsBits;
+  d_count += 1L << d_bsBits;
 
   for (unsigned j = b; j < d_bsBits; ++j) {
-    d_list[j] = reinterpret_cast<MemBlock *> (ptr + (1L<<j));
+    d_list[j] = reinterpret_cast<MemBlock *>(ptr + (1L << j));
     d_allocated[j]++;
   }
 
-  d_list[b]->next = reinterpret_cast<MemBlock *> (ptr);
+  d_list[b]->next = reinterpret_cast<MemBlock *>(ptr);
   d_allocated[b]++;
 
   return;
@@ -159,8 +159,7 @@ void Arena::newBlock(unsigned b) {
 
   The memory is zero-initialized.
 */
-void* Arena::alloc(size_t n)
-{
+void *Arena::alloc(size_t n) {
   if (n == 0)
     return 0;
 
@@ -168,7 +167,7 @@ void* Arena::alloc(size_t n)
 
   unsigned b = 0;
   if (n > ABYTES)
-    b = lastBit(n-1)-lastbit[ABYTES]+1;
+    b = lastBit(n - 1) - lastbit[ABYTES] + 1;
 
   if (d_list[b] == 0) { /* need to make a new block */
     newBlock(b);
@@ -183,33 +182,31 @@ void* Arena::alloc(size_t n)
   block->next = 0;
   d_used[b]++;
 
-  return static_cast<void *> (block);
+  return static_cast<void *>(block);
 }
 
 /**
   Returns the size of the actual memory allocation provided on a request
   of n nodes of size m, in units of m
 */
-Ulong Arena::allocSize(Ulong n, Ulong m) const
-{
+Ulong Arena::allocSize(Ulong n, Ulong m) const {
   if (n == 0)
     return 0;
-  if (n*m <= ABYTES)
-    return ABYTES/m;
-  return ((1 << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES)/m;
+  if (n * m <= ABYTES)
+    return ABYTES / m;
+  return ((1 << lastBit(n * m - 1) - lastbit[ABYTES] + 1) * ABYTES) / m;
 }
 
 /**
   Returns the actual number of bytes of the memory allocation (as opposed
   to allocSize, which rounds the allocation to the largest multiple of m.)
 */
-Ulong Arena::byteSize(Ulong n, Ulong m) const
-{
+Ulong Arena::byteSize(Ulong n, Ulong m) const {
   if (n == 0)
     return 0;
-  if (n*m <= ABYTES)
+  if (n * m <= ABYTES)
     return ABYTES;
-  return (1 << lastBit(n*m-1)-lastbit[ABYTES]+1)*ABYTES;
+  return (1 << lastBit(n * m - 1) - lastbit[ABYTES] + 1) * ABYTES;
 }
 
 /**
@@ -222,14 +219,13 @@ Ulong Arena::byteSize(Ulong n, Ulong m) const
 
   NOTE : equivalent to alloc if old_size = 0.
 */
-void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
-{
+void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size) {
   void *new_ptr = alloc(new_size);
   if (ERRNO) /* overflow */
     return 0;
   if (old_size) {
-    memcpy(new_ptr,ptr,old_size);
-    free(ptr,old_size);
+    memcpy(new_ptr, ptr, old_size);
+    free(ptr, old_size);
   }
 
   return new_ptr;
@@ -240,8 +236,7 @@ void *memory::Arena::realloc(void *ptr, size_t old_size, size_t new_size)
   know to which list the pointer should be appended (it will in fact be
   prepended), we need to pass the size to which ptr was allocated.
 */
-void Arena::free(void *ptr, size_t n)
-{
+void Arena::free(void *ptr, size_t n) {
   if (ptr == 0)
     return;
   if (n == 0)
@@ -249,9 +244,9 @@ void Arena::free(void *ptr, size_t n)
 
   unsigned b = 0;
   if (n > ABYTES)
-    b = lastBit(n-1)-lastbit[ABYTES]+1;
+    b = lastBit(n - 1) - lastbit[ABYTES] + 1;
 
-  memset(ptr,0,(1L<<b)*ABYTES);
+  memset(ptr, 0, (1L << b) * ABYTES);
   MemBlock *block = (MemBlock *)ptr;
   block->next = d_list[b];
   d_list[b] = block;
@@ -263,22 +258,21 @@ void Arena::free(void *ptr, size_t n)
 /**
   Prints information about the memory arena.
 */
-void Arena::print(FILE *file) const
-{
-  fprintf(file,"%-10s%10s/%-10s\n","size : 2^","used","allocated");
+void Arena::print(FILE *file) const {
+  fprintf(file, "%-10s%10s/%-10s\n", "size : 2^", "used", "allocated");
 
   Ulong used_count = 0;
 
   for (unsigned j = 0; j < BITS(Ulong); ++j) {
-    fprintf(file,"%3u%7s%10lu/%-10lu\n",j,"",d_used[j],d_allocated[j]);
-    used_count += (1L<<j)*d_used[j];
+    fprintf(file, "%3u%7s%10lu/%-10lu\n", j, "", d_used[j], d_allocated[j]);
+    used_count += (1L << j) * d_used[j];
   }
 
-  fprintf(file,"\n");
-  fprintf(file,"total : %10lu/%-10lu %lu-byte units used/allocated\n",
-	  used_count,static_cast<Ulong>(d_count),ABYTES);
+  fprintf(file, "\n");
+  fprintf(file, "total : %10lu/%-10lu %lu-byte units used/allocated\n",
+          used_count, static_cast<Ulong>(d_count), ABYTES);
 }
 
 void pause() { ; }
 
-}
+} // namespace memory

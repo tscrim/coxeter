@@ -16,39 +16,38 @@
 
  ****************************************************************************/
 
-#ifndef FCOXGROUP_H  /* guard against multiple inclusions */
+#ifndef FCOXGROUP_H /* guard against multiple inclusions */
 #define FCOXGROUP_H
 
 #include "globals.h"
 #include "coxgroup.h"
 
 namespace fcoxgroup {
-  using namespace coxeter;
+using namespace coxeter;
 
 /******** type declarations *************************************************/
 
-  class FiniteCoxGroup;
-  class FiniteBigRankCoxGroup;
-  class GeneralFBRCoxGroup;
-  class FiniteMedRankCoxGroup;
-  class GeneralFMRCoxGroup;
-  class FiniteSmallRankCoxGroup;
-  class GeneralFSRCoxGroup;
-  class SmallCoxGroup;
-  class GeneralSCoxGroup;
-  typedef CoxNbr DenseArray;
+class FiniteCoxGroup;
+class FiniteBigRankCoxGroup;
+class GeneralFBRCoxGroup;
+class FiniteMedRankCoxGroup;
+class GeneralFMRCoxGroup;
+class FiniteSmallRankCoxGroup;
+class GeneralFSRCoxGroup;
+class SmallCoxGroup;
+class GeneralSCoxGroup;
+typedef CoxNbr DenseArray;
 
 /******** function declarations *********************************************/
 
-  bool isFiniteType(CoxGroup *W);
-  Rank maxSmallRank(const Type& x);
+bool isFiniteType(CoxGroup *W);
+Rank maxSmallRank(const Type &x);
 
 /******** type definitions **************************************************/
 
 class FiniteCoxGroup : public CoxGroup {
 
- protected:
-
+protected:
   CoxArr d_longest_coxarr;
   CoxWord d_longest_coxword;
   Length d_maxlength;
@@ -68,182 +67,196 @@ class FiniteCoxGroup : public CoxGroup {
   Partition d_rstring;
   List<CoxNbr> d_duflo;
 
- public:
+public:
+  /* constructors */
 
-/* constructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(FiniteCoxGroup));
+  }
 
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(FiniteCoxGroup));}
-
-  FiniteCoxGroup(const Type& x, const Rank& l);
+  FiniteCoxGroup(const Type &x, const Rank &l);
   virtual ~FiniteCoxGroup();
 
-/* accessors */
+  /* accessors */
 
   bool isFullContext() const;
-  const CoxArr& longest_coxarr() const;                          /* inlined */
-  const CoxWord& longest_coxword() const;                        /* inlined */
-  Length maxLength() const;                                      /* inlined */
-  void modify(ParseInterface& P, const Token& tok) const;
-  CoxSize order() const;                                         /* inlined */
-  bool parseModifier(ParseInterface& P) const;
-  const FiltrationTerm *transducer(const Rank& l = 0) const;     /* inlined */
+  const CoxArr &longest_coxarr() const;   /* inlined */
+  const CoxWord &longest_coxword() const; /* inlined */
+  Length maxLength() const;               /* inlined */
+  void modify(ParseInterface &P, const Token &tok) const;
+  CoxSize order() const; /* inlined */
+  bool parseModifier(ParseInterface &P) const;
+  const FiltrationTerm *transducer(const Rank &l = 0) const; /* inlined */
 
-/* modifiers */
+  /* modifiers */
 
-  FiltrationTerm *transducer(const Rank& l = 0)
-    {return d_transducer->transducer(l);}
+  FiltrationTerm *transducer(const Rank &l = 0) {
+    return d_transducer->transducer(l);
+  }
 
-/* array operations */
+  /* array operations */
 
-  const CoxArr& assign(CoxArr& a, const CoxArr& b) const;        /* inlined */
-  virtual const CoxArr& inverseArr(CoxArr& a) const;
-  Length length(const CoxArr& a) const;
-  const CoxArr& powerArr(CoxArr& a, const Ulong& m) const;
-  int prodArr(CoxArr& a, const CoxArr& b) const;
-  LFlags rDescent(const CoxArr& a) const;
-  const CoxWord& reducedArr(CoxWord& g, const CoxArr& a) const;
-  const CoxArr& setZero(CoxArr& a) const;                        /* inlined */
+  const CoxArr &assign(CoxArr &a, const CoxArr &b) const; /* inlined */
+  virtual const CoxArr &inverseArr(CoxArr &a) const;
+  Length length(const CoxArr &a) const;
+  const CoxArr &powerArr(CoxArr &a, const Ulong &m) const;
+  int prodArr(CoxArr &a, const CoxArr &b) const;
+  LFlags rDescent(const CoxArr &a) const;
+  const CoxWord &reducedArr(CoxWord &g, const CoxArr &a) const;
+  const CoxArr &setZero(CoxArr &a) const; /* inlined */
 
-/* mixed operations */
+  /* mixed operations */
 
-  const CoxArr& assign(CoxArr& a, const CoxWord& g) const;
-  int prodArr(CoxArr& a, Generator s) const;
-  int prodArr(CoxArr& a, const CoxWord& g) const;
+  const CoxArr &assign(CoxArr &a, const CoxWord &g) const;
+  int prodArr(CoxArr &a, Generator s) const;
+  int prodArr(CoxArr &a, const CoxWord &g) const;
 
-// manipulators
+  // manipulators
 
-  void fullContext();                                            /* inlined */
+  void fullContext(); /* inlined */
 
-/* kazhdan-lusztig cells and realted partitions */
+  /* kazhdan-lusztig cells and realted partitions */
 
-  const Partition& lCell();
-  const Partition& lrCell();
-  const Partition& rCell();
-  const List<CoxNbr>& duflo();
-  const Partition& lUneqCell();
-  const Partition& lrUneqCell();
-  const Partition& rUneqCell();
-  const Partition& lDescent();
-  const Partition& rDescent();
-  const Partition& lString();
-  const Partition& rString();
-  const Partition& lTau();
-  const Partition& rTau();
-
+  const Partition &lCell();
+  const Partition &lrCell();
+  const Partition &rCell();
+  const List<CoxNbr> &duflo();
+  const Partition &lUneqCell();
+  const Partition &lrUneqCell();
+  const Partition &rUneqCell();
+  const Partition &lDescent();
+  const Partition &rDescent();
+  const Partition &lString();
+  const Partition &rString();
+  const Partition &lTau();
+  const Partition &rTau();
 };
 
 class FiniteBigRankCoxGroup : public FiniteCoxGroup {
- public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(FiniteBigRankCoxGroup));}
-  FiniteBigRankCoxGroup(const Type& x, const Rank& l);
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(FiniteBigRankCoxGroup));
+  }
+  FiniteBigRankCoxGroup(const Type &x, const Rank &l);
   virtual ~FiniteBigRankCoxGroup();
-/* accessors */
-  kl::KLContext& kl() const;                                     /* inlined */
+  /* accessors */
+  kl::KLContext &kl() const; /* inlined */
 };
 
- class GeneralFBRCoxGroup : public FiniteBigRankCoxGroup { /* leaf class */
-  public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(GeneralFBRCoxGroup));}
-  GeneralFBRCoxGroup(const Type& x, const Rank& l);
+class GeneralFBRCoxGroup : public FiniteBigRankCoxGroup { /* leaf class */
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(GeneralFBRCoxGroup));
+  }
+  GeneralFBRCoxGroup(const Type &x, const Rank &l);
   ~GeneralFBRCoxGroup();
 };
 
 class FiniteMedRankCoxGroup : public FiniteCoxGroup {
- public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(FiniteMedRankCoxGroup));}
-  FiniteMedRankCoxGroup(const Type& x, const Rank& l);
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(FiniteMedRankCoxGroup));
+  }
+  FiniteMedRankCoxGroup(const Type &x, const Rank &l);
   virtual ~FiniteMedRankCoxGroup();
-/* accessors */
-  kl::KLContext& kl() const;                                     /* inlined */
+  /* accessors */
+  kl::KLContext &kl() const; /* inlined */
 };
 
- class GeneralFMRCoxGroup : public FiniteMedRankCoxGroup { /* leaf class */
-  public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(GeneralFMRCoxGroup));}
-  GeneralFMRCoxGroup(const Type& x, const Rank& l);
+class GeneralFMRCoxGroup : public FiniteMedRankCoxGroup { /* leaf class */
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(GeneralFMRCoxGroup));
+  }
+  GeneralFMRCoxGroup(const Type &x, const Rank &l);
   ~GeneralFMRCoxGroup();
 };
 
 class FiniteSmallRankCoxGroup : public FiniteMedRankCoxGroup {
- public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(FiniteSmallRankCoxGroup));}
-  FiniteSmallRankCoxGroup(const Type& x, const Rank& l);
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(FiniteSmallRankCoxGroup));
+  }
+  FiniteSmallRankCoxGroup(const Type &x, const Rank &l);
   virtual ~FiniteSmallRankCoxGroup();
-/* accessors */
-  kl::KLContext& kl() const;                                     /* inlined */
+  /* accessors */
+  kl::KLContext &kl() const; /* inlined */
 };
 
- class GeneralFSRCoxGroup : public FiniteSmallRankCoxGroup { /* leaf class */
-  public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(GeneralFSRCoxGroup));}
-  GeneralFSRCoxGroup(const Type& x, const Rank& l);
+class GeneralFSRCoxGroup : public FiniteSmallRankCoxGroup { /* leaf class */
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(GeneralFSRCoxGroup));
+  }
+  GeneralFSRCoxGroup(const Type &x, const Rank &l);
   ~GeneralFSRCoxGroup();
 };
 
 class SmallCoxGroup : public FiniteSmallRankCoxGroup {
- public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(SmallCoxGroup));}
-  SmallCoxGroup(const Type& x, const Rank& l);
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(SmallCoxGroup));
+  }
+  SmallCoxGroup(const Type &x, const Rank &l);
   virtual ~SmallCoxGroup();
-/* accessors */
-  const CoxArr& assign(CoxArr& a, const DenseArray& x) const;
-  void assign(DenseArray& x, const CoxArr& a) const;
-  bool parseDenseArray(ParseInterface& P) const;
-  virtual bool parseGroupElement(ParseInterface& P) const;
-  int prodD(CoxWord& g, const DenseArray& x) const;
-  int prodD(DenseArray& x, const CoxWord& g) const;
+  /* accessors */
+  const CoxArr &assign(CoxArr &a, const DenseArray &x) const;
+  void assign(DenseArray &x, const CoxArr &a) const;
+  bool parseDenseArray(ParseInterface &P) const;
+  virtual bool parseGroupElement(ParseInterface &P) const;
+  int prodD(CoxWord &g, const DenseArray &x) const;
+  int prodD(DenseArray &x, const CoxWord &g) const;
 };
 
- class GeneralSCoxGroup : public SmallCoxGroup { /* leaf class */
-  public:
-/* constructors and destructors */
-  void* operator new(size_t size) {return arena().alloc(size);}
-  void operator delete(void* ptr)
-    {return arena().free(ptr,sizeof(GeneralSCoxGroup));}
-  GeneralSCoxGroup(const Type& x, const Rank& l);
+class GeneralSCoxGroup : public SmallCoxGroup { /* leaf class */
+public:
+  /* constructors and destructors */
+  void *operator new(size_t size) { return arena().alloc(size); }
+  void operator delete(void *ptr) {
+    return arena().free(ptr, sizeof(GeneralSCoxGroup));
+  }
+  GeneralSCoxGroup(const Type &x, const Rank &l);
   ~GeneralSCoxGroup();
 };
 
 /******** Inline implementations ******************************************/
 
-inline const CoxArr& FiniteCoxGroup::assign(CoxArr& a, const CoxArr& b) const
-  {memmove(a,b,rank()*sizeof(ParNbr)); return a;}
-inline void FiniteCoxGroup::fullContext()
-  {extendContext(d_longest_coxword);}
-inline const CoxArr& FiniteCoxGroup::longest_coxarr() const
-  {return d_longest_coxarr;}
-inline const CoxWord& FiniteCoxGroup::longest_coxword() const
-  {return d_longest_coxword;}
-inline Length FiniteCoxGroup::maxLength() const {return d_maxlength;}
-inline CoxSize FiniteCoxGroup::order() const {return d_order;}
-inline const CoxArr& FiniteCoxGroup::setZero(CoxArr& a) const
-  {memset(a,0,rank()*sizeof(ParNbr)); return a;}
-inline const FiltrationTerm* FiniteCoxGroup::transducer(const Rank& l) const
-  {return d_transducer->transducer(l);}
-
+inline const CoxArr &FiniteCoxGroup::assign(CoxArr &a, const CoxArr &b) const {
+  memmove(a, b, rank() * sizeof(ParNbr));
+  return a;
 }
+inline void FiniteCoxGroup::fullContext() { extendContext(d_longest_coxword); }
+inline const CoxArr &FiniteCoxGroup::longest_coxarr() const {
+  return d_longest_coxarr;
+}
+inline const CoxWord &FiniteCoxGroup::longest_coxword() const {
+  return d_longest_coxword;
+}
+inline Length FiniteCoxGroup::maxLength() const { return d_maxlength; }
+inline CoxSize FiniteCoxGroup::order() const { return d_order; }
+inline const CoxArr &FiniteCoxGroup::setZero(CoxArr &a) const {
+  memset(a, 0, rank() * sizeof(ParNbr));
+  return a;
+}
+inline const FiltrationTerm *FiniteCoxGroup::transducer(const Rank &l) const {
+  return d_transducer->transducer(l);
+}
+
+} // namespace fcoxgroup
 
 #endif

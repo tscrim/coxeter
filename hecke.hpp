@@ -1,6 +1,6 @@
 /*
   This is hecke.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,7 +8,7 @@
 #include "polynomials.h"
 
 namespace hecke {
-  using namespace polynomials;
+using namespace polynomials;
 };
 
 /*****************************************************************************
@@ -28,28 +28,28 @@ namespace hecke {
 ******************************************************************************/
 
 namespace {
-  using namespace hecke;
+using namespace hecke;
 
-  template<class P> struct PPtrF {
-    typedef const P* valueType;
-    valueType operator() (const HeckeMonomial<P>& m) {return &m.pol();}
-  };
-
-  template<class P>
-  void appendStar(String& str, const HeckeMonomial<P>& m, 
-		  const SchubertContext& p, const Length& l);
-  template<class P> 
-  Ulong maxLength(const List<HeckeMonomial<P> >& h, const SchubertContext& p,
-		    const Interface& I, const Length& l);
-  template<class P> 
-  void oneColumnPrint(FILE* file, const List<HeckeMonomial<P> >& h,
-		      const Permutation& a, const SchubertContext& p, 
-		      const Interface& I, const Length& l, const Ulong& ls);
-  template<class P> 
-  void twoColumnPrint(FILE* file, const List<HeckeMonomial<P> >& h,
-		      const Permutation&a, const SchubertContext& p, 
-		      const Interface& I, const Length& l, const Ulong& ls);
+template <class P> struct PPtrF {
+  typedef const P *valueType;
+  valueType operator()(const HeckeMonomial<P> &m) { return &m.pol(); }
 };
+
+template <class P>
+void appendStar(String &str, const HeckeMonomial<P> &m,
+                const SchubertContext &p, const Length &l);
+template <class P>
+Ulong maxLength(const List<HeckeMonomial<P>> &h, const SchubertContext &p,
+                const Interface &I, const Length &l);
+template <class P>
+void oneColumnPrint(FILE *file, const List<HeckeMonomial<P>> &h,
+                    const Permutation &a, const SchubertContext &p,
+                    const Interface &I, const Length &l, const Ulong &ls);
+template <class P>
+void twoColumnPrint(FILE *file, const List<HeckeMonomial<P>> &h,
+                    const Permutation &a, const SchubertContext &p,
+                    const Interface &I, const Length &l, const Ulong &ls);
+}; // namespace
 
 /*****************************************************************************
 
@@ -76,12 +76,13 @@ namespace {
 namespace hecke {
 
 template <class P>
-HeckeMonomial<P>::HeckeMonomial(const CoxNbr& x, const P* pol)
-  :d_x(x), d_pol(pol)
+HeckeMonomial<P>::HeckeMonomial(const CoxNbr &x, const P *pol)
+    : d_x(x), d_pol(pol)
 
 {}
 
-template<class P> HeckeMonomial<P>::~HeckeMonomial()
+template <class P>
+HeckeMonomial<P>::~HeckeMonomial()
 
 /*
   Automatic destruction is enough.
@@ -89,7 +90,7 @@ template<class P> HeckeMonomial<P>::~HeckeMonomial()
 
 {}
 
-};
+}; // namespace hecke
 
 /*****************************************************************************
 
@@ -98,7 +99,7 @@ template<class P> HeckeMonomial<P>::~HeckeMonomial()
   This section defines some utility functions declared in hecke.h :
 
    - append(str,m,p,I) : appends m to str using I;
-   - appendStar(str,m,p,l) : appends a star to str if there is a 
+   - appendStar(str,m,p,l) : appends a star to str if there is a
      mu-coefficient;
    - maxLength(h,p,I,l) : computes the maximal length of an output line;
    - oneColumnPrint(h,p,I,l,ls) : does one-column output;
@@ -112,58 +113,58 @@ template<class P> HeckeMonomial<P>::~HeckeMonomial()
 
 namespace hecke {
 
-template<class P>
-void append(String& str, const HeckeMonomial<P>& m, const SchubertContext& p,
-	    const Interface& I)
+template <class P>
+void append(String &str, const HeckeMonomial<P> &m, const SchubertContext &p,
+            const Interface &I)
 
 /*
   Outputs m to str.
 */
 
-{    
-  p.append(str,m.x(),I);
-  io::append(str," : ");
-  polynomials::append(str,m.pol(),"q");
+{
+  p.append(str, m.x(), I);
+  io::append(str, " : ");
+  polynomials::append(str, m.pol(), "q");
 
   return;
 }
 
-};
+}; // namespace hecke
 
 namespace {
 
-template<class P>
-void appendStar(String& str, const HeckeMonomial<P>& m, 
-		  const SchubertContext& p, const Length& l)
+template <class P>
+void appendStar(String &str, const HeckeMonomial<P> &m,
+                const SchubertContext &p, const Length &l)
 
 {
   Length lx = p.length(m.x());
-  
-  if (static_cast<long>(2*m.pol().deg()) == static_cast<long>(l-lx-1))
-    append(str," *");
+
+  if (static_cast<long>(2 * m.pol().deg()) == static_cast<long>(l - lx - 1))
+    append(str, " *");
 
   return;
 }
 
-template<class P> 
-Ulong maxLength(const List<HeckeMonomial<P> >& h, const SchubertContext& p, 
-		  const Interface& I, const Length& l)
+template <class P>
+Ulong maxLength(const List<HeckeMonomial<P>> &h, const SchubertContext &p,
+                const Interface &I, const Length &l)
 
 /*
   Returns the length of the longest line that would be printed out by
   oneColumnPrint(file,h,I,l). This is a preliminary to prettyprinting.
 */
 
-{  
+{
   static String buf(0);
 
   Ulong maxl = 0;
 
   for (Ulong j = 0; j < h.size(); ++j) {
     reset(buf);
-    const HeckeMonomial<P>& m = h[j];
-    hecke::append(buf,m,p,I);
-    appendStar(buf,m,p,l);
+    const HeckeMonomial<P> &m = h[j];
+    hecke::append(buf, m, p, I);
+    appendStar(buf, m, p, l);
     if (maxl < buf.length())
       maxl = buf.length();
   }
@@ -171,14 +172,10 @@ Ulong maxLength(const List<HeckeMonomial<P> >& h, const SchubertContext& p,
   return maxl;
 }
 
-template<class P> 
-void oneColumnPrint(FILE* file, 
-		    const List<HeckeMonomial<P> >& h,
-		    const Permutation& a,
-		    const SchubertContext& p, 
-		    const Interface& I,
-		    const Length& l, 
-		    const Ulong& ls)
+template <class P>
+void oneColumnPrint(FILE *file, const List<HeckeMonomial<P>> &h,
+                    const Permutation &a, const SchubertContext &p,
+                    const Interface &I, const Length &l, const Ulong &ls)
 
 /*
   This function prints out the row in one-column format, trying to fold long
@@ -190,25 +187,21 @@ void oneColumnPrint(FILE* file,
 
   for (Ulong j = 0; j < h.size(); ++j) {
     reset(buf);
-    hecke::append(buf,h[a[j]],p,I);
-    appendStar(buf,h[a[j]],p,l);
-    foldLine(file,buf,ls,4,"+");
-    fprintf(file,"\n");
+    hecke::append(buf, h[a[j]], p, I);
+    appendStar(buf, h[a[j]], p, l);
+    foldLine(file, buf, ls, 4, "+");
+    fprintf(file, "\n");
   }
 }
 
-};
+}; // namespace
 
 namespace hecke {
 
-template<class P>
-void prettyPrint(FILE* file, 
-		 const List<HeckeMonomial<P> >& h,
-		 const Permutation& a,
-		 const SchubertContext& p, 
-		 const Interface& I, 
-		 const Length& l, 
-		 const Ulong& ls)
+template <class P>
+void prettyPrint(FILE *file, const List<HeckeMonomial<P>> &h,
+                 const Permutation &a, const SchubertContext &p,
+                 const Interface &I, const Length &l, const Ulong &ls)
 
 /*
   This function does the prettyprinting of h to the file. The formatting
@@ -222,25 +215,25 @@ void prettyPrint(FILE* file,
 {
   static String buf(0);
 
-  Ulong maxl = maxLength(h,p,I,l);
-  Ulong hl = (ls-1)/2;
+  Ulong maxl = maxLength(h, p, I, l);
+  Ulong hl = (ls - 1) / 2;
 
   if (maxl > hl)
-    return oneColumnPrint(file,h,a,p,I,l,ls);
+    return oneColumnPrint(file, h, a, p, I, l, ls);
   else
-    return twoColumnPrint(file,h,a,p,I,l,ls);
+    return twoColumnPrint(file, h, a, p, I, l, ls);
 
   return;
 }
 
-template<class P>
-void singularStratification(List<HeckeMonomial<P> >& hs, 
-			    const List<HeckeMonomial<P> >& h,
-			    const SchubertContext& p)
+template <class P>
+void singularStratification(List<HeckeMonomial<P>> &hs,
+                            const List<HeckeMonomial<P>> &h,
+                            const SchubertContext &p)
 
 /*
-  This function extracts the "rational singular stratification". By this we 
-  mean that we sort by Kazhdan-Lusztig polynomials, and then consider maximal 
+  This function extracts the "rational singular stratification". By this we
+  mean that we sort by Kazhdan-Lusztig polynomials, and then consider maximal
   elements (for the Bruhat ordering) in each class.
 
   Geometrically, when the Bruhat ordering comes from the stratification
@@ -269,7 +262,7 @@ void singularStratification(List<HeckeMonomial<P> >& hs,
   /* sort row by kl-polynomial */
 
   PPtrF<P> f;
-  Partition pi(h.begin(),h.end(),f);
+  Partition pi(h.begin(), h.end(), f);
 
   /* find maximal elements in each class */
 
@@ -280,30 +273,26 @@ void singularStratification(List<HeckeMonomial<P> >& hs,
     if (h[m].pol().deg() == 0) // polynomial is one
       continue;
     ToCoxNbr<P> f(&h);
-    List<CoxNbr> c(i().begin(),i().end(),f);
+    List<CoxNbr> c(i().begin(), i().end(), f);
     List<Ulong> a(0);
-    extractMaximals(p,c,a);
-    hs.setSize(count+a.size());
+    extractMaximals(p, c, a);
+    hs.setSize(count + a.size());
     for (Ulong j = 0; j < a.size(); ++j)
-      hs[count+j] = h[i()[a[j]]];
+      hs[count + j] = h[i()[a[j]]];
     count += a.size();
   }
 
   return;
 }
 
-};
+}; // namespace hecke
 
 namespace {
 
-template<class P> 
-void twoColumnPrint(FILE* file, 
-		    const List<HeckeMonomial<P> >& h,
-		    const Permutation& a,
-		    const SchubertContext& p, 
-		    const Interface& I, 
-		    const Length& l, 
-		    const Ulong& ls)
+template <class P>
+void twoColumnPrint(FILE *file, const List<HeckeMonomial<P>> &h,
+                    const Permutation &a, const SchubertContext &p,
+                    const Interface &I, const Length &l, const Ulong &ls)
 
 /*
   This function prints out the row in two-column format, on lines of length
@@ -316,39 +305,32 @@ void twoColumnPrint(FILE* file,
 {
   static String buf(0);
 
-  Ulong hl = (ls-1)/2; /* width of output column */
-  Ulong fl = h.size()/2; /* number of full lines */
+  Ulong hl = (ls - 1) / 2; /* width of output column */
+  Ulong fl = h.size() / 2; /* number of full lines */
   Ulong i = 0;
 
   for (Ulong j = 0; j < fl; ++j) { /* print out a full line */
     reset(buf);
-    hecke::append(buf,h[a[i]],p,I);
-    appendStar(buf,h[a[i]],p,l);
-    pad(buf,ls-hl);
+    hecke::append(buf, h[a[i]], p, I);
+    appendStar(buf, h[a[i]], p, l);
+    pad(buf, ls - hl);
     i++;
-    hecke::append(buf,h[a[i]],p,I);
-    appendStar(buf,h[a[i]],p,l);
+    hecke::append(buf, h[a[i]], p, I);
+    appendStar(buf, h[a[i]], p, l);
     i++;
-    print(file,buf);
-    fprintf(file,"\n");
+    print(file, buf);
+    fprintf(file, "\n");
   }
 
-  if (h.size()%2) { /* print out a half line */
+  if (h.size() % 2) { /* print out a half line */
     reset(buf);
-    hecke::append(buf,h[a[i]],p,I);
-    appendStar(buf,h[a[i]],p,l);
-    print(file,buf);
-    fprintf(file,"\n");
+    hecke::append(buf, h[a[i]], p, I);
+    appendStar(buf, h[a[i]], p, l);
+    print(file, buf);
+    fprintf(file, "\n");
   }
 
   return;
 }
 
-};
-
-
-
-
-
-
-
+}; // namespace

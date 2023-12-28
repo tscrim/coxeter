@@ -1,6 +1,6 @@
 /*
   This is io.cpp
-  
+
   Coxeter version 3.0_demo  Copyright (C) 2001 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -42,7 +42,7 @@ String::~String()
 
 {}
 
-};
+}; // namespace io
 
 /*****************************************************************************
 
@@ -71,7 +71,7 @@ String::~String()
 
 namespace io {
 
-String& append(String& l, const char c)
+String &append(String &l, const char c)
 
 /*
   Appends c to the varstring l, resizing l as necessary.
@@ -79,64 +79,59 @@ String& append(String& l, const char c)
 
 {
   l[l.length()] = c;
-  l.setLength(l.length()+1);
+  l.setLength(l.length() + 1);
   l[l.length()] = 0;
 
   return l;
 }
 
-
-String& append(String& l, const char *s)
+String &append(String &l, const char *s)
 
 /*
   Appends s to the varstring l, resizing l as necessary.
 */
 
 {
-  l.setLength(l.length()+strlen(s));
-  strcat(l.ptr(),s);
+  l.setLength(l.length() + strlen(s));
+  strcat(l.ptr(), s);
 
   return l;
 }
 
-
-String& append(String& l1, const String& l2)
+String &append(String &l1, const String &l2)
 
 /*
   Appends l2 to the varstring l1, resizing l1 as necessary.
 */
 
-{  
-  l1.setLength(l1.length()+l2.length());
-  strcat(l1.ptr(),l2.ptr());
+{
+  l1.setLength(l1.length() + l2.length());
+  strcat(l1.ptr(), l2.ptr());
 
   return l1;
 }
 
-
-String& append(String& str, const Ulong& n)
+String &append(String &str, const Ulong &n)
 
 {
-  static String cs(digits(ULONG_MAX,10));
+  static String cs(digits(ULONG_MAX, 10));
 
-  cs.setLength(sprintf(cs.ptr(),"%lu",n));
-  append(str,cs);
+  cs.setLength(sprintf(cs.ptr(), "%lu", n));
+  append(str, cs);
   return str;
 }
 
-
-String& append(String& str, const long& m)
+String &append(String &str, const long &m)
 
 {
-  static String cs(digits(LONG_MAX,10)+1);
+  static String cs(digits(LONG_MAX, 10) + 1);
 
-  cs.setLength(sprintf(cs.ptr(),"%ld",m));
-  append(str,cs);
+  cs.setLength(sprintf(cs.ptr(), "%ld", m));
+  append(str, cs);
   return str;
 }
 
-
-String& append(String& l, const int *v, const Ulong& n)
+String &append(String &l, const int *v, const Ulong &n)
 
 /*
   Appends to l the string representation of the n first elements pointed
@@ -148,45 +143,42 @@ String& append(String& l, const int *v, const Ulong& n)
 
   reset(buf);
 
-  append(buf,"[");
+  append(buf, "[");
 
   for (Ulong j = 0; j < n; j++) {
-    append(buf,v[j]);
-    if (j+1 < n)  /* more to come */
-      append(buf,",");
+    append(buf, v[j]);
+    if (j + 1 < n) /* more to come */
+      append(buf, ",");
   }
 
-  append(buf,"]");
+  append(buf, "]");
 
   return l;
 }
 
-
-String& append(String& str, const int& n)
+String &append(String &str, const int &n)
 
 {
-  static String cs(digits(INT_MAX,10)+1);
+  static String cs(digits(INT_MAX, 10) + 1);
 
-  cs.setLength(sprintf(cs.ptr(),"%d",n));
-  append(str,cs);
+  cs.setLength(sprintf(cs.ptr(), "%d", n));
+  append(str, cs);
 
   return str;
 }
 
-
-String& append(String& str, const unsigned& n)
+String &append(String &str, const unsigned &n)
 
 {
-  static String cs(digits(UINT_MAX,10)+1);
+  static String cs(digits(UINT_MAX, 10) + 1);
 
-  cs.setLength(sprintf(cs.ptr(),"%u",n));
-  append(str,cs);
+  cs.setLength(sprintf(cs.ptr(), "%u", n));
+  append(str, cs);
 
   return str;
 }
 
-
-String& erase(String&l, const Ulong& n)
+String &erase(String &l, const Ulong &n)
 
 /*
   Erases the last n letters from the string l (everything if n >= length)
@@ -196,14 +188,13 @@ String& erase(String&l, const Ulong& n)
   if (n >= l.length()) /* erase everything */
     return reset(l);
 
-  l[l.length()-n] = '\0';
-  l.setLength(l.length()-n);
+  l[l.length() - n] = '\0';
+  l.setLength(l.length() - n);
 
   return l;
 }
 
-
-String& pad(String& l, const Ulong& n)
+String &pad(String &l, const Ulong &n)
 
 /*
   Pads the string with white spaces to length n.
@@ -217,13 +208,12 @@ String& pad(String& l, const Ulong& n)
 
   int a = l.length();
   l.setLength(n);
-  sprintf(l.ptr()+a,"%*s",static_cast<int>(n-a),"");
+  sprintf(l.ptr() + a, "%*s", static_cast<int>(n - a), "");
 
   return l;
 }
 
-
-String& reset(String& l)
+String &reset(String &l)
 
 /*
   Resets l to the empty string.
@@ -236,8 +226,8 @@ String& reset(String& l)
   return l;
 }
 
-String& setString(String& l, const String& s, const Ulong& first,
-		     const Ulong& r)
+String &setString(String &l, const String &s, const Ulong &first,
+                  const Ulong &r)
 
 /*
   Sets the string l to the subword of s starting at first, with length r.
@@ -245,13 +235,13 @@ String& setString(String& l, const String& s, const Ulong& first,
 
 {
   l.setLength(r);
-  l.setData(s.ptr()+first,0,r);
+  l.setData(s.ptr() + first, 0, r);
   l[r] = '\0';
 
   return l;
 }
 
-const String& String::undefined()
+const String &String::undefined()
 
 /*
   This function returns an impossible string, namely the one corresponding
@@ -263,8 +253,7 @@ const String& String::undefined()
   return str;
 }
 
-};
-
+}; // namespace io
 
 /*****************************************************************************
 
@@ -279,15 +268,15 @@ const String& String::undefined()
   - print(file,str) : prints the (var)string to the file;
   - print(file,v,n) : prints a list of integers;
   - printFile(file,name) : prints the contents of the file name;
-  - printFile(file,name,dir_name) : prints the contents of the file 
+  - printFile(file,name,dir_name) : prints the contents of the file
     dir_name/name;
 
 ******************************************************************************/
 
 namespace io {
 
-void foldLine(FILE* file, const String& str, const Ulong& ls,
-	      const Ulong& h, const char* hyphens)
+void foldLine(FILE *file, const String &str, const Ulong &ls, const Ulong &h,
+              const char *hyphens)
 
 /*
   This function breaks up the string str into lines of at most ls characters
@@ -301,7 +290,7 @@ void foldLine(FILE* file, const String& str, const Ulong& ls,
   String buf(0);
 
   if (str.length() <= ls) { /* str fits on one line */
-    print(file,str);
+    print(file, str);
     return;
   }
 
@@ -309,7 +298,7 @@ void foldLine(FILE* file, const String& str, const Ulong& ls,
 
   Ulong bp = 0;
 
-  for (Ulong j = 0; j < ls; j += strcspn(str.ptr()+j,hyphens)) {
+  for (Ulong j = 0; j < ls; j += strcspn(str.ptr() + j, hyphens)) {
     bp = j;
     j++;
   }
@@ -317,37 +306,36 @@ void foldLine(FILE* file, const String& str, const Ulong& ls,
   if (bp == 0) /* break brutally */
     bp = ls;
 
-  setString(buf,str,0,bp);
-  print(file,buf);
+  setString(buf, str, 0, bp);
+  print(file, buf);
 
   /* print continuation lines */
 
   Ulong p = bp;
 
-  for (; p < str.length()-ls+h; p += bp) {
+  for (; p < str.length() - ls + h; p += bp) {
     bp = 0;
-    for (Ulong j = 0; j < ls-h; j += strcspn(str.ptr()+p+j,hyphens)) {
+    for (Ulong j = 0; j < ls - h; j += strcspn(str.ptr() + p + j, hyphens)) {
       bp = j;
       j++;
     }
     if (bp == 0)
-      bp = ls-h;
-    setString(buf,str,p,bp);
-    fprintf(file,"\n%*s",static_cast<int>(h),"");
-    print(file,buf);
+      bp = ls - h;
+    setString(buf, str, p, bp);
+    fprintf(file, "\n%*s", static_cast<int>(h), "");
+    print(file, buf);
   }
 
   /* print last line */
 
-  setString(buf,str,p,str.length()-p);
-  fprintf(file,"\n%*s",static_cast<int>(h),"");
-  print(file,buf);
+  setString(buf, str, p, str.length() - p);
+  fprintf(file, "\n%*s", static_cast<int>(h), "");
+  print(file, buf);
 
   return;
 }
 
-   
-void print(FILE *file, const int* const& v, const Ulong& n)
+void print(FILE *file, const int *const &v, const Ulong &n)
 
 /*
   Appends to l the string representation of the n first elements pointed
@@ -355,21 +343,20 @@ void print(FILE *file, const int* const& v, const Ulong& n)
 */
 
 {
-  fprintf(file,"[");
+  fprintf(file, "[");
 
-  for (Ulong j = 0; j < n; j++)
-    {
-      fprintf(file,"%d",v[j]);
-      if (j+1 < n)  /* more to come */
-	fprintf(file,",");
-    }
+  for (Ulong j = 0; j < n; j++) {
+    fprintf(file, "%d", v[j]);
+    if (j + 1 < n) /* more to come */
+      fprintf(file, ",");
+  }
 
-  fprintf(file,"]");
+  fprintf(file, "]");
 
   return;
 }
 
-void printFile(FILE* file, const char *name, const char *dir_name)
+void printFile(FILE *file, const char *name, const char *dir_name)
 
 /*
   Prints the contents of the file with the name dir_name/name on the file.
@@ -379,55 +366,54 @@ void printFile(FILE* file, const char *name, const char *dir_name)
   static String buf(0);
 
   reset(buf);
-  append(buf,dir_name);
-  append(buf,"/");
-  append(buf,name);
+  append(buf, dir_name);
+  append(buf, "/");
+  append(buf, name);
 
-  FILE* inputfile;
+  FILE *inputfile;
   char c;
 
-  inputfile = fopen(buf.ptr(),"r");
+  inputfile = fopen(buf.ptr(), "r");
 
   if (inputfile == 0) {
-    Error(FILE_NOT_FOUND,buf.ptr());
+    Error(FILE_NOT_FOUND, buf.ptr());
     return;
   }
 
-  while((c = getc(inputfile)) != EOF)
-    putc(c,file);
+  while ((c = getc(inputfile)) != EOF)
+    putc(c, file);
 
   fclose(inputfile);
 
   return;
 }
 
-void printFile(FILE* file, const char *name)
+void printFile(FILE *file, const char *name)
 
 /*
   Prints the contents of the file with the given name, onto file.
 */
 
 {
-  FILE* inputfile;
+  FILE *inputfile;
   char c;
 
-  inputfile = fopen(name,"r");
+  inputfile = fopen(name, "r");
 
   if (inputfile == 0) {
-    Error(FILE_NOT_FOUND,name);
+    Error(FILE_NOT_FOUND, name);
     return;
   }
 
-  while((c = getc(inputfile)) != EOF)
-    putc(c,file);
+  while ((c = getc(inputfile)) != EOF)
+    putc(c, file);
 
   fclose(inputfile);
 
   return;
 }
 
-};
-
+}; // namespace io
 
 /*****************************************************************************
 
@@ -443,7 +429,7 @@ void printFile(FILE* file, const char *name)
 
 namespace io {
 
-char* getInput(FILE *inputfile, String& buf, Ulong len)
+char *getInput(FILE *inputfile, String &buf, Ulong len)
 
 /*
   Reads from the inputfile until either EOF or a newline is reached;
@@ -454,7 +440,7 @@ char* getInput(FILE *inputfile, String& buf, Ulong len)
 
 {
   for (Ulong a = len;; a++) {
-    int c = getc(inputfile);    
+    int c = getc(inputfile);
     buf.setLength(a);
     if ((c == EOF) || (c == '\n')) {
       buf[a] = '\0';
@@ -466,8 +452,7 @@ char* getInput(FILE *inputfile, String& buf, Ulong len)
   return buf.ptr();
 }
 
-};
-
+}; // namespace io
 
 /*****************************************************************************
 
@@ -498,12 +483,11 @@ int alphabeticDigits(Ulong c, Ulong b)
 {
   Ulong j = 0;
 
-  for(; c; c = (c-1)/b)
+  for (; c; c = (c - 1) / b)
     ++j;
 
   return j;
 }
-
 
 int digits(Ulong c, Ulong b)
 
@@ -520,7 +504,7 @@ int digits(Ulong c, Ulong b)
   return j;
 }
 
-Ulong skipSpaces(const String& l, Ulong p)
+Ulong skipSpaces(const String &l, Ulong p)
 
 /*
   Skips from character position p over white space (characters recognized
@@ -530,10 +514,10 @@ Ulong skipSpaces(const String& l, Ulong p)
 {
   Ulong j = 0;
 
-  for (; isspace(l[p+j]); ++j)
+  for (; isspace(l[p + j]); ++j)
     ;
 
   return j;
 }
 
-};
+}; // namespace io

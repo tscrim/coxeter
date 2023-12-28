@@ -16,269 +16,264 @@
 #include "typeA.h"
 
 namespace commands {
-  using namespace directories;
-  using namespace error;
-  using namespace fcoxgroup;
-  using namespace help;
-  using namespace interactive;
-};
+using namespace directories;
+using namespace error;
+using namespace fcoxgroup;
+using namespace help;
+using namespace interactive;
+}; // namespace commands
 
 namespace {
 
-  using namespace commands;
-  using namespace stack;
+using namespace commands;
+using namespace stack;
 
-  bool wgraph_warning = true;
+bool wgraph_warning = true;
 
-  /* used in the definition of command trees */
+/* used in the definition of command trees */
 
-  struct Empty_tag {};
-  struct Interface_tag {};
-  struct Main_tag {};
-  struct Uneq_tag {};
+struct Empty_tag {};
+struct Interface_tag {};
+struct Main_tag {};
+struct Uneq_tag {};
 
-  Stack<CommandTree *> treeStack;
-  CoxGroup* W = 0;
+Stack<CommandTree *> treeStack;
+CoxGroup *W = 0;
 
-  void activate(CommandTree* tree);
-  void ambigAction(CommandTree* tree, const String& str);
-  CommandData* ambigCommand();
-  void cellCompletion(DictCell<CommandData>* cell);
-  void commandCompletion(DictCell<CommandData>* cell);
-  void empty_error(char* str);
-  CommandTree* emptyCommandTree();
-  template<class C> CommandTree* initCommandTree();
-  void printCommandTree(FILE* file, DictCell<CommandData>* cell);
-  void startup();
+void activate(CommandTree *tree);
+void ambigAction(CommandTree *tree, const String &str);
+CommandData *ambigCommand();
+void cellCompletion(DictCell<CommandData> *cell);
+void commandCompletion(DictCell<CommandData> *cell);
+void empty_error(char *str);
+CommandTree *emptyCommandTree();
+template <class C> CommandTree *initCommandTree();
+void printCommandTree(FILE *file, DictCell<CommandData> *cell);
+void startup();
 
-  void interface_entry();
-  void interface_exit();
+void interface_entry();
+void interface_exit();
 
-  void main_entry();
-  void main_exit();
+void main_entry();
+void main_exit();
 
-  void uneq_entry();
-  void uneq_exit();
+void uneq_entry();
+void uneq_exit();
 
-  void author_f();
-  void betti_f();
-  void coatoms_f();
-  void compute_f();
-  void descent_f();
-  void duflo_f();
-  void extremals_f();
-  void fullcontext_f();
-  void help_f();
-  void ihbetti_f();
-  void inorder_f();
-  void interface_f();
-  void interval_f();
-  void invpol_f();
-  void klbasis_f();
-  void lcorder_f();
-  void lcells_f();
-  void lcwgraphs_f();
-  void lrcorder_f();
-  void lrcells_f();
-  void lrcwgraphs_f();
-  void lrwgraph_f();
-  void lwgraph_f();
-  void matrix_f();
-  void mu_f();
-  void not_implemented_f();
-  void pol_f();
-  void q_f();
-  void qq_f();
-  void rank_f();
-  void rcorder_f();
-  void rcells_f();
-  void rcwgraphs_f();
-  void rwgraph_f();
-  void schubert_f();
-  void show_f();
-  void showmu_f();
-  void slocus_f();
-  void sstratification_f();
-  void type_f();
-  void uneq_f();
+void author_f();
+void betti_f();
+void coatoms_f();
+void compute_f();
+void descent_f();
+void duflo_f();
+void extremals_f();
+void fullcontext_f();
+void help_f();
+void ihbetti_f();
+void inorder_f();
+void interface_f();
+void interval_f();
+void invpol_f();
+void klbasis_f();
+void lcorder_f();
+void lcells_f();
+void lcwgraphs_f();
+void lrcorder_f();
+void lrcells_f();
+void lrcwgraphs_f();
+void lrwgraph_f();
+void lwgraph_f();
+void matrix_f();
+void mu_f();
+void not_implemented_f();
+void pol_f();
+void q_f();
+void qq_f();
+void rank_f();
+void rcorder_f();
+void rcells_f();
+void rcwgraphs_f();
+void rwgraph_f();
+void schubert_f();
+void show_f();
+void showmu_f();
+void slocus_f();
+void sstratification_f();
+void type_f();
+void uneq_f();
 
-  const char* author_tag = "prints a message about the author";
-  const char* betti_tag = "prints the ordinary betti numbers";
-  const char* coatoms_tag = "prints out the coatoms of an element";
-  const char* compute_tag = "prints out the normal form of an element";
-  const char* descent_tag = "prints out the descent sets";
-  const char* duflo_tag = "prints out the Duflo involutions";
-  const char* extremals_tag =
+const char *author_tag = "prints a message about the author";
+const char *betti_tag = "prints the ordinary betti numbers";
+const char *coatoms_tag = "prints out the coatoms of an element";
+const char *compute_tag = "prints out the normal form of an element";
+const char *descent_tag = "prints out the descent sets";
+const char *duflo_tag = "prints out the Duflo involutions";
+const char *extremals_tag =
     "prints out the k-l polynomials for the extremal pairs";
-  const char* fullcontext_tag = "sets the context to the full group";
-  const char* help_tag = "enters help mode";
-  const char* ihbetti_tag = "prints the IH betti numbers";
-  const char* input_tag = "(in help mode only) explains the input conventions";
-  const char* interface_tag = "changes the interface";
-  const char* interval_tag = "prints an interval in the Bruhat ordering";
-  const char* intro_tag =
+const char *fullcontext_tag = "sets the context to the full group";
+const char *help_tag = "enters help mode";
+const char *ihbetti_tag = "prints the IH betti numbers";
+const char *input_tag = "(in help mode only) explains the input conventions";
+const char *interface_tag = "changes the interface";
+const char *interval_tag = "prints an interval in the Bruhat ordering";
+const char *intro_tag =
     "(in help mode only) prints a message for first time users";
-  const char* inorder_tag = "tells whether two elements are in Bruhat order";
-  const char* invpol_tag = "prints a single inverse k-l polynomial";
-  const char* klbasis_tag = "prints an element of the k-l basis";
-  const char* lcorder_tag = "prints the left cell order";
-  const char* lcells_tag = "prints out the left k-l cells";
-  const char* lcwgraphs_tag = "prints out the W-graphs of the left k-l cells";
-  const char* lrcorder_tag = "prints the two-sided cell order";
-  const char* lrcells_tag = "prints out the tow-sided k-l cells";
-  const char* lrcwgraphs_tag =
+const char *inorder_tag = "tells whether two elements are in Bruhat order";
+const char *invpol_tag = "prints a single inverse k-l polynomial";
+const char *klbasis_tag = "prints an element of the k-l basis";
+const char *lcorder_tag = "prints the left cell order";
+const char *lcells_tag = "prints out the left k-l cells";
+const char *lcwgraphs_tag = "prints out the W-graphs of the left k-l cells";
+const char *lrcorder_tag = "prints the two-sided cell order";
+const char *lrcells_tag = "prints out the tow-sided k-l cells";
+const char *lrcwgraphs_tag =
     "prints out the W-graphs of the two-sided k-l cells";
-  const char* lrwgraph_tag = "prints out the two-sided W-graph";
-  const char* lwgraph_tag = "prints out the left W-graph";
-  const char* matrix_tag = "prints the current Coxeter matrix";
-  const char* mu_tag = "prints a single mu-coefficient";
-  const char* pol_tag = "prints a single k-l polynomial";
-  const char* q_tag = "exits the current mode";
-  const char* qq_tag = "exits the program";
-  const char* rank_tag = "resets the rank";
-  const char* rcorder_tag = "prints the right cell order";
-  const char* rcells_tag = "prints out the right k-l cells";
-  const char* rcwgraphs_tag = "prints out the W-graphs of the right k-l cells";
-  const char* rwgraph_tag = "prints out the right W-graph";
-  const char* schubert_tag = "prints out the kl data for a schubert variety";
-  const char* show_tag = "maps out the computation of a k-l polynomial";
-  const char* showmu_tag = "maps out the computation of a mu coefficient";
-  const char* slocus_tag =
+const char *lrwgraph_tag = "prints out the two-sided W-graph";
+const char *lwgraph_tag = "prints out the left W-graph";
+const char *matrix_tag = "prints the current Coxeter matrix";
+const char *mu_tag = "prints a single mu-coefficient";
+const char *pol_tag = "prints a single k-l polynomial";
+const char *q_tag = "exits the current mode";
+const char *qq_tag = "exits the program";
+const char *rank_tag = "resets the rank";
+const char *rcorder_tag = "prints the right cell order";
+const char *rcells_tag = "prints out the right k-l cells";
+const char *rcwgraphs_tag = "prints out the W-graphs of the right k-l cells";
+const char *rwgraph_tag = "prints out the right W-graph";
+const char *schubert_tag = "prints out the kl data for a schubert variety";
+const char *show_tag = "maps out the computation of a k-l polynomial";
+const char *showmu_tag = "maps out the computation of a mu coefficient";
+const char *slocus_tag =
     "prints the rational singular locus of the Schubert variety";
-  const char* sstratification_tag =
+const char *sstratification_tag =
     "prints the rational singular stratification of the Schubert variety";
-  const char* type_tag =
-    "resets the type and rank (hence restarts the program)";
-  const char* uneq_tag = "puts the program in unequal-parameter mode";
+const char *type_tag = "resets the type and rank (hence restarts the program)";
+const char *uneq_tag = "puts the program in unequal-parameter mode";
 
-  namespace uneq {
-    void klbasis_f();
-    void lcorder_f();
-    void lrcorder_f();
-    void lcells_f();
-    void lrcells_f();
-    void mu_f();
-    void pol_f();
-    void rcells_f();
-    void rcorder_f();
+namespace uneq {
+void klbasis_f();
+void lcorder_f();
+void lrcorder_f();
+void lcells_f();
+void lrcells_f();
+void mu_f();
+void pol_f();
+void rcells_f();
+void rcorder_f();
 
-    const char* lcorder_tag = "prints the left cell order";
-    const char* lrcorder_tag = "prints the two-sided cell order";
-    const char* lcells_tag = "prints out the left k-l cells";
-    const char* lrcells_tag = "prints out the two-sided k-l cells";
-    const char* mu_tag = "prints out a mu-coefficient";
-    const char* pol_tag = "prints out a single k-l polynomial";
-    const char* rcells_tag = "prints out the right k-l cells";
-    const char* rcorder_tag = "prints the right cell order";
-  };
+const char *lcorder_tag = "prints the left cell order";
+const char *lrcorder_tag = "prints the two-sided cell order";
+const char *lcells_tag = "prints out the left k-l cells";
+const char *lrcells_tag = "prints out the two-sided k-l cells";
+const char *mu_tag = "prints out a mu-coefficient";
+const char *pol_tag = "prints out a single k-l polynomial";
+const char *rcells_tag = "prints out the right k-l cells";
+const char *rcorder_tag = "prints the right cell order";
+}; // namespace uneq
+}; // namespace
+
+namespace commands {
+void (*default_help)() = &help::default_h;
 };
 
 namespace commands {
-  void (*default_help)() = &help::default_h;
-};
 
-namespace commands {
+namespace interface {
 
-  namespace interface {
+GroupEltInterface *in_buf = 0;
 
-    GroupEltInterface* in_buf = 0;
+struct In_tag {};
+struct Out_tag {};
 
-    struct In_tag {};
-    struct Out_tag {};
+void in_entry();
+void in_exit();
+void out_entry();
+void out_exit();
 
-    void in_entry();
-    void in_exit();
-    void out_entry();
-    void out_exit();
+void abort_f();
+void alphabetic_f();
+void bourbaki_f();
+void default_f();
+void decimal_f();
+void gap_f();
+void hexadecimal_f();
+void in_f();
+void out_f();
+void permutation_f();
+void symbol_f();
+void terse_f();
+void ordering_f();
 
-    void abort_f();
-    void alphabetic_f();
-    void bourbaki_f();
-    void default_f();
-    void decimal_f();
-    void gap_f();
-    void hexadecimal_f();
-    void in_f();
-    void out_f();
-    void permutation_f();
-    void symbol_f();
-    void terse_f();
-    void ordering_f();
+const char *abort_tag = "leaves without modifying the interface";
+const char *alphabetic_tag = "sets alphabetic generator symbols";
+const char *bourbaki_tag = "sets Bourbaki conventions for i/o";
+const char *decimal_tag = "sets decimal generator symbols";
+const char *default_tag = "sets i/o to default mode";
+const char *gap_tag = "sets i/o to GAP mode";
+const char *hexadecimal_tag = "sets hexadecimal generator symbols";
+const char *in_tag = "enters reset-input mode";
+const char *out_tag = "enters reset-output mode";
+const char *permutation_tag =
+    "sets permutation notation for i/o (in type A only)";
+const char *ordering_tag = "modifies the ordering of the generators";
+const char *terse_tag = "sets i/o to terse mode";
 
-    const char* abort_tag = "leaves without modifying the interface";
-    const char* alphabetic_tag = "sets alphabetic generator symbols";
-    const char* bourbaki_tag = "sets Bourbaki conventions for i/o";
-    const char* decimal_tag = "sets decimal generator symbols";
-    const char* default_tag = "sets i/o to default mode";
-    const char* gap_tag = "sets i/o to GAP mode";
-    const char* hexadecimal_tag = "sets hexadecimal generator symbols";
-    const char* in_tag = "enters reset-input mode";
-    const char* out_tag = "enters reset-output mode";
-    const char* permutation_tag =
-      "sets permutation notation for i/o (in type A only)";
-    const char* ordering_tag = "modifies the ordering of the generators";
-    const char* terse_tag = "sets i/o to terse mode";
+namespace in {
+void alphabetic_f();
+void bourbaki_f();
+void decimal_f();
+void default_f();
+void gap_f();
+void hexadecimal_f();
+void permutation_f();
+void postfix_f();
+void prefix_f();
+void separator_f();
+void terse_f();
+const char *alphabetic_tag = "sets alphabetic generator symbols for input";
+const char *bourbaki_tag = "sets Bourbaki conventions for input";
+const char *decimal_tag = "sets decimal generator symbols for input";
+const char *default_tag = "sets default conventions for input";
+const char *gap_tag = "sets GAP conventions for input";
+const char *hexadecimal_tag = "sets hexadecimal generator symbols for input";
+const char *permutation_tag =
+    "sets permutation notation for input (in type A only)";
+const char *postfix_tag = "resets the input postfix";
+const char *prefix_tag = "resets the input prefix";
+const char *separator_tag = "resets the input separator";
+const char *symbol_tag = "resets an input symbol";
+const char *terse_tag = "sets terse conventions for input";
+}; // namespace in
 
-    namespace in {
-      void alphabetic_f();
-      void bourbaki_f();
-      void decimal_f();
-      void default_f();
-      void gap_f();
-      void hexadecimal_f();
-      void permutation_f();
-      void postfix_f();
-      void prefix_f();
-      void separator_f();
-      void terse_f();
-      const char* alphabetic_tag =
-        "sets alphabetic generator symbols for input";
-      const char* bourbaki_tag = "sets Bourbaki conventions for input";
-      const char* decimal_tag = "sets decimal generator symbols for input";
-      const char* default_tag = "sets default conventions for input";
-      const char* gap_tag = "sets GAP conventions for input";
-      const char* hexadecimal_tag =
-        "sets hexadecimal generator symbols for input";
-      const char* permutation_tag =
-        "sets permutation notation for input (in type A only)";
-      const char* postfix_tag = "resets the input postfix";
-      const char* prefix_tag = "resets the input prefix";
-      const char* separator_tag = "resets the input separator";
-      const char* symbol_tag = "resets an input symbol";
-      const char* terse_tag = "sets terse conventions for input";
-    };
+namespace out {
+void alphabetic_f();
+void bourbaki_f();
+void decimal_f();
+void default_f();
+void gap_f();
+void hexadecimal_f();
+void permutation_f();
+void postfix_f();
+void prefix_f();
+void separator_f();
+void terse_f();
+const char *alphabetic_tag = "sets alphabetic generator symbols for output";
+const char *bourbaki_tag = "sets Bourbaki conventions for output";
+const char *decimal_tag = "sets decimal generator symbols for output";
+const char *default_tag = "sets default conventions for output";
+const char *gap_tag = "sets GAP conventions for output";
+const char *hexadecimal_tag = "sets hexadecimal generator symbols for output";
+const char *permutation_tag =
+    "sets permutation notation for output (in type A only)";
+const char *postfix_tag = "resets the output postfix";
+const char *prefix_tag = "resets the output prefix";
+const char *separator_tag = "resets the output separator";
+const char *symbol_tag = "resets an output symbol";
+const char *terse_tag = "sets terse conventions for output";
+}; // namespace out
+}; // namespace interface
 
-    namespace out {
-      void alphabetic_f();
-      void bourbaki_f();
-      void decimal_f();
-      void default_f();
-      void gap_f();
-      void hexadecimal_f();
-      void permutation_f();
-      void postfix_f();
-      void prefix_f();
-      void separator_f();
-      void terse_f();
-      const char* alphabetic_tag =
-        "sets alphabetic generator symbols for output";
-      const char* bourbaki_tag = "sets Bourbaki conventions for output";
-      const char* decimal_tag = "sets decimal generator symbols for output";
-      const char* default_tag = "sets default conventions for output";
-      const char* gap_tag = "sets GAP conventions for output";
-      const char* hexadecimal_tag =
-        "sets hexadecimal generator symbols for output";
-      const char* permutation_tag =
-        "sets permutation notation for output (in type A only)";
-      const char* postfix_tag = "resets the output postfix";
-      const char* prefix_tag = "resets the output prefix";
-      const char* separator_tag = "resets the output separator";
-      const char* symbol_tag = "resets an output symbol";
-      const char* terse_tag = "sets terse conventions for output";
-    };
-};
-
-};
+}; // namespace commands
 
 /*****************************************************************************
 
@@ -346,51 +341,50 @@ void run()
   activate(emptyCommandTree());
 
   if (ERRNO) {
-    Error (ERRNO);
+    Error(ERRNO);
     return;
   }
 
   while (1) { /* the only way to exit from this loop is the "qq" command */
-    CommandTree* tree = treeStack.top();
+    CommandTree *tree = treeStack.top();
     tree->prompt();
-    getInput(stdin,name);
-    CommandData* cd = tree->find(name);
+    getInput(stdin, name);
+    CommandData *cd = tree->find(name);
     if (cd == 0) {
       tree->error(name.ptr());
       continue;
     }
     if (cd == ambigCommand()) {
-      ambigAction(tree,name);
+      ambigAction(tree, name);
       continue;
     }
     cd->action();
     if (cd->autorepeat) {
-      tree->setAction("",cd->action);
-      tree->setRepeat("",true);
-    }
-    else {
-      tree->setAction("",&relax_f);
-      tree->setRepeat("",false);
+      tree->setAction("", cd->action);
+      tree->setRepeat("", true);
+    } else {
+      tree->setAction("", &relax_f);
+      tree->setRepeat("", false);
     }
   }
 }
 
-void default_error(char* str)
+void default_error(char *str)
 
 /*
   Default response to an unknown command.
 */
 
 {
-  Error(COMMAND_NOT_FOUND,str);
+  Error(COMMAND_NOT_FOUND, str);
   return;
 }
 
-};
+}; // namespace commands
 
 namespace {
 
-void activate(CommandTree* tree)
+void activate(CommandTree *tree)
 
 /*
   Puts the tree on top of treeStack, and executes the initialization function.
@@ -410,7 +404,7 @@ void activate(CommandTree* tree)
   return;
 }
 
-void ambigAction(CommandTree* tree, const String& str)
+void ambigAction(CommandTree *tree, const String &str)
 
 /*
   Response to ambiguous commands. Prints a warning and the list of possible
@@ -421,28 +415,28 @@ void ambigAction(CommandTree* tree, const String& str)
   static String name(0);
   bool b = true;
 
-  print(stderr,str);
-  fprintf(stderr," : ambiguous (");
-  DictCell<CommandData>* cell = tree->findCell(str);
-  new(&name) String(str);
-  printExtensions(stderr,cell->left,name,b);
-  fprintf(stderr,")\n");
+  print(stderr, str);
+  fprintf(stderr, " : ambiguous (");
+  DictCell<CommandData> *cell = tree->findCell(str);
+  new (&name) String(str);
+  printExtensions(stderr, cell->left, name, b);
+  fprintf(stderr, ")\n");
 
   return;
 }
 
-void empty_error(char* str)
+void empty_error(char *str)
 
 {
-  CommandTree* tree = mainCommandTree();
+  CommandTree *tree = mainCommandTree();
 
-  CommandData* cd = tree->find(str);
+  CommandData *cd = tree->find(str);
   if (cd == 0) {
     default_error(str);
     return;
   }
   if (cd == ambigCommand()) {
-    ambigAction(tree,str);
+    ambigAction(tree, str);
     return;
   }
   activate(tree);
@@ -454,12 +448,11 @@ void empty_error(char* str)
   if ((cd != tree->find("type")) && (cd != tree->find("rank")))
     cd->action();
   if (cd->autorepeat) {
-    tree->setAction("",cd->action);
-    tree->setRepeat("",true);
-  }
-  else {
-    tree->setAction("",&relax_f);
-    tree->setRepeat("",false);
+    tree->setAction("", cd->action);
+    tree->setRepeat("", true);
+  } else {
+    tree->setAction("", &relax_f);
+    tree->setRepeat("", false);
   }
   return;
 }
@@ -480,7 +473,7 @@ void startup()
   return;
 }
 
-};
+}; // namespace
 
 /*****************************************************************************
 
@@ -538,13 +531,9 @@ void startup()
 
 namespace commands {
 
-CommandTree::CommandTree(const char* prompt,
-			 void (*a)(),
-			 void (*entry)(),
-			 void (*error)(char*),
-			 void (*exit)(),
-			 void (*h)())
-  :d_prompt(prompt), d_entry(entry), d_error(error), d_exit(exit)
+CommandTree::CommandTree(const char *prompt, void (*a)(), void (*entry)(),
+                         void (*error)(char *), void (*exit)(), void (*h)())
+    : d_prompt(prompt), d_entry(entry), d_error(error), d_exit(exit)
 
 /*
   Initializes a command tree with the given prompt and action for the
@@ -552,12 +541,12 @@ CommandTree::CommandTree(const char* prompt,
 */
 
 {
-  d_root->ptr = new CommandData("","",a,&relax_f,false);
+  d_root->ptr = new CommandData("", "", a, &relax_f, false);
 
   if (h) { /* add help functionality */
-    d_help = new CommandTree("help",&cr_h,h);
-    d_help->add("q",q_tag,&q_f,0,false);
-    add("help",help_tag,&help_f,&help_h,false);
+    d_help = new CommandTree("help", &cr_h, h);
+    d_help->add("q", q_tag, &q_f, 0, false);
+    add("help", help_tag, &help_f, &help_h, false);
   }
 }
 
@@ -581,13 +570,13 @@ void CommandTree::prompt() const
 */
 
 {
-  printf("%s : ",d_prompt.ptr());
+  printf("%s : ", d_prompt.ptr());
 }
 
 /******** manipulators ******************************************************/
 
-void CommandTree::add(const char* name, const char* tag, void (*a)(),
-		      void (*h)(), bool rep)
+void CommandTree::add(const char *name, const char *tag, void (*a)(),
+                      void (*h)(), bool rep)
 
 /*
   This function adds a new command to the tree, adding new cells as
@@ -595,15 +584,15 @@ void CommandTree::add(const char* name, const char* tag, void (*a)(),
 */
 
 {
-  CommandData *cd = new CommandData(name,tag,a,h,rep);
+  CommandData *cd = new CommandData(name, tag, a, h, rep);
 
-  insert(name,cd);
+  insert(name, cd);
   if (d_help && h) { /* add help functionality */
-    d_help->add(name,tag,h,0,false);
+    d_help->add(name, tag, h, 0, false);
   }
 }
 
-void CommandTree::setAction(const char* str, void (*a)())
+void CommandTree::setAction(const char *str, void (*a)())
 
 /*
   Assuming that str is a fullname on the command tree, sets the response
@@ -613,13 +602,13 @@ void CommandTree::setAction(const char* str, void (*a)())
 */
 
 {
-  CommandData* cd = find(str);
+  CommandData *cd = find(str);
   cd->action = a;
 
   return;
 }
 
-void CommandTree::setRepeat(const char* str, bool b)
+void CommandTree::setRepeat(const char *str, bool b)
 
 /*
   Assuming that str is a fullname on the command tree, sets the autorepeat
@@ -627,13 +616,13 @@ void CommandTree::setRepeat(const char* str, bool b)
 */
 
 {
-  CommandData* cd = find(str);
+  CommandData *cd = find(str);
   cd->autorepeat = b;
 
   return;
 }
 
-};
+}; // namespace commands
 
 /*****************************************************************************
 
@@ -648,9 +637,9 @@ void CommandTree::setRepeat(const char* str, bool b)
 
 namespace commands {
 
-CommandData::CommandData(const char* const& str, const char* const& t,
-			 void (*a)(), void (*h)(), bool rep)
-  :name(str), tag(t), action(a), help(h), autorepeat(rep)
+CommandData::CommandData(const char *const &str, const char *const &t,
+                         void (*a)(), void (*h)(), bool rep)
+    : name(str), tag(t), action(a), help(h), autorepeat(rep)
 
 {}
 
@@ -662,7 +651,7 @@ CommandData::~CommandData()
 
 {}
 
-};
+}; // namespace commands
 
 /*****************************************************************************
 
@@ -690,7 +679,7 @@ CommandData::~CommandData()
 
 namespace {
 
-CommandData* ambigCommand()
+CommandData *ambigCommand()
 
 /*
   Returns a dummy command cell which is a placeholder indicating that
@@ -699,11 +688,11 @@ CommandData* ambigCommand()
 */
 
 {
-  static CommandData cd("","",0,0,false);
+  static CommandData cd("", "", 0, 0, false);
   return &cd;
 }
 
-void cellCompletion(DictCell<CommandData>* cell)
+void cellCompletion(DictCell<CommandData> *cell)
 
 /*
   This function fills in the value fields of the cells which do not
@@ -728,7 +717,7 @@ void cellCompletion(DictCell<CommandData>* cell)
   }
 }
 
-void commandCompletion(DictCell<CommandData>* cell)
+void commandCompletion(DictCell<CommandData> *cell)
 
 /*
   This function finishes up the command tree by implementing command
@@ -749,7 +738,8 @@ void commandCompletion(DictCell<CommandData>* cell)
   commandCompletion(cell->right);
 }
 
-template<> CommandTree* initCommandTree<Empty_tag>()
+template <>
+CommandTree *initCommandTree<Empty_tag>()
 
 /*
   This function builds the initial command tree of the program. The idea
@@ -759,22 +749,22 @@ template<> CommandTree* initCommandTree<Empty_tag>()
 */
 
 {
-  static CommandTree tree("coxeter",&startup,&relax_f,&empty_error,&relax_f,
-			  &intro_h);
+  static CommandTree tree("coxeter", &startup, &relax_f, &empty_error, &relax_f,
+                          &intro_h);
 
-  tree.add("author","author_tag",&author_f,&relax_f,false);
-  tree.add("qq",qq_tag,&qq_f,&qq_h,false);
+  tree.add("author", "author_tag", &author_f, &relax_f, false);
+  tree.add("qq", qq_tag, &qq_f, &qq_h, false);
 
   commandCompletion(tree.root());
 
-  tree.helpMode()->add("intro",intro_tag,&intro_h,0,false);
+  tree.helpMode()->add("intro", intro_tag, &intro_h, 0, false);
 
   commandCompletion(tree.helpMode()->root());
 
   return &tree;
 }
 
-CommandTree* emptyCommandTree()
+CommandTree *emptyCommandTree()
 
 /*
   Returns a pointer to the initial command tree of the program, building it on
@@ -782,11 +772,12 @@ CommandTree* emptyCommandTree()
 */
 
 {
-  static CommandTree* tree = initCommandTree<Empty_tag>();
+  static CommandTree *tree = initCommandTree<Empty_tag>();
   return tree;
 }
 
-template<> CommandTree* initCommandTree<Interface_tag>()
+template <>
+CommandTree *initCommandTree<Interface_tag>()
 
 /*
   This function builds the interface command tree; this makes available the
@@ -795,34 +786,35 @@ template<> CommandTree* initCommandTree<Interface_tag>()
 */
 
 {
-  static CommandTree tree("interface",&relax_f,&interface_entry,&default_error,
-			  &interface_exit,&interface_help);
+  static CommandTree tree("interface", &relax_f, &interface_entry,
+                          &default_error, &interface_exit, &interface_help);
 
-  tree.add("alphabetic",commands::interface::alphabetic_tag,
-	   &commands::interface::alphabetic_f,&help::interface::alphabetic_h);
-  tree.add("bourbaki",commands::interface::bourbaki_tag,
-	   &commands::interface::bourbaki_f,&help::interface::bourbaki_h);
-  tree.add("decimal",commands::interface::decimal_tag,
-	   &commands::interface::decimal_f,&help::interface::decimal_h);
-  tree.add("default",commands::interface::default_tag,
-	   &commands::interface::default_f,&help::interface::default_h);
-  tree.add("gap",commands::interface::out::gap_tag,
-	   &commands::interface::out::gap_f, &help::interface::gap_h);
-  tree.add("hexadecimal",commands::interface::hexadecimal_tag,
-	   &commands::interface::hexadecimal_f,
-	   &help::interface::hexadecimal_h);
-  tree.add("in",commands::interface::in_tag,&commands::interface::in_f,
-	   help::interface::in_h,false);
-  tree.add("ordering",commands::interface::ordering_tag,
-	   &commands::interface::ordering_f,help::interface::ordering_h,false);
-  tree.add("out",commands::interface::out_tag,&commands::interface::out_f,
-	   help::interface::out_h,false);
-  tree.add("permutation",commands::interface::permutation_tag,
-	   &commands::interface::permutation_f,
-	   &help::interface::permutation_h);
-  tree.add("q",q_tag,&q_f,0,false);
-  tree.add("terse",commands::interface::out::terse_tag,
-	   &commands::interface::out::terse_f, &help::interface::out::terse_h);
+  tree.add("alphabetic", commands::interface::alphabetic_tag,
+           &commands::interface::alphabetic_f, &help::interface::alphabetic_h);
+  tree.add("bourbaki", commands::interface::bourbaki_tag,
+           &commands::interface::bourbaki_f, &help::interface::bourbaki_h);
+  tree.add("decimal", commands::interface::decimal_tag,
+           &commands::interface::decimal_f, &help::interface::decimal_h);
+  tree.add("default", commands::interface::default_tag,
+           &commands::interface::default_f, &help::interface::default_h);
+  tree.add("gap", commands::interface::out::gap_tag,
+           &commands::interface::out::gap_f, &help::interface::gap_h);
+  tree.add("hexadecimal", commands::interface::hexadecimal_tag,
+           &commands::interface::hexadecimal_f,
+           &help::interface::hexadecimal_h);
+  tree.add("in", commands::interface::in_tag, &commands::interface::in_f,
+           help::interface::in_h, false);
+  tree.add("ordering", commands::interface::ordering_tag,
+           &commands::interface::ordering_f, help::interface::ordering_h,
+           false);
+  tree.add("out", commands::interface::out_tag, &commands::interface::out_f,
+           help::interface::out_h, false);
+  tree.add("permutation", commands::interface::permutation_tag,
+           &commands::interface::permutation_f,
+           &help::interface::permutation_h);
+  tree.add("q", q_tag, &q_f, 0, false);
+  tree.add("terse", commands::interface::out::terse_tag,
+           &commands::interface::out::terse_f, &help::interface::out::terse_h);
 
   commandCompletion(tree.root());
   commandCompletion(tree.helpMode()->root());
@@ -830,7 +822,8 @@ template<> CommandTree* initCommandTree<Interface_tag>()
   return &tree;
 }
 
-template<> CommandTree* initCommandTree<commands::interface::In_tag>()
+template <>
+CommandTree *initCommandTree<commands::interface::In_tag>()
 
 /*
   This function builds the command tree for the input-modification mode.
@@ -839,34 +832,33 @@ template<> CommandTree* initCommandTree<commands::interface::In_tag>()
 {
   using namespace commands::interface;
 
-  static CommandTree tree("in",&relax_f,&in_entry,&default_error,
-			  &in_exit,&help::interface::in_help);
+  static CommandTree tree("in", &relax_f, &in_entry, &default_error, &in_exit,
+                          &help::interface::in_help);
 
-  tree.add("q",q_tag,&q_f,0,false);
+  tree.add("q", q_tag, &q_f, 0, false);
 
-  tree.add("abort",abort_tag,&abort_f,&help::interface::abort_h);
-  tree.add("alphabetic",in::alphabetic_tag,&in::alphabetic_f,
-	   &help::interface::in::alphabetic_h,false);
-  tree.add("bourbaki",in::bourbaki_tag,&in::bourbaki_f,
-	   &help::interface::in::bourbaki_h);
-  tree.add("decimal",in::decimal_tag,&in::decimal_f,
-	   &help::interface::in::decimal_h,false);
-  tree.add("default",in::default_tag,&in::default_f,
-	   &help::interface::in::default_h);
-  tree.add("gap",in::gap_tag,&in::gap_f,&help::interface::in::gap_h);
-  tree.add("hexadecimal",in::hexadecimal_tag,&in::hexadecimal_f,
-	   &help::interface::in::hexadecimal_h,false);
-  tree.add("permutation",in::permutation_tag,&in::permutation_f,
-	   &help::interface::in::permutation_h,false);
-  tree.add("postfix",in::postfix_tag,&in::postfix_f,
-	   &help::interface::in::postfix_h);
-  tree.add("prefix",in::prefix_tag,&in::prefix_f,
-	   &help::interface::in::prefix_h);
-  tree.add("separator",in::separator_tag,
-	   &in::separator_f,&help::interface::in::separator_h);
-  tree.add("symbol",in::symbol_tag,&symbol_f,
-	   &help::interface::in::symbol_h);
-  tree.add("terse",in::terse_tag,&in::terse_f,&help::interface::in::terse_h);
+  tree.add("abort", abort_tag, &abort_f, &help::interface::abort_h);
+  tree.add("alphabetic", in::alphabetic_tag, &in::alphabetic_f,
+           &help::interface::in::alphabetic_h, false);
+  tree.add("bourbaki", in::bourbaki_tag, &in::bourbaki_f,
+           &help::interface::in::bourbaki_h);
+  tree.add("decimal", in::decimal_tag, &in::decimal_f,
+           &help::interface::in::decimal_h, false);
+  tree.add("default", in::default_tag, &in::default_f,
+           &help::interface::in::default_h);
+  tree.add("gap", in::gap_tag, &in::gap_f, &help::interface::in::gap_h);
+  tree.add("hexadecimal", in::hexadecimal_tag, &in::hexadecimal_f,
+           &help::interface::in::hexadecimal_h, false);
+  tree.add("permutation", in::permutation_tag, &in::permutation_f,
+           &help::interface::in::permutation_h, false);
+  tree.add("postfix", in::postfix_tag, &in::postfix_f,
+           &help::interface::in::postfix_h);
+  tree.add("prefix", in::prefix_tag, &in::prefix_f,
+           &help::interface::in::prefix_h);
+  tree.add("separator", in::separator_tag, &in::separator_f,
+           &help::interface::in::separator_h);
+  tree.add("symbol", in::symbol_tag, &symbol_f, &help::interface::in::symbol_h);
+  tree.add("terse", in::terse_tag, &in::terse_f, &help::interface::in::terse_h);
 
   commandCompletion(tree.root());
   commandCompletion(tree.helpMode()->root());
@@ -874,7 +866,8 @@ template<> CommandTree* initCommandTree<commands::interface::In_tag>()
   return &tree;
 }
 
-template<> CommandTree* initCommandTree<commands::interface::Out_tag>()
+template <>
+CommandTree *initCommandTree<commands::interface::Out_tag>()
 
 /*
   This function builds the command tree for the output-modification mode.
@@ -883,35 +876,34 @@ template<> CommandTree* initCommandTree<commands::interface::Out_tag>()
 {
   using namespace commands::interface;
 
-  static CommandTree tree("out",&relax_f,&out_entry,&default_error,
-			  &out_exit,&help::interface::out_help);
+  static CommandTree tree("out", &relax_f, &out_entry, &default_error,
+                          &out_exit, &help::interface::out_help);
 
-  tree.add("q",q_tag,&q_f,0,false);
+  tree.add("q", q_tag, &q_f, 0, false);
 
-  tree.add("alphabetic",out::alphabetic_tag,&out::alphabetic_f,
-	   &help::interface::out::alphabetic_h,false);
-  tree.add("bourbaki",out::bourbaki_tag,&out::bourbaki_f,
-	   &help::interface::out::bourbaki_h);
-  tree.add("decimal",out::decimal_tag,&out::decimal_f,
-	   &help::interface::out::decimal_h,false);
-  tree.add("default",out::default_tag,&out::default_f,
-	   &help::interface::out::default_h);
-  tree.add("gap",out::gap_tag,&out::gap_f,
-	   &help::interface::out::gap_h);
-  tree.add("hexadecimal",out::hexadecimal_tag,&out::hexadecimal_f,
-	   &help::interface::out::hexadecimal_h,false);
-  tree.add("permutation",out::permutation_tag,&out::permutation_f,
-	   &help::interface::out::permutation_h,false);
-  tree.add("postfix",out::postfix_tag,&out::postfix_f,
-	   &help::interface::out::postfix_h);
-  tree.add("prefix",out::prefix_tag,&out::prefix_f,
-	   &help::interface::out::prefix_h);
-  tree.add("separator",out::separator_tag,
-	   &out::separator_f,&help::interface::out::separator_h);
-  tree.add("symbol",out::symbol_tag,&symbol_f,
-	   &help::interface::out::symbol_h);
-  tree.add("terse",out::terse_tag,&out::terse_f,
-	   &help::interface::out::terse_h);
+  tree.add("alphabetic", out::alphabetic_tag, &out::alphabetic_f,
+           &help::interface::out::alphabetic_h, false);
+  tree.add("bourbaki", out::bourbaki_tag, &out::bourbaki_f,
+           &help::interface::out::bourbaki_h);
+  tree.add("decimal", out::decimal_tag, &out::decimal_f,
+           &help::interface::out::decimal_h, false);
+  tree.add("default", out::default_tag, &out::default_f,
+           &help::interface::out::default_h);
+  tree.add("gap", out::gap_tag, &out::gap_f, &help::interface::out::gap_h);
+  tree.add("hexadecimal", out::hexadecimal_tag, &out::hexadecimal_f,
+           &help::interface::out::hexadecimal_h, false);
+  tree.add("permutation", out::permutation_tag, &out::permutation_f,
+           &help::interface::out::permutation_h, false);
+  tree.add("postfix", out::postfix_tag, &out::postfix_f,
+           &help::interface::out::postfix_h);
+  tree.add("prefix", out::prefix_tag, &out::prefix_f,
+           &help::interface::out::prefix_h);
+  tree.add("separator", out::separator_tag, &out::separator_f,
+           &help::interface::out::separator_h);
+  tree.add("symbol", out::symbol_tag, &symbol_f,
+           &help::interface::out::symbol_h);
+  tree.add("terse", out::terse_tag, &out::terse_f,
+           &help::interface::out::terse_h);
 
   commandCompletion(tree.root());
   commandCompletion(tree.helpMode()->root());
@@ -919,25 +911,25 @@ template<> CommandTree* initCommandTree<commands::interface::Out_tag>()
   return &tree;
 }
 
-};
+}; // namespace
 
 namespace commands {
 
-CommandTree* interface::inCommandTree()
+CommandTree *interface::inCommandTree()
 
 {
-  static CommandTree* tree = initCommandTree<In_tag>();
+  static CommandTree *tree = initCommandTree<In_tag>();
   return tree;
 }
 
-CommandTree* interface::outCommandTree()
+CommandTree *interface::outCommandTree()
 
 {
-  static CommandTree* tree = initCommandTree<Out_tag>();
+  static CommandTree *tree = initCommandTree<Out_tag>();
   return tree;
 }
 
-CommandTree* interfaceCommandTree()
+CommandTree *interfaceCommandTree()
 
 /*
   Returns a pointer to the interface command tree, building it on the first
@@ -945,15 +937,16 @@ CommandTree* interfaceCommandTree()
 */
 
 {
-  static CommandTree* tree = initCommandTree<Interface_tag>();
+  static CommandTree *tree = initCommandTree<Interface_tag>();
   return tree;
 }
 
-};
+}; // namespace commands
 
 namespace {
 
-template<> CommandTree* initCommandTree<Main_tag>()
+template <>
+CommandTree *initCommandTree<Main_tag>()
 
 /*
   This function builds the main command tree, the one that is being run on
@@ -962,67 +955,67 @@ template<> CommandTree* initCommandTree<Main_tag>()
 */
 
 {
-  static CommandTree tree("coxeter",&relax_f,&main_entry,&default_error,
-			  &main_exit,&main_help);
+  static CommandTree tree("coxeter", &relax_f, &main_entry, &default_error,
+                          &main_exit, &main_help);
 
-  tree.add("author",author_tag,&author_f,&relax_f,false);
-  tree.add("betti",betti_tag,&betti_f,&betti_h,false);
-  tree.add("coatoms",coatoms_tag,&coatoms_f,&coatoms_h);
-  tree.add("compute",compute_tag,&compute_f,&compute_h);
-  tree.add("descent",descent_tag,&descent_f,&descent_h);
-  tree.add("duflo",duflo_tag,&duflo_f,&duflo_h);
-  tree.add("extremals",extremals_tag,&extremals_f,&extremals_h);
-  tree.add("fullcontext",fullcontext_tag,&fullcontext_f,&fullcontext_h);
-  tree.add("ihbetti",ihbetti_tag,&ihbetti_f,&ihbetti_h,false);
-  tree.add("interface",interface_tag,&interface_f,&interface_h,false);
-  tree.add("interval",interval_tag,&interval_f,&interval_h,false);
-  tree.add("inorder",inorder_tag,&inorder_f,&inorder_h);
-  tree.add("invpol",invpol_tag,&invpol_f,&invpol_h);
-  tree.add("lcorder",lcorder_tag,&lcorder_f,&lcorder_h,false);
-  tree.add("lcells",lcells_tag,&lcells_f,&lcells_h,false);
-  tree.add("lcwgraphs",lcwgraphs_tag,&lcwgraphs_f,&lcwgraphs_h,false);
-  tree.add("lrcorder",lrcorder_tag,&lrcorder_f,&lrcorder_h,false);
-  tree.add("lrcells",lrcells_tag,&lrcells_f,&lrcells_h,false);
-  tree.add("lrcwgraphs",lrcwgraphs_tag,&lrcwgraphs_f,&lrcwgraphs_h,false);
-  tree.add("lrwgraph",lrwgraph_tag,&lrwgraph_f,&lrwgraph_h,false);
-  tree.add("lwgraph",lwgraph_tag,&lwgraph_f,&lwgraph_h,false);
-  tree.add("klbasis",klbasis_tag,&klbasis_f,&klbasis_h,true);
-  tree.add("matrix",matrix_tag,&matrix_f,&matrix_h);
-  tree.add("mu",mu_tag,&mu_f,&mu_h);
-  tree.add("pol",pol_tag,&pol_f,&pol_h);
-  tree.add("q",q_tag,&q_f,0,false);
-  tree.add("qq",qq_tag,&qq_f,&qq_h,false);
-  tree.add("rank",rank_tag,&rank_f,&rank_h,false);
-  tree.add("rcorder",rcorder_tag,&rcorder_f,&rcorder_h,false);
-  tree.add("rcells",rcells_tag,&rcells_f,&rcells_h,false);
-  tree.add("rcwgraphs",rcwgraphs_tag,&rcwgraphs_f,&rcwgraphs_h,false);
-  tree.add("rwgraph",rwgraph_tag,&rwgraph_f,&rwgraph_h,false);
-  tree.add("schubert",schubert_tag,&schubert_f,&schubert_h);
-  tree.add("show",show_tag,&show_f,&show_h);
-  tree.add("showmu",showmu_tag,&showmu_f,&showmu_h);
-  tree.add("slocus",slocus_tag,&slocus_f,&slocus_h);
-  tree.add("sstratification",sstratification_tag,&sstratification_f,
-	   &sstratification_h);
-  tree.add("type",type_tag,&type_f,&type_h,false);
-  tree.add("uneq",uneq_tag,&uneq_f,&uneq_h,false);
+  tree.add("author", author_tag, &author_f, &relax_f, false);
+  tree.add("betti", betti_tag, &betti_f, &betti_h, false);
+  tree.add("coatoms", coatoms_tag, &coatoms_f, &coatoms_h);
+  tree.add("compute", compute_tag, &compute_f, &compute_h);
+  tree.add("descent", descent_tag, &descent_f, &descent_h);
+  tree.add("duflo", duflo_tag, &duflo_f, &duflo_h);
+  tree.add("extremals", extremals_tag, &extremals_f, &extremals_h);
+  tree.add("fullcontext", fullcontext_tag, &fullcontext_f, &fullcontext_h);
+  tree.add("ihbetti", ihbetti_tag, &ihbetti_f, &ihbetti_h, false);
+  tree.add("interface", interface_tag, &interface_f, &interface_h, false);
+  tree.add("interval", interval_tag, &interval_f, &interval_h, false);
+  tree.add("inorder", inorder_tag, &inorder_f, &inorder_h);
+  tree.add("invpol", invpol_tag, &invpol_f, &invpol_h);
+  tree.add("lcorder", lcorder_tag, &lcorder_f, &lcorder_h, false);
+  tree.add("lcells", lcells_tag, &lcells_f, &lcells_h, false);
+  tree.add("lcwgraphs", lcwgraphs_tag, &lcwgraphs_f, &lcwgraphs_h, false);
+  tree.add("lrcorder", lrcorder_tag, &lrcorder_f, &lrcorder_h, false);
+  tree.add("lrcells", lrcells_tag, &lrcells_f, &lrcells_h, false);
+  tree.add("lrcwgraphs", lrcwgraphs_tag, &lrcwgraphs_f, &lrcwgraphs_h, false);
+  tree.add("lrwgraph", lrwgraph_tag, &lrwgraph_f, &lrwgraph_h, false);
+  tree.add("lwgraph", lwgraph_tag, &lwgraph_f, &lwgraph_h, false);
+  tree.add("klbasis", klbasis_tag, &klbasis_f, &klbasis_h, true);
+  tree.add("matrix", matrix_tag, &matrix_f, &matrix_h);
+  tree.add("mu", mu_tag, &mu_f, &mu_h);
+  tree.add("pol", pol_tag, &pol_f, &pol_h);
+  tree.add("q", q_tag, &q_f, 0, false);
+  tree.add("qq", qq_tag, &qq_f, &qq_h, false);
+  tree.add("rank", rank_tag, &rank_f, &rank_h, false);
+  tree.add("rcorder", rcorder_tag, &rcorder_f, &rcorder_h, false);
+  tree.add("rcells", rcells_tag, &rcells_f, &rcells_h, false);
+  tree.add("rcwgraphs", rcwgraphs_tag, &rcwgraphs_f, &rcwgraphs_h, false);
+  tree.add("rwgraph", rwgraph_tag, &rwgraph_f, &rwgraph_h, false);
+  tree.add("schubert", schubert_tag, &schubert_f, &schubert_h);
+  tree.add("show", show_tag, &show_f, &show_h);
+  tree.add("showmu", showmu_tag, &showmu_f, &showmu_h);
+  tree.add("slocus", slocus_tag, &slocus_f, &slocus_h);
+  tree.add("sstratification", sstratification_tag, &sstratification_f,
+           &sstratification_h);
+  tree.add("type", type_tag, &type_f, &type_h, false);
+  tree.add("uneq", uneq_tag, &uneq_f, &uneq_h, false);
 
   special::addSpecialCommands(&tree);
 
   commandCompletion(tree.root());
 
-  tree.helpMode()->add("intro",intro_tag,&intro_h,0,false);
-  tree.helpMode()->add("input",input_tag,&input_h,0,false);
+  tree.helpMode()->add("intro", intro_tag, &intro_h, 0, false);
+  tree.helpMode()->add("input", input_tag, &input_h, 0, false);
 
   commandCompletion(tree.helpMode()->root());
 
   return &tree;
 }
 
-};
+}; // namespace
 
 namespace commands {
 
-CommandTree* mainCommandTree()
+CommandTree *mainCommandTree()
 
 /*
   Returns a pointer to the main command tree of the program, building it on
@@ -1030,15 +1023,16 @@ CommandTree* mainCommandTree()
 */
 
 {
-  static CommandTree* tree = initCommandTree<Main_tag>();
+  static CommandTree *tree = initCommandTree<Main_tag>();
   return tree;
 }
 
-};
+}; // namespace commands
 
 namespace {
 
-template<> CommandTree* initCommandTree<Uneq_tag>()
+template <>
+CommandTree *initCommandTree<Uneq_tag>()
 
 /*
   This function builds the unequal-parameter command tree. It contains
@@ -1047,33 +1041,34 @@ template<> CommandTree* initCommandTree<Uneq_tag>()
 */
 
 {
-  static CommandTree tree("uneq",&relax_f,&uneq_entry,&default_error,
-			  &uneq_exit,&uneq_help);
+  static CommandTree tree("uneq", &relax_f, &uneq_entry, &default_error,
+                          &uneq_exit, &uneq_help);
 
-  tree.add("author",author_tag,&author_f,&relax_f,false);
-  tree.add("coatoms",coatoms_tag,&coatoms_f,&coatoms_h);
-  tree.add("compute",compute_tag,&compute_f,&compute_h);
-  tree.add("descent",descent_tag,&descent_f,&descent_h);
-  tree.add("fullcontext",fullcontext_tag,&fullcontext_f,&fullcontext_h);
-  tree.add("interface",interface_tag,&interface_f,&interface_h,false);
-  tree.add("klbasis",klbasis_tag,&uneq::klbasis_f,&help::uneq::klbasis_h,true);
-  tree.add("lcorder",uneq::lcorder_tag,&uneq::lcorder_f,
-	   &help::uneq::lcorder_h,false);
-  tree.add("lrcorder",uneq::lrcorder_tag,&uneq::lrcorder_f,
-	   &help::uneq::lrcorder_h,false);
-  tree.add("lcells",uneq::lcells_tag,&uneq::lcells_f,&help::uneq::lcells_h,
-	   false);
-  tree.add("lrcells",uneq::lrcells_tag,&uneq::lrcells_f,&help::uneq::lrcells_h,
-	   false);
-  tree.add("matrix",matrix_tag,&matrix_f,&matrix_h);
-  tree.add("mu",uneq::mu_tag,&uneq::mu_f,&help::uneq::mu_h);
-  tree.add("pol",uneq::pol_tag,&uneq::pol_f,&help::uneq::pol_h);
-  tree.add("rcells",uneq::rcells_tag,&uneq::rcells_f,&help::uneq::rcells_h,
-	   false);
-  tree.add("rcorder",uneq::rcorder_tag,&uneq::rcorder_f,
-	   &help::uneq::rcorder_h,false);
-  tree.add("q",q_tag,&q_f,0,false);
-  tree.add("qq",qq_tag,&qq_f,&qq_h,false);
+  tree.add("author", author_tag, &author_f, &relax_f, false);
+  tree.add("coatoms", coatoms_tag, &coatoms_f, &coatoms_h);
+  tree.add("compute", compute_tag, &compute_f, &compute_h);
+  tree.add("descent", descent_tag, &descent_f, &descent_h);
+  tree.add("fullcontext", fullcontext_tag, &fullcontext_f, &fullcontext_h);
+  tree.add("interface", interface_tag, &interface_f, &interface_h, false);
+  tree.add("klbasis", klbasis_tag, &uneq::klbasis_f, &help::uneq::klbasis_h,
+           true);
+  tree.add("lcorder", uneq::lcorder_tag, &uneq::lcorder_f,
+           &help::uneq::lcorder_h, false);
+  tree.add("lrcorder", uneq::lrcorder_tag, &uneq::lrcorder_f,
+           &help::uneq::lrcorder_h, false);
+  tree.add("lcells", uneq::lcells_tag, &uneq::lcells_f, &help::uneq::lcells_h,
+           false);
+  tree.add("lrcells", uneq::lrcells_tag, &uneq::lrcells_f,
+           &help::uneq::lrcells_h, false);
+  tree.add("matrix", matrix_tag, &matrix_f, &matrix_h);
+  tree.add("mu", uneq::mu_tag, &uneq::mu_f, &help::uneq::mu_h);
+  tree.add("pol", uneq::pol_tag, &uneq::pol_f, &help::uneq::pol_h);
+  tree.add("rcells", uneq::rcells_tag, &uneq::rcells_f, &help::uneq::rcells_h,
+           false);
+  tree.add("rcorder", uneq::rcorder_tag, &uneq::rcorder_f,
+           &help::uneq::rcorder_h, false);
+  tree.add("q", q_tag, &q_f, 0, false);
+  tree.add("qq", qq_tag, &qq_f, &qq_h, false);
 
   commandCompletion(tree.root());
   commandCompletion(tree.helpMode()->root());
@@ -1081,22 +1076,22 @@ template<> CommandTree* initCommandTree<Uneq_tag>()
   return &tree;
 }
 
-};
+}; // namespace
 
 namespace commands {
 
-CommandTree* uneqCommandTree()
+CommandTree *uneqCommandTree()
 
 /*
   Returns a pointer to the uneq command tree, building it on the first call.
 */
 
 {
-  static CommandTree* tree = initCommandTree<Uneq_tag>();
+  static CommandTree *tree = initCommandTree<Uneq_tag>();
   return tree;
 }
 
-};
+}; // namespace commands
 
 /*****************************************************************************
 
@@ -1206,7 +1201,7 @@ void author_f()
 */
 
 {
-  printFile(stderr,"author.mess",MESSAGE_DIR);
+  printFile(stderr, "author.mess", MESSAGE_DIR);
   return;
 }
 
@@ -1235,8 +1230,8 @@ void betti_f()
     return;
   }
 
-  OutputTraits& traits = W->outputTraits();
-  printBetti(stdout,y,W->schubert(),traits);
+  OutputTraits &traits = W->outputTraits();
+  printBetti(stdout, y, W->schubert(), traits);
 
   return;
 }
@@ -1259,10 +1254,10 @@ void coatoms_f()
   }
 
   List<CoxWord> c(0);
-  W->coatoms(c,g);
+  W->coatoms(c, g);
 
   for (Ulong j = 0; j < c.size(); ++j) {
-    W->print(stdout,c[j]);
+    W->print(stdout, c[j]);
     printf("\n");
   }
 
@@ -1285,15 +1280,15 @@ void compute_f()
     return;
   }
   W->normalForm(g);
-  W->print(stdout,g);
-  if (SmallCoxGroup* Ws = dynamic_cast<SmallCoxGroup*> (W)) {
+  W->print(stdout, g);
+  if (SmallCoxGroup *Ws = dynamic_cast<SmallCoxGroup *>(W)) {
     CoxNbr x = 0;
-    Ws->prodD(x,g);
-    printf(" (#%lu)",static_cast<Ulong>(x));
+    Ws->prodD(x, g);
+    printf(" (#%lu)", static_cast<Ulong>(x));
   }
   CoxNbr x = W->contextNumber(g);
   if (x != undef_coxnbr)
-    printf(" (%s%lu)","%",static_cast<Ulong>(x));
+    printf(" (%s%lu)", "%", static_cast<Ulong>(x));
   printf("\n");
 
   return;
@@ -1317,10 +1312,10 @@ void descent_f()
 
   LFlags f = W->ldescent(g);
   printf("L:");
-  W->printFlags(stdout,f);
+  W->printFlags(stdout, f);
   printf("; R:");
   f = W->rdescent(g);
-  W->printFlags(stdout,f);
+  W->printFlags(stdout, f);
   printf("\n");
 
   return;
@@ -1334,11 +1329,11 @@ void duflo_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"duflo.mess",MESSAGE_DIR);
+    printFile(stderr, "duflo.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -1353,10 +1348,11 @@ void duflo_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),dufloH,traits);
-  printDuflo(file.f(),Wf->duflo(),Wf->lCell(),Wf->kl(),W->interface(),traits);
+  printHeader(file.f(), dufloH, traits);
+  printDuflo(file.f(), Wf->duflo(), Wf->lCell(), Wf->kl(), W->interface(),
+             traits);
 
   return;
 }
@@ -1385,10 +1381,10 @@ void extremals_f()
   }
 
   interactive::OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),extremalsH,traits);
-  printExtremals(file.f(),y,W->kl(),W->interface(),traits);
+  printHeader(file.f(), extremalsH, traits);
+  printExtremals(file.f(), y, W->kl(), W->interface(), traits);
 
   return;
 }
@@ -1402,11 +1398,11 @@ void fullcontext_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"fullcontext.mess",MESSAGE_DIR);
+    printFile(stderr, "fullcontext.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -1449,8 +1445,8 @@ void ihbetti_f()
     return;
   }
 
-  OutputTraits& traits = W->outputTraits();
-  printIHBetti(stdout,y,W->kl(),traits);
+  OutputTraits &traits = W->outputTraits();
+  printIHBetti(stdout, y, W->kl(), traits);
 
   return;
 }
@@ -1476,21 +1472,21 @@ void interval_f()
   CoxWord g(0);
   CoxWord h(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
     return;
   }
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   h = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
     return;
   }
 
-  if (not W->inOrder(g,h)) {
-    fprintf(stderr,"the two elements are not in order\n");
+  if (not W->inOrder(g, h)) {
+    fprintf(stderr, "the two elements are not in order\n");
     return;
   }
 
@@ -1502,28 +1498,28 @@ void interval_f()
   OutputFile file;
 
   BitMap b(W->contextSize());
-  W->extractClosure(b,y);
+  W->extractClosure(b, y);
 
   BitMap::ReverseIterator b_rend = b.rend();
   List<CoxNbr> res(0);
 
   for (BitMap::ReverseIterator i = b.rbegin(); i != b_rend; ++i)
-    if (not W->inOrder(x,*i)) {
+    if (not W->inOrder(x, *i)) {
       BitMap bi(W->contextSize());
-      W->extractClosure(bi,*i);
+      W->extractClosure(bi, *i);
       CoxNbr z = *i; // andnot will invalidate iterator
       b.andnot(bi);
-      b.setBit(z);   // otherwise the decrement will not be correct
+      b.setBit(z); // otherwise the decrement will not be correct
     } else
       res.append(*i);
 
-  schubert::NFCompare nfc(W->schubert(),W->ordering());
+  schubert::NFCompare nfc(W->schubert(), W->ordering());
   Permutation a(res.size());
-  sortI(res,nfc,a);
+  sortI(res, nfc, a);
 
   for (size_t j = 0; j < res.size(); ++j) {
-    W->print(file.f(),res[a[j]]);
-    fprintf(file.f(),"\n");
+    W->print(file.f(), res[a[j]]);
+    fprintf(file.f(), "\n");
   }
 
   return;
@@ -1542,38 +1538,37 @@ void inorder_f()
   CoxWord h(0);
   List<Length> a(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
     return;
   }
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   h = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
     return;
   }
 
-  if (W->inOrder(a,g,h)) {
-    fprintf(stdout,"true :   ");
+  if (W->inOrder(a, g, h)) {
+    fprintf(stdout, "true :   ");
     Ulong i = 0;
     for (Ulong j = 0; j < a.size(); ++j) {
       while (i < a[j]) {
-	W->printSymbol(stdout,h[i]-1);
-	++i;
+        W->printSymbol(stdout, h[i] - 1);
+        ++i;
       }
-      fprintf(stdout,".");
+      fprintf(stdout, ".");
       ++i;
     }
     while (i < h.length()) {
-      W->printSymbol(stdout,h[i]-1);
+      W->printSymbol(stdout, h[i] - 1);
       ++i;
     }
-    fprintf(stdout,"\n");
-  }
-  else
-    fprintf(stdout,"false\n");
+    fprintf(stdout, "\n");
+  } else
+    fprintf(stdout, "false\n");
 }
 
 void invpol_f()
@@ -1586,7 +1581,7 @@ void invpol_f()
 {
   CoxWord g(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -1598,7 +1593,7 @@ void invpol_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -1610,18 +1605,18 @@ void invpol_f()
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
-  const invkl::KLPol& pol = W->invklPol(x,y);
+  const invkl::KLPol &pol = W->invklPol(x, y);
   if (ERRNO) {
-    Error(ERRNO,x,y);
+    Error(ERRNO, x, y);
     return;
   }
 
-  print(stdout,pol,"q");
+  print(stdout, pol, "q");
   printf("\n");
 
   return;
@@ -1652,17 +1647,17 @@ void klbasis_f()
 
   kl::HeckeElt h(0);
 
-  W->cBasis(h,y);
+  W->cBasis(h, y);
   if (ERRNO) {
     Error(ERRNO);
     return;
   }
 
   interactive::OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),basisH,traits);
-  printAsBasisElt(file.f(),h,W->schubert(),W->interface(),traits);
+  printHeader(file.f(), basisH, traits);
+  printAsBasisElt(file.f(), h, W->schubert(), W->interface(), traits);
 
   return;
 }
@@ -1676,11 +1671,11 @@ void lcorder_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcorder.mess",MESSAGE_DIR);
+    printFile(stderr, "lcorder.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -1695,10 +1690,10 @@ void lcorder_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lCOrderH,traits);
-  printLCOrder(file.f(),Wf->kl(),Wf->interface(),traits);
+  printHeader(file.f(), lCOrderH, traits);
+  printLCOrder(file.f(), Wf->kl(), Wf->interface(), traits);
 
   return;
 }
@@ -1711,17 +1706,17 @@ void lcells_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcells.mess",MESSAGE_DIR);
+    printFile(stderr, "lcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lCellsH,traits);
-  printLCells(file.f(),Wf->lCell(),Wf->kl(),Wf->interface(),traits);
+  printHeader(file.f(), lCellsH, traits);
+  printLCells(file.f(), Wf->lCell(), Wf->kl(), Wf->interface(), traits);
 
   return;
 }
@@ -1735,17 +1730,17 @@ void lcwgraphs_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcells.mess",MESSAGE_DIR);
+    printFile(stderr, "lcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lCellWGraphsH,traits);
-  printLCellWGraphs(file.f(),Wf->lCell(),Wf->kl(),W->interface(),traits);
+  printHeader(file.f(), lCellWGraphsH, traits);
+  printLCellWGraphs(file.f(), Wf->lCell(), Wf->kl(), W->interface(), traits);
 
   return;
 }
@@ -1759,11 +1754,11 @@ void lrcorder_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lrcorder.mess",MESSAGE_DIR);
+    printFile(stderr, "lrcorder.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -1778,10 +1773,10 @@ void lrcorder_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lrCOrderH,traits);
-  printLRCOrder(file.f(),Wf->kl(),Wf->interface(),traits);
+  printHeader(file.f(), lrCOrderH, traits);
+  printLRCOrder(file.f(), Wf->kl(), Wf->interface(), traits);
 
   return;
 }
@@ -1795,11 +1790,11 @@ void lrcells_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lrcells.mess",MESSAGE_DIR);
+    printFile(stderr, "lrcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -1814,10 +1809,10 @@ void lrcells_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lrCellsH,traits);
-  printLRCells(file.f(),Wf->lrCell(),Wf->kl(),Wf->interface(),traits);
+  printHeader(file.f(), lrCellsH, traits);
+  printLRCells(file.f(), Wf->lrCell(), Wf->kl(), Wf->interface(), traits);
 
   return;
 }
@@ -1831,17 +1826,17 @@ void lrcwgraphs_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcells.mess",MESSAGE_DIR);
+    printFile(stderr, "lcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lrCellWGraphsH,traits);
-  printLRCellWGraphs(file.f(),Wf->lrCell(),Wf->kl(),W->interface(),traits);
+  printHeader(file.f(), lrCellWGraphsH, traits);
+  printLRCellWGraphs(file.f(), Wf->lrCell(), Wf->kl(), W->interface(), traits);
 
   return;
 }
@@ -1854,7 +1849,7 @@ void lrwgraph_f()
 
 {
   if (!W->isFullContext() && wgraph_warning) {
-    printFile(stderr,"wgraph.mess",MESSAGE_DIR);
+    printFile(stderr, "wgraph.mess", MESSAGE_DIR);
     printf("continue ? y/n\n");
     if (!yesNo())
       return;
@@ -1870,10 +1865,10 @@ void lrwgraph_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),lrWGraphH,traits);
-  printLRWGraph(file.f(),W->kl(),W->interface(),traits);
+  printHeader(file.f(), lrWGraphH, traits);
+  printLRWGraph(file.f(), W->kl(), W->interface(), traits);
 
   return;
 }
@@ -1886,7 +1881,7 @@ void lwgraph_f()
 
 {
   if (!W->isFullContext() && wgraph_warning) {
-    printFile(stderr,"wgraph.mess",MESSAGE_DIR);
+    printFile(stderr, "wgraph.mess", MESSAGE_DIR);
     printf("continue ? y/n\n");
     if (!yesNo())
       return;
@@ -1902,10 +1897,10 @@ void lwgraph_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),lWGraphH,traits);
-  printLWGraph(file.f(),W->kl(),W->interface(),traits);
+  printHeader(file.f(), lWGraphH, traits);
+  printLWGraph(file.f(), W->kl(), W->interface(), traits);
 
   return;
 }
@@ -1917,7 +1912,7 @@ void matrix_f()
 */
 
 {
-  interactive::printMatrix(stdout,W);
+  interactive::printMatrix(stdout, W);
 
   return;
 }
@@ -1929,9 +1924,8 @@ void not_implemented_f()
 */
 
 {
-  fprintf(stderr,"Sorry, not implemented yet\n");
+  fprintf(stderr, "Sorry, not implemented yet\n");
   return;
-
 }
 
 void mu_f()
@@ -1944,7 +1938,7 @@ void mu_f()
 {
   static CoxWord g(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   CoxNbr x = W->extendContext(g);
   if (ERRNO) {
@@ -1952,7 +1946,7 @@ void mu_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -1964,18 +1958,18 @@ void mu_f()
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
-  KLCoeff mu = W->mu(x,y);
+  KLCoeff mu = W->mu(x, y);
   if (ERRNO) {
-    Error(ERRNO,x,y);
+    Error(ERRNO, x, y);
     return;
   }
 
-  printf("%lu\n",static_cast<Ulong>(mu));
+  printf("%lu\n", static_cast<Ulong>(mu));
 
   return;
 }
@@ -1990,7 +1984,7 @@ void pol_f()
 {
   static CoxWord g(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2002,7 +1996,7 @@ void pol_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2014,18 +2008,18 @@ void pol_f()
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
-  const kl::KLPol& pol = W->klPol(x,y);
+  const kl::KLPol &pol = W->klPol(x, y);
   if (ERRNO) {
-    Error(ERRNO,x,y);
+    Error(ERRNO, x, y);
     return;
   }
 
-  print(stdout,pol,"q");
+  print(stdout, pol, "q");
   printf("\n");
 
   return;
@@ -2039,7 +2033,7 @@ void q_f()
 */
 
 {
-  CommandTree* tree = treeStack.top();
+  CommandTree *tree = treeStack.top();
   tree->exit();
 
   if (ERRNO) {
@@ -2059,8 +2053,8 @@ void qq_f()
 */
 
 {
-  while(treeStack.size()) {
-    CommandTree* tree = treeStack.top();
+  while (treeStack.size()) {
+    CommandTree *tree = treeStack.top();
     tree->exit();
     treeStack.pop();
   }
@@ -2075,12 +2069,11 @@ void rank_f()
 */
 
 {
-  CoxGroup* Wloc = interactive::allocCoxGroup(W->type());
+  CoxGroup *Wloc = interactive::allocCoxGroup(W->type());
 
   if (ERRNO) {
     Error(ERRNO);
-  }
-  else {
+  } else {
     W = Wloc;
   }
 
@@ -2096,11 +2089,11 @@ void rcorder_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"rcorder.mess",MESSAGE_DIR);
+    printFile(stderr, "rcorder.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2115,10 +2108,10 @@ void rcorder_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),rCOrderH,traits);
-  printRCOrder(file.f(),Wf->kl(),Wf->interface(),traits);
+  printHeader(file.f(), rCOrderH, traits);
+  printRCOrder(file.f(), Wf->kl(), Wf->interface(), traits);
 
   return;
 }
@@ -2132,11 +2125,11 @@ void rcells_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"rcells.mess",MESSAGE_DIR);
+    printFile(stderr, "rcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2151,10 +2144,10 @@ void rcells_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),rCellsH,traits);
-  printRCells(file.f(),Wf->rCell(),Wf->kl(),Wf->interface(),traits);
+  printHeader(file.f(), rCellsH, traits);
+  printRCells(file.f(), Wf->rCell(), Wf->kl(), Wf->interface(), traits);
 
   return;
 }
@@ -2168,17 +2161,17 @@ void rcwgraphs_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcells.mess",MESSAGE_DIR);
+    printFile(stderr, "lcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),rCellWGraphsH,traits);
-  printRCellWGraphs(file.f(),Wf->rCell(),Wf->kl(),W->interface(),traits);
+  printHeader(file.f(), rCellWGraphsH, traits);
+  printRCellWGraphs(file.f(), Wf->rCell(), Wf->kl(), W->interface(), traits);
 
   return;
 }
@@ -2191,7 +2184,7 @@ void rwgraph_f()
 
 {
   if (!W->isFullContext() && wgraph_warning) {
-    printFile(stderr,"wgraph.mess",MESSAGE_DIR);
+    printFile(stderr, "wgraph.mess", MESSAGE_DIR);
     printf("continue ? y/n\n");
     if (!yesNo())
       return;
@@ -2207,10 +2200,10 @@ void rwgraph_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),rWGraphH,traits);
-  printRWGraph(file.f(),W->kl(),W->interface(),traits);
+  printHeader(file.f(), rWGraphH, traits);
+  printRWGraph(file.f(), W->kl(), W->interface(), traits);
 
   return;
 }
@@ -2241,10 +2234,10 @@ void schubert_f()
   }
 
   interactive::OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),closureH,traits);
-  printClosure(file.f(),y,W->kl(),W->interface(),traits);
+  printHeader(file.f(), closureH, traits);
+  printClosure(file.f(), y, W->kl(), W->interface(), traits);
 
   return;
 }
@@ -2261,7 +2254,7 @@ void show_f()
 {
   static CoxWord g(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2273,7 +2266,7 @@ void show_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2285,21 +2278,21 @@ void show_f()
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
-  fprintf(stdout,"generator (carriage return for default) : ");
+  fprintf(stdout, "generator (carriage return for default) : ");
   LFlags f = W->descent(y);
-  Generator s = interactive::getGenerator(W,f);
+  Generator s = interactive::getGenerator(W, f);
   if (ERRNO) {
-    Error (ERRNO);
+    Error(ERRNO);
     return;
   }
 
   interactive::OutputFile file;
-  showKLPol(file.f(),W->kl(),x,y,W->interface(),s);
+  showKLPol(file.f(), W->kl(), x, y, W->interface(), s);
 
   return;
 }
@@ -2316,7 +2309,7 @@ void showmu_f()
 {
   static CoxWord g(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2328,7 +2321,7 @@ void showmu_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2340,18 +2333,18 @@ void showmu_f()
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
   interactive::OutputFile file;
-  showMu(file.f(),W->kl(),x,y,W->interface());
+  showMu(file.f(), W->kl(), x, y, W->interface());
 
   return;
 }
 
-void slocus_f ()
+void slocus_f()
 
 /*
   Response to the slocus command. Prints out the singular locus of the
@@ -2375,15 +2368,15 @@ void slocus_f ()
   }
 
   OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),slocusH,traits);
-  printSingularLocus(file.f(),y,W->kl(),W->interface(),traits);
+  printHeader(file.f(), slocusH, traits);
+  printSingularLocus(file.f(), y, W->kl(), W->interface(), traits);
 
   return;
 }
 
-void sstratification_f ()
+void sstratification_f()
 
 /*
   Response to the slocus command. Prints out the singular locus of the
@@ -2407,10 +2400,10 @@ void sstratification_f ()
   }
 
   OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),sstratificationH,traits);
-  printSingularStratification(file.f(),y,W->kl(),W->interface(),traits);
+  printHeader(file.f(), sstratificationH, traits);
+  printSingularStratification(file.f(), y, W->kl(), W->interface(), traits);
 
   return;
 }
@@ -2423,12 +2416,11 @@ void type_f()
 */
 
 {
-  CoxGroup* Wloc = interactive::allocCoxGroup();
+  CoxGroup *Wloc = interactive::allocCoxGroup();
 
   if (ERRNO) {
     Error(ERRNO);
-  }
-  else {
+  } else {
     delete W;
     wgraph_warning = true;
     W = Wloc;
@@ -2475,17 +2467,17 @@ void klbasis_f()
 
   uneqkl::HeckeElt h(0);
 
-  W->uneqcBasis(h,y);
+  W->uneqcBasis(h, y);
   if (ERRNO) {
     Error(ERRNO);
     return;
   }
 
   interactive::OutputFile file;
-  OutputTraits& traits = W->outputTraits();
+  OutputTraits &traits = W->outputTraits();
 
-  printHeader(file.f(),basisH,traits);
-  printAsBasisElt(file.f(),h,W->schubert(),W->interface(),traits);
+  printHeader(file.f(), basisH, traits);
+  printAsBasisElt(file.f(), h, W->schubert(), W->interface(), traits);
 
   return;
 }
@@ -2498,11 +2490,11 @@ void lcells_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcells.mess",MESSAGE_DIR);
+    printFile(stderr, "lcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2517,10 +2509,10 @@ void lcells_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lCellsH,traits);
-  printLCells(file.f(),Wf->lUneqCell(),Wf->uneqkl(),Wf->interface(),traits);
+  printHeader(file.f(), lCellsH, traits);
+  printLCells(file.f(), Wf->lUneqCell(), Wf->uneqkl(), Wf->interface(), traits);
 
   return;
 }
@@ -2534,11 +2526,11 @@ void lcorder_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"lcorder.mess",MESSAGE_DIR);
+    printFile(stderr, "lcorder.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2553,10 +2545,10 @@ void lcorder_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lCOrderH,traits);
-  printLCOrder(file.f(),Wf->uneqkl(),Wf->interface(),traits);
+  printHeader(file.f(), lCOrderH, traits);
+  printLCOrder(file.f(), Wf->uneqkl(), Wf->interface(), traits);
 
   return;
 }
@@ -2570,11 +2562,11 @@ void lrcorder_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"uneq/lrcorder.mess",MESSAGE_DIR);
+    printFile(stderr, "uneq/lrcorder.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2589,10 +2581,10 @@ void lrcorder_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lrCOrderH,traits);
-  printLRCOrder(file.f(),Wf->uneqkl(),Wf->interface(),traits);
+  printHeader(file.f(), lrCOrderH, traits);
+  printLRCOrder(file.f(), Wf->uneqkl(), Wf->interface(), traits);
 
   return;
 }
@@ -2606,11 +2598,11 @@ void lrcells_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"uneq/lrcells.mess",MESSAGE_DIR);
+    printFile(stderr, "uneq/lrcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2625,10 +2617,11 @@ void lrcells_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),lrCellsH,traits);
-  printLRCells(file.f(),Wf->lrUneqCell(),Wf->uneqkl(),Wf->interface(),traits);
+  printHeader(file.f(), lrCellsH, traits);
+  printLRCells(file.f(), Wf->lrUneqCell(), Wf->uneqkl(), Wf->interface(),
+               traits);
 
   return;
 }
@@ -2646,7 +2639,7 @@ void mu_f()
   static CoxWord g(0);
   bool leftAction = false;
 
-  fprintf(stdout,"generator : ");
+  fprintf(stdout, "generator : ");
   Generator s = getGenerator(W);
 
   if (s >= W->rank()) { // action is on the left
@@ -2654,12 +2647,12 @@ void mu_f()
     leftAction = true;
   }
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (leftAction)
     W->inverse(g);
-  if (!W->isDescent(g,s)) { // mu(s,x,y) is undefined
-    fprintf(stderr,"xs is greater than x\n");
+  if (!W->isDescent(g, s)) { // mu(s,x,y) is undefined
+    fprintf(stderr, "xs is greater than x\n");
     return;
   }
   CoxNbr x = W->extendContext(g);
@@ -2668,12 +2661,12 @@ void mu_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (leftAction)
     W->inverse(g);
-  if (W->isDescent(g,s)) { // mu(s,x,y) is undefined
-    fprintf(stderr,"ys is smaller than y\n");
+  if (W->isDescent(g, s)) { // mu(s,x,y) is undefined
+    fprintf(stderr, "ys is smaller than y\n");
     return;
   }
   if (ERRNO) {
@@ -2687,22 +2680,22 @@ void mu_f()
   }
 
   if (x == y) {
-    fprintf(stderr,"the two elements are equal\n");
+    fprintf(stderr, "the two elements are equal\n");
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
-  const uneqkl::MuPol& mu = W->uneqmu(s,x,y);
+  const uneqkl::MuPol &mu = W->uneqmu(s, x, y);
   if (ERRNO) {
-    Error(ERRNO,x,y);
+    Error(ERRNO, x, y);
     return;
   }
 
-  print(stdout,mu,"v");
+  print(stdout, mu, "v");
   printf("\n");
 
   return;
@@ -2717,7 +2710,7 @@ void pol_f()
 {
   static CoxWord g(0);
 
-  fprintf(stdout,"first : ");
+  fprintf(stdout, "first : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2729,7 +2722,7 @@ void pol_f()
     return;
   }
 
-  fprintf(stdout,"second : ");
+  fprintf(stdout, "second : ");
   g = interactive::getCoxWord(W);
   if (ERRNO) {
     Error(ERRNO);
@@ -2741,18 +2734,18 @@ void pol_f()
     return;
   }
 
-  if (!W->inOrder(x,y)) {
-    fprintf(stderr,"the two elements are not in Bruhat order\n");
+  if (!W->inOrder(x, y)) {
+    fprintf(stderr, "the two elements are not in Bruhat order\n");
     return;
   }
 
-  const uneqkl::KLPol& pol = W->uneqklPol(x,y);
+  const uneqkl::KLPol &pol = W->uneqklPol(x, y);
   if (ERRNO) {
-    Error(ERRNO,x,y);
+    Error(ERRNO, x, y);
     return;
   }
 
-  print(stdout,pol,"q");
+  print(stdout, pol, "q");
   printf("\n");
 
   return;
@@ -2767,11 +2760,11 @@ void rcells_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"rcells.mess",MESSAGE_DIR);
+    printFile(stderr, "rcells.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2786,10 +2779,10 @@ void rcells_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),rCellsH,traits);
-  printRCells(file.f(),Wf->rUneqCell(),Wf->uneqkl(),Wf->interface(),traits);
+  printHeader(file.f(), rCellsH, traits);
+  printRCells(file.f(), Wf->rUneqCell(), Wf->uneqkl(), Wf->interface(), traits);
 
   return;
 }
@@ -2803,11 +2796,11 @@ void rcorder_f()
 
 {
   if (!isFiniteType(W)) {
-    printFile(stderr,"rcorder.mess",MESSAGE_DIR);
+    printFile(stderr, "rcorder.mess", MESSAGE_DIR);
     return;
   }
 
-  FiniteCoxGroup* Wf = dynamic_cast<FiniteCoxGroup*> (W);
+  FiniteCoxGroup *Wf = dynamic_cast<FiniteCoxGroup *>(W);
 
   Wf->fullContext();
   if (ERRNO) {
@@ -2822,17 +2815,17 @@ void rcorder_f()
   }
 
   OutputFile file;
-  OutputTraits& traits = Wf->outputTraits();
+  OutputTraits &traits = Wf->outputTraits();
 
-  printHeader(file.f(),rCOrderH,traits);
-  printRCOrder(file.f(),Wf->uneqkl(),Wf->interface(),traits);
+  printHeader(file.f(), rCOrderH, traits);
+  printRCOrder(file.f(), Wf->uneqkl(), Wf->interface(), traits);
 
   return;
 }
 
-};
+}; // namespace uneq
 
-};
+}; // namespace
 
 namespace commands {
 
@@ -2861,7 +2854,7 @@ void interface::alphabetic_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),Alphabetic());
+  in_buf = new GroupEltInterface(W->rank(), Alphabetic());
   W->interface().setIn(*in_buf);
   W->interface().setOut(*in_buf);
 
@@ -2901,7 +2894,7 @@ void interface::decimal_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),Decimal());
+  in_buf = new GroupEltInterface(W->rank(), Decimal());
   W->interface().setIn(*in_buf);
   W->interface().setOut(*in_buf);
 
@@ -2942,7 +2935,7 @@ void interface::gap_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),GAP());
+  in_buf = new GroupEltInterface(W->rank(), GAP());
 
   in::bourbaki_f();
   W->interface().setIn(*in_buf);
@@ -2965,7 +2958,7 @@ void interface::hexadecimal_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),Hexadecimal());
+  in_buf = new GroupEltInterface(W->rank(), Hexadecimal());
   W->interface().setIn(*in_buf);
 
   W->interface().setOut(*in_buf);
@@ -2989,7 +2982,7 @@ void interface::ordering_f()
 {
   static Permutation in_order(W->rank());
 
-  changeOrdering(W,in_order);
+  changeOrdering(W, in_order);
 
   if (ERRNO) {
     Error(ERRNO);
@@ -3018,11 +3011,11 @@ void interface::permutation_f()
   using namespace coxeter;
 
   if (!isTypeA(W->type())) {
-    printFile(stderr,"permutation.mess",MESSAGE_DIR);
+    printFile(stderr, "permutation.mess", MESSAGE_DIR);
     return;
   }
 
-  TypeACoxGroup* WA = dynamic_cast<TypeACoxGroup*>(W);
+  TypeACoxGroup *WA = dynamic_cast<TypeACoxGroup *>(W);
 
   WA->setPermutationInput(true);
   WA->setPermutationOutput(true);
@@ -3044,7 +3037,7 @@ void interface::symbol_f()
 {
   static String buf(0);
 
-  const Interface& I = W->interface();
+  const Interface &I = W->interface();
   Generator s = undef_generator;
   reset(buf);
 
@@ -3052,21 +3045,21 @@ void interface::symbol_f()
     if (ERRNO)
       Error(ERRNO);
     printf("enter the generator symbol you wish to change, ? to abort:\n");
-    getInput(stdin,buf,0);
+    getInput(stdin, buf, 0);
     if (buf[0] == '?')
       return;
-    io::skipSpaces(buf,0);
+    io::skipSpaces(buf, 0);
     Token tok;
-    I.symbolTree().find(buf,0,tok);
-    if (tokenType(tok) != generator_type)/* error */
+    I.symbolTree().find(buf, 0, tok);
+    if (tokenType(tok) != generator_type) /* error */
       ERRNO = NOT_GENERATOR;
     else
-      s = tok-1;
+      s = tok - 1;
   } while (ERRNO);
 
   printf("enter the new symbol (finish with a carriage return):\n");
-  getInput(stdin,buf,0);
-  in_buf->setSymbol(s,buf);
+  getInput(stdin, buf, 0);
+  in_buf->setSymbol(s, buf);
 
   return;
 }
@@ -3082,7 +3075,7 @@ void interface::terse_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),GAP());
+  in_buf = new GroupEltInterface(W->rank(), GAP());
   W->interface().setIn(*in_buf);
   W->interface().setOut(*in_buf);
 
@@ -3099,7 +3092,7 @@ void interface::in::alphabetic_f()
 */
 
 {
-  const String* alpha = alphabeticSymbols(in_buf->symbol.size());
+  const String *alpha = alphabeticSymbols(in_buf->symbol.size());
 
   for (Ulong j = 0; j < in_buf->symbol.size(); ++j) {
     in_buf->symbol[j] = alpha[j];
@@ -3116,7 +3109,7 @@ void interface::in::bourbaki_f()
 */
 
 {
-  const Type& x = W->type();
+  const Type &x = W->type();
 
   if (!isFiniteType(x))
     return;
@@ -3124,7 +3117,7 @@ void interface::in::bourbaki_f()
     return;
 
   for (Generator s = 0; s < W->rank(); ++s) {
-    in_buf->symbol[s] = W->interface().inSymbol(W->rank()-s-1);
+    in_buf->symbol[s] = W->interface().inSymbol(W->rank() - s - 1);
   }
 
   return;
@@ -3137,7 +3130,7 @@ void interface::in::decimal_f()
 */
 
 {
-  const String* dec = decimalSymbols(in_buf->symbol.size());
+  const String *dec = decimalSymbols(in_buf->symbol.size());
 
   for (Ulong j = 0; j < in_buf->symbol.size(); ++j) {
     in_buf->symbol[j] = dec[j];
@@ -3167,7 +3160,7 @@ void interface::in::gap_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),GAP());
+  in_buf = new GroupEltInterface(W->rank(), GAP());
   in::bourbaki_f();
 
   return;
@@ -3180,7 +3173,7 @@ void interface::in::hexadecimal_f()
 */
 
 {
-  const String* hex = hexSymbols(in_buf->symbol.size());
+  const String *hex = hexSymbols(in_buf->symbol.size());
 
   for (Ulong j = 0; j < in_buf->symbol.size(); ++j) {
     in_buf->symbol[j] = hex[j];
@@ -3199,11 +3192,11 @@ void interface::in::permutation_f()
   using namespace coxeter;
 
   if (!isTypeA(W->type())) {
-    printFile(stderr,"permutation.mess",MESSAGE_DIR);
+    printFile(stderr, "permutation.mess", MESSAGE_DIR);
     return;
   }
 
-  TypeACoxGroup* WA = dynamic_cast<TypeACoxGroup*>(W);
+  TypeACoxGroup *WA = dynamic_cast<TypeACoxGroup *>(W);
   WA->setPermutationInput(true);
 
   delete in_buf;
@@ -3221,7 +3214,7 @@ void interface::in::postfix_f()
 {
   printf("Enter the new input postfix (finish with a carriage return):\n");
   String buf(0);
-  getInput(stdin,buf,0);
+  getInput(stdin, buf, 0);
   in_buf->setPostfix(buf);
   return;
 }
@@ -3235,7 +3228,7 @@ void interface::in::prefix_f()
 {
   printf("Enter the new input prefix (finish with a carriage return):\n");
   String buf(0);
-  getInput(stdin,buf,0);
+  getInput(stdin, buf, 0);
   in_buf->setPrefix(buf);
   return;
 }
@@ -3249,7 +3242,7 @@ void interface::in::separator_f()
 {
   printf("Enter the new input separator (finish with a carriage return):\n");
   String buf(0);
-  getInput(stdin,buf,0);
+  getInput(stdin, buf, 0);
   in_buf->setSeparator(buf);
   return;
 }
@@ -3262,7 +3255,7 @@ void interface::in::terse_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),GAP());
+  in_buf = new GroupEltInterface(W->rank(), GAP());
 
   return;
 }
@@ -3274,7 +3267,7 @@ void interface::out::alphabetic_f()
 */
 
 {
-  const String* alpha = alphabeticSymbols(in_buf->symbol.size());
+  const String *alpha = alphabeticSymbols(in_buf->symbol.size());
 
   for (Ulong j = 0; j < in_buf->symbol.size(); ++j) {
     in_buf->symbol[j] = alpha[j];
@@ -3292,7 +3285,7 @@ void interface::out::bourbaki_f()
 */
 
 {
-  const Type& x = W->type();
+  const Type &x = W->type();
 
   if (!isFiniteType(x))
     return;
@@ -3302,13 +3295,13 @@ void interface::out::bourbaki_f()
   }
 
   for (Generator s = 0; s < W->rank(); ++s) {
-    in_buf->symbol[s] = W->interface().outSymbol(W->rank()-s-1);
+    in_buf->symbol[s] = W->interface().outSymbol(W->rank() - s - 1);
   }
 
   Permutation a(W->rank());
 
   for (Generator s = 0; s < W->rank(); ++s) {
-    a[s] = W->rank()-1-s;
+    a[s] = W->rank() - 1 - s;
   }
 
   W->setOrdering(a);
@@ -3323,7 +3316,7 @@ void interface::out::decimal_f()
 */
 
 {
-  const String* dec = decimalSymbols(in_buf->symbol.size());
+  const String *dec = decimalSymbols(in_buf->symbol.size());
 
   for (Ulong j = 0; j < in_buf->symbol.size(); ++j) {
     in_buf->symbol[j] = dec[j];
@@ -3356,7 +3349,7 @@ void interface::out::gap_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),GAP());
+  in_buf = new GroupEltInterface(W->rank(), GAP());
   W->setOrdering(identityOrder(W->rank()));
   out::bourbaki_f();
 
@@ -3375,7 +3368,7 @@ void interface::out::hexadecimal_f()
 */
 
 {
-  const String* hex = hexSymbols(in_buf->symbol.size());
+  const String *hex = hexSymbols(in_buf->symbol.size());
 
   for (Ulong j = 0; j < in_buf->symbol.size(); ++j) {
     in_buf->symbol[j] = hex[j];
@@ -3394,11 +3387,11 @@ void interface::out::permutation_f()
   using namespace coxeter;
 
   if (!isTypeA(W->type())) {
-    printFile(stderr,"permutation.mess",MESSAGE_DIR);
+    printFile(stderr, "permutation.mess", MESSAGE_DIR);
     return;
   }
 
-  TypeACoxGroup* WA = dynamic_cast<TypeACoxGroup*>(W);
+  TypeACoxGroup *WA = dynamic_cast<TypeACoxGroup *>(W);
 
   WA->setPermutationOutput(true);
 
@@ -3421,7 +3414,7 @@ void interface::out::postfix_f()
 {
   printf("enter the new output postfix (finish with a carriage return):\n");
   String buf(0);
-  getInput(stdin,buf,0);
+  getInput(stdin, buf, 0);
   in_buf->setPostfix(buf);
   return;
 }
@@ -3435,7 +3428,7 @@ void interface::out::prefix_f()
 {
   printf("Enter the new output prefix (finish with a carriage return):\n");
   String buf(0);
-  getInput(stdin,buf,0);
+  getInput(stdin, buf, 0);
   in_buf->setPrefix(buf);
   return;
 }
@@ -3449,7 +3442,7 @@ void interface::out::separator_f()
 {
   printf("Enter the new output separator (finish with a carriage return):\n");
   String buf(0);
-  getInput(stdin,buf,0);
+  getInput(stdin, buf, 0);
   in_buf->setSeparator(buf);
   return;
 }
@@ -3462,7 +3455,7 @@ void interface::out::terse_f()
 
 {
   delete in_buf;
-  in_buf = new GroupEltInterface(W->rank(),GAP());
+  in_buf = new GroupEltInterface(W->rank(), GAP());
 
   W->interface().setDescent(Default());
   W->interface().setOut(*in_buf); // has to be done here so that output
@@ -3472,7 +3465,7 @@ void interface::out::terse_f()
   return;
 }
 
-};
+}; // namespace commands
 
 /*****************************************************************************
 
@@ -3499,7 +3492,7 @@ void interface::out::terse_f()
 
 namespace commands {
 
-void printCommands(FILE* file, CommandTree* tree)
+void printCommands(FILE *file, CommandTree *tree)
 
 /*
   Prints one line for each command on the tree (sorted in alphabetical order)
@@ -3507,13 +3500,13 @@ void printCommands(FILE* file, CommandTree* tree)
 */
 
 {
-  printCommandTree(file,tree->root()->left);
+  printCommandTree(file, tree->root()->left);
   return;
 }
 
-};
+}; // namespace commands
 
-CoxGroup* commands::currentGroup()
+CoxGroup *commands::currentGroup()
 
 /*
   Returns the "current" Coxeter group.
@@ -3527,19 +3520,19 @@ CoxGroup* commands::currentGroup()
 
 namespace {
 
-void printCommandTree(FILE* file, DictCell<CommandData>* cell)
+void printCommandTree(FILE *file, DictCell<CommandData> *cell)
 
 {
   if (cell == 0)
     return;
 
   if (cell->fullname) { /* print command info */
-    CommandData* cd = cell->value();
-    fprintf(file,"  - %s : %s;\n",cd->name.ptr(),cd->tag.ptr());
+    CommandData *cd = cell->value();
+    fprintf(file, "  - %s : %s;\n", cd->name.ptr(), cd->tag.ptr());
   };
 
-  printCommandTree(file,cell->left);
-  printCommandTree(file,cell->right);
+  printCommandTree(file, cell->left);
+  printCommandTree(file, cell->right);
 
   return;
 }
@@ -3578,7 +3571,7 @@ void main_entry()
   return;
 }
 
-};
+}; // namespace
 
 namespace commands {
 
@@ -3594,7 +3587,7 @@ void interface::in_entry()
   a.inverse();
 
   printf("current input symbols are the following :\n\n");
-  printInterface(stdout,W->interface().inInterface(),a);
+  printInterface(stdout, W->interface().inInterface(), a);
   printf("\n");
 
   in_buf = new GroupEltInterface(W->interface().inInterface());
@@ -3622,36 +3615,36 @@ void interface::in_exit()
   /* at this point in_buf holds the full putative new interface; we
    need to check for reserved or repeated non-empty symbols */
 
-  const String* str = checkLeadingWhite(*in_buf);
+  const String *str = checkLeadingWhite(*in_buf);
 
   if (str) {
-    Error(LEADING_WHITESPACE,in_buf,&W->interface().inInterface(),&a,str);
+    Error(LEADING_WHITESPACE, in_buf, &W->interface().inInterface(), &a, str);
     goto error_exit;
   }
 
-  str = checkReserved(*in_buf,W->interface());
+  str = checkReserved(*in_buf, W->interface());
 
   if (str) {
-    Error(RESERVED_SYMBOL,in_buf,&W->interface().inInterface(),&a,str);
+    Error(RESERVED_SYMBOL, in_buf, &W->interface().inInterface(), &a, str);
     goto error_exit;
   }
 
   if (!checkRepeated(*in_buf)) {
-    Error(REPEATED_SYMBOL,in_buf,&W->interface().inInterface(),&a);
+    Error(REPEATED_SYMBOL, in_buf, &W->interface().inInterface(), &a);
     goto error_exit;
   }
 
   /* if we reach this point, the new interface is ok */
 
   printf("new input symbols:\n\n");
-  printInterface(stdout,*in_buf,a);
+  printInterface(stdout, *in_buf, a);
   printf("\n");
 
   W->interface().setIn(*in_buf);
 
   return;
 
- error_exit:
+error_exit:
   ERRNO = ERROR_WARNING;
   return;
 }
@@ -3671,7 +3664,7 @@ void interface::out_entry()
   a.inverse();
 
   printf("current output symbols are the following :\n\n");
-  printInterface(stdout,*in_buf,W->interface().inInterface(),a);
+  printInterface(stdout, *in_buf, W->interface().inInterface(), a);
   printf("\n");
 
   return;
@@ -3692,7 +3685,7 @@ void interface::out_exit()
   a.inverse();
 
   printf("new output symbols:\n\n");
-  printInterface(stdout,*in_buf,W->interface().inInterface(),a);
+  printInterface(stdout, *in_buf, W->interface().inInterface(), a);
   printf("\n");
 
   W->interface().setOut(*in_buf);
@@ -3700,7 +3693,7 @@ void interface::out_exit()
   return;
 }
 
-};
+}; // namespace commands
 
 namespace {
 
@@ -3734,4 +3727,4 @@ void uneq_exit()
   return;
 }
 
-};
+}; // namespace

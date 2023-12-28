@@ -1,6 +1,6 @@
 /*
   This is search.cpp
-  
+
   Coxeter version 3.0 Copyright (C) 2002 Fokko du Cloux
   See file main.cpp for full copyright notice
 */
@@ -8,7 +8,7 @@
 #include "memory.h"
 
 namespace search {
-  using namespace memory;
+using namespace memory;
 };
 
 /****************************************************************************
@@ -19,7 +19,6 @@ namespace search {
   to study its behaviour and choose the best way to improve.
 
  ****************************************************************************/
-
 
 /****************************************************************************
 
@@ -46,12 +45,14 @@ namespace search {
 
 namespace search {
 
-template <class T> BinaryTree<T>::BinaryTree()
-  :d_size(0), d_root(0)
+template <class T>
+BinaryTree<T>::BinaryTree()
+    : d_size(0), d_root(0)
 
 {}
 
-template <class T> BinaryTree<T>::~BinaryTree()
+template <class T>
+BinaryTree<T>::~BinaryTree()
 
 /*
   The tree is destructed recursively by ~TreeNode().
@@ -61,7 +62,8 @@ template <class T> BinaryTree<T>::~BinaryTree()
   delete d_root;
 }
 
-template <class T> T* BinaryTree<T>::find(const T& a)
+template <class T>
+T *BinaryTree<T>::find(const T &a)
 
 /*
   Finds the element a in the tree; creates a new node if a is not found.
@@ -72,7 +74,7 @@ template <class T> T* BinaryTree<T>::find(const T& a)
 */
 
 {
-  TreeNode<T>** c = &d_root;
+  TreeNode<T> **c = &d_root;
 
   while (*c) {
     if (a == (*c)->data) /* a was found */
@@ -80,7 +82,7 @@ template <class T> T* BinaryTree<T>::find(const T& a)
     if (a < (*c)->data) /* go to left tree */
       c = &((*c)->left);
     else /* go to right tree */
-      c = &((*c)->right);      
+      c = &((*c)->right);
   }
 
   /* at this point c points to the insertion point */
@@ -94,7 +96,7 @@ template <class T> T* BinaryTree<T>::find(const T& a)
   return &((*c)->data);
 }
 
-};
+}; // namespace search
 
 /*****************************************************************************
 
@@ -108,18 +110,21 @@ template <class T> T* BinaryTree<T>::find(const T& a)
 
 namespace search {
 
-template <class T> TreeNode<T>::TreeNode(const T& a):data(a)
+template <class T>
+TreeNode<T>::TreeNode(const T &a)
+    : data(a)
 
 {}
 
-template <class T> TreeNode<T>::~TreeNode()
+template <class T>
+TreeNode<T>::~TreeNode()
 
 {
   delete left;
   delete right;
 }
 
-};
+}; // namespace search
 
 /*****************************************************************************
 
@@ -130,23 +135,25 @@ template <class T> TreeNode<T>::~TreeNode()
    - print(file,t) : prints the tree on the file;
 
  *****************************************************************************/
-  
+
 namespace search {
 
-template <class T> void print(FILE* file, const BinaryTree<T>& t)
+template <class T>
+void print(FILE *file, const BinaryTree<T> &t)
 
 /*
   Prints out the tree on the output file.
 */
 
 {
-  fprintf(file,"size : %lu\n\n",t.size());
-  print(file,t.root());
+  fprintf(file, "size : %lu\n\n", t.size());
+  print(file, t.root());
 
   return;
 }
 
-template <class T> void print(FILE* file, TreeNode<T>* c, const char* varname)
+template <class T>
+void print(FILE *file, TreeNode<T> *c, const char *varname)
 
 /*
   Recursively prints out the nodes, indenting to express the tree structure.
@@ -159,18 +166,18 @@ template <class T> void print(FILE* file, TreeNode<T>* c, const char* varname)
     return;
 
   // indentation += 2;
-  print(file,c->left,varname);
+  print(file, c->left, varname);
   // indentation -= 2;
 
-  fprintf(file,"%*s",indentation,"");
-  print(file,c->data,varname);
-  fprintf(file,"\n");
+  fprintf(file, "%*s", indentation, "");
+  print(file, c->data, varname);
+  fprintf(file, "\n");
 
   // indentation += 2;
-  print(file,c->right,varname);
+  print(file, c->right, varname);
   // indentation -= 2;
 
   return;
 }
 
-};
+}; // namespace search

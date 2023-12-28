@@ -9,9 +9,9 @@
 
 namespace {
 
-  const char* affinetypes ="abcdefg";
-  const char *finitetypes = "ABCDEFGHI";
-};
+const char *affinetypes = "abcdefg";
+const char *finitetypes = "ABCDEFGHI";
+}; // namespace
 
 /****************************************************************************
 
@@ -23,7 +23,8 @@ namespace {
 
 namespace coxeter {
 
-Type::Type():d_name("")
+Type::Type()
+    : d_name("")
 
 /*
   Default constructor; yields the undefined type.
@@ -31,7 +32,8 @@ Type::Type():d_name("")
 
 {}
 
-Type::Type(const char* str):d_name(str)
+Type::Type(const char *str)
+    : d_name(str)
 
 /*
   Makes the type with name str.
@@ -62,7 +64,7 @@ Type::~Type()
 
  *****************************************************************************/
 
-bool isAffineType(const Type& x)
+bool isAffineType(const Type &x)
 
 /*
   Recognizes the type of an affine group. This function defines the class
@@ -72,12 +74,12 @@ bool isAffineType(const Type& x)
 */
 
 {
-  if (strchr(affinetypes,x[0]) == NULL)
+  if (strchr(affinetypes, x[0]) == NULL)
     return false;
   return true;
 }
 
-bool isFiniteType(const Type& type)
+bool isFiniteType(const Type &type)
 
 /*
   Recognizes the type of a finite group. Non-irreducible types are
@@ -89,14 +91,14 @@ bool isFiniteType(const Type& type)
 
 {
   for (Ulong j = 0; j < type.name().length(); ++j) {
-    if (strchr(finitetypes,type[j]) == NULL)
+    if (strchr(finitetypes, type[j]) == NULL)
       return false;
   }
 
   return true;
 }
 
-bool isTypeA(const Type& type)
+bool isTypeA(const Type &type)
 
 /*
   Recognizes if the group is of type A; it is assumed that isFiniteType
@@ -107,7 +109,7 @@ bool isTypeA(const Type& type)
   return type[0] == 'A';
 }
 
-bool isTypeB(const Type& type)
+bool isTypeB(const Type &type)
 
 /*
   Recognizes if the group is of type B; it is assumed that isFiniteType
@@ -118,7 +120,7 @@ bool isTypeB(const Type& type)
   return type[0] == 'B';
 }
 
-bool isTypeD(const Type& type)
+bool isTypeD(const Type &type)
 
 /*
   Recognizes if the group is of type D; it is assumed that isFiniteType
@@ -129,5 +131,4 @@ bool isTypeD(const Type& type)
   return type[0] == 'D';
 }
 
-};
-
+}; // namespace coxeter

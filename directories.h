@@ -1,12 +1,12 @@
 /*
   This is directories.h
-  
+
   Coxeter version 3.0  Copyright (C) 2002 Fokko du Cloux
   Coxeter version 3.1  Copyright (C) 2015 Travis Scrimshaw
   See file main.cpp for full copyright notice
 */
 
-#ifndef DIRECTORIES_H  /* guard against multiple inclusions */
+#ifndef DIRECTORIES_H /* guard against multiple inclusions */
 #define DIRECTORIES_H
 
 /*
@@ -25,9 +25,9 @@
 */
 
 namespace directories {
-  const char* const COXMATRIX_DIR = "/usr/local/coxeter/coxeter_matrices";
-  const char* const HEADER_DIR = "/usr/local/coxeter/headers";
-  const char* const MESSAGE_DIR = "/usr/local/coxeter/messages";
-};
+const char *const COXMATRIX_DIR = "/usr/local/coxeter/coxeter_matrices";
+const char *const HEADER_DIR = "/usr/local/coxeter/headers";
+const char *const MESSAGE_DIR = "/usr/local/coxeter/messages";
+}; // namespace directories
 
 #endif
