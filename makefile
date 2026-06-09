@@ -54,6 +54,9 @@ LIBRARY = $(LIBPREFIX)$(LIBNAME)$(LIBEXT)
 
 all: coxeter executable
 
+direcrories.h: directories.h.in
+        $(SED) "s|@PREFIX@|$PREFIX|g" directories.h.in > directories.h
+
 coxeter: $(objects)
 	$(CXX) $(LINKFLAGS) -o $(LIBRARY) $(objects) $(LINKLIBS)
 
