@@ -1,0 +1,6 @@
+*.o
+*.bak
+*.swp
+libcoxeter3.*
+directories.h
+coxeter

@@ -25,15 +25,16 @@ endif
 
 EXENAME = coxeter
 LIBNAME = coxeter3
-ifeq ($(UNAME),Darwin)
+OS = $(shell uname)
+ifeq ($(OS),Darwin)
 	EXEEXT = 
 	LIBPREFIX = lib
 	LIBEXT = .dylib
 	LIBDIR = lib
-	LINKFLAGS = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,3.0,-current_version,3.0,-install_name,$(SAGE_LOCAL)/lib/$(LIBPREFIX)$(LIBNAME)$(LIBEXT)
+	LINKFLAGS = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,3.0,-current_version,3.0,-install_name,$(PREFIX)/lib/$(LIBPREFIX)$(LIBNAME)$(LIBEXT)
 	LINKLIBS = 
 else
-ifeq ($(UNAME),CYGWIN)
+ifeq ($(OS),CYGWIN)
 	EXEEXT = .exe
 	LIBPREFIX = cyg
 	LIBEXT = .dll
@@ -54,8 +55,8 @@ LIBRARY = $(LIBPREFIX)$(LIBNAME)$(LIBEXT)
 
 all: coxeter executable
 
-direcrories.h: directories.h.in
-        $(SED) "s|@PREFIX@|$PREFIX|g" directories.h.in > directories.h
+directories.h: directories.h.in
+	sed "s|@PREFIX@|$(PREFIX)|g" directories.h.in > directories.h
 
 coxeter: $(objects)
 	$(CXX) $(LINKFLAGS) -o $(LIBRARY) $(objects) $(LINKLIBS)
@@ -63,19 +64,19 @@ coxeter: $(objects)
 executable: $(objects)
 	$(CXX) -o $(EXENAME)$(EXEEXT) $(objects)
 
-BINDIR=$$SAGE_LOCAL/bin/
-DATADIR=$$SAGE_LOCAL/coxeter/
-INCLUDEDIR=$$SAGE_LOCAL/include/coxeter/
-LIBRARYDIR=$$SAGE_LOCAL/$(LIBDIR)
+BINDIR=$$PREFIX/bin/
+DATADIR=$$PREFIX/coxeter/
+INCLUDEDIR=$$PREFIX/include/coxeter/
+LIBRARYDIR=$$PREFIX/$(LIBDIR)
 
 install: coxeter executable
 	mkdir -p "$(DESTDIR)$(BINDIR)"
 	mkdir -p "$(DESTDIR)$(LIBRARYDIR)"
 	cp $(EXENAME)$(EXEEXT) "$(DESTDIR)$(BINDIR)"
 	cp $(LIBRARY) "$(DESTDIR)$(LIBRARYDIR)"
-	if [ $(UNAME) = "CYGWIN" ]; then                 \
-	    mkdir -p "$(DESTDIR)$$SAGE_LOCAL/lib/";      \
-	    cp $(IMPLIB) "$(DESTDIR)$$SAGE_LOCAL/lib/";  \
+	if [ $(OS) = "CYGWIN" ]; then                 \
+	    mkdir -p "$(DESTDIR)$$PREFIX/lib/";      \
+	    cp $(IMPLIB) "$(DESTDIR)$$PREFIX/lib/";  \
 	fi
 
 	mkdir -p "$(DESTDIR)$(DATADIR)"
@@ -84,7 +85,7 @@ install: coxeter executable
 	cp -r *.h *.hpp "$(DESTDIR)$(INCLUDEDIR)"
 
 check: coxeter executable
-	$(EXENAME)$(EXEEXT) < test.input > test.output
+	./$(EXENAME)$(EXEEXT) < test.input > test.output
 
 	if ! diff test.output.expected test.output > /dev/null; then \
 	   echo >&2 "Error testing coxeter on test.input:"; \
