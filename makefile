@@ -12,6 +12,7 @@ oflags = -c $(includedirs) -O -Wall
 gflags = -c $(includedirs) -g
 
 cflags = $(gflags) # the default setting
+cflags = -c $(includedirs) -O2 -fPIC -g
 
 ifdef optimize
 	NDEBUG = true
@@ -22,18 +23,82 @@ ifdef profile
 	cflags = $(pflags)
 endif
 
-cc = g++
+EXENAME = coxeter
+LIBNAME = coxeter3
+OS = $(shell uname)
+ifeq ($(OS),Darwin)
+	EXEEXT = 
+	LIBPREFIX = lib
+	LIBEXT = .dylib
+	LIBDIR = lib
+	LINKFLAGS = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-compatibility_version,3.0,-current_version,3.0,-install_name,$(PREFIX)/lib/$(LIBPREFIX)$(LIBNAME)$(LIBEXT)
+	LINKLIBS = 
+else
+ifeq ($(OS),CYGWIN)
+	EXEEXT = .exe
+	LIBPREFIX = cyg
+	LIBEXT = .dll
+	LIBDIR = bin
+	IMPLIB = lib$(LIBNAME).dll.a
+	LINKFLAGS = -shared -Wl,--out-implib=$(IMPLIB) -Wl,--export-all-symbols
+	LINKLIBS = -lc
+else
+	EXEEXT = 
+	LIBPREFIX = lib
+	LIBEXT = .so
+	LIBDIR = lib
+	LINKFLAGS = -shared -Wl,-soname,libcoxeter3.so
+	LINKLIBS = -lc
+endif
+endif
+LIBRARY = $(LIBPREFIX)$(LIBNAME)$(LIBEXT)
 
-all: coxeter #clean
+all: coxeter executable
+
+directories.h: directories.h.in
+	sed "s|@PREFIX@|$(PREFIX)|g" directories.h.in > directories.h
 
 coxeter: $(objects)
-	$(cc) -o coxeter $(objects)
+	$(CXX) $(LINKFLAGS) -o $(LIBRARY) $(objects) $(LINKLIBS)
+
+executable: $(objects)
+	$(CXX) -o $(EXENAME)$(EXEEXT) $(objects)
+
+BINDIR=$$PREFIX/bin/
+DATADIR=$$PREFIX/coxeter/
+INCLUDEDIR=$$PREFIX/include/coxeter/
+LIBRARYDIR=$$PREFIX/$(LIBDIR)
+
+install: coxeter executable
+	mkdir -p "$(DESTDIR)$(BINDIR)"
+	mkdir -p "$(DESTDIR)$(LIBRARYDIR)"
+	cp $(EXENAME)$(EXEEXT) "$(DESTDIR)$(BINDIR)"
+	cp $(LIBRARY) "$(DESTDIR)$(LIBRARYDIR)"
+	if [ $(OS) = "CYGWIN" ]; then                 \
+	    mkdir -p "$(DESTDIR)$$PREFIX/lib/";      \
+	    cp $(IMPLIB) "$(DESTDIR)$$PREFIX/lib/";  \
+	fi
+
+	mkdir -p "$(DESTDIR)$(DATADIR)"
+	cp -r coxeter_matrices headers messages "$(DESTDIR)$(DATADIR)"
+	mkdir -p "$(DESTDIR)$(INCLUDEDIR)"
+	cp -r *.h *.hpp "$(DESTDIR)$(INCLUDEDIR)"
+
+check: coxeter executable
+	./$(EXENAME)$(EXEEXT) < test.input > test.output
+
+	if ! diff test.output.expected test.output > /dev/null; then \
+	   echo >&2 "Error testing coxeter on test.input:"; \
+	   diff test.output.expected test.output; \
+	   exit 1; \
+	fi
+	rm -f test.output
 
 clean:
 	rm -f $(objects)
 
 %.o:%.cpp
-	$(cc) $(cflags) $*.cpp
+	$(CXX) $(cflags) $*.cpp
 
 # dependencies --- these were generated automatically by make depend on my
 # system; they are explicitly copied for portability. Only local dependencies
@@ -43,7 +108,7 @@ clean:
 # contents of tmp in lieu of the dependencies listed here.
 
 %.d:%.cpp
-	@$(cc) -MM $*.cpp
+	@$(CXX) -MM $*.cpp
 depend: $(dependencies)
 
 affine.o: affine.cpp affine.h globals.h coxgroup.h coxtypes.h io.h list.h \
